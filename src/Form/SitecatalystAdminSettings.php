@@ -280,7 +280,7 @@ function sitecatalyst_page_alter(&$page) {
    
     // config/install/sitecatalyst.settings.yml and config/schema/sitecatalyst.schema.yml.
 
-	$existing_variables = ![$form_state->getUserInput('sitecatalyst_variables')] ? $form_state->getUserInput('sitecatalyst_variables') : \Drupal::config('sitecatalyst.settings')->get('sitecatalyst_variables');
+	$existing_variables = ![$form_state->getUserInput('mytable')] ? $form_state->getUserInput('mytable') : \Drupal::config('sitecatalyst.settings')->get('sitecatalyst_variables');
 	$this->sitecatalyst_variables_form($form['variables'], $existing_variables);
 	//$this->theme_sitecatalyst_variables($variables);
 	//dpm(theme_sitecatalyst_variables($variables));
@@ -386,7 +386,7 @@ function sitecatalyst_variables_trim_empties(&$values, $parent = 'sitecatalyst_v
 
 function sitecatalyst_add_another_variable_js($form, $form_state) {
   // @todo By hard-coding, "variables" here it forces a generic name for the containing form element. This is awkward for the node edit form.
-  return $form['variables']['sitecatalyst_variables'];
+  return $form['variables']['mytable'];
 }
 
 /**
@@ -394,10 +394,13 @@ function sitecatalyst_add_another_variable_js($form, $form_state) {
  */
 
 function sitecatalyst_add_another_variable_submit($form, &$form_state) {
-  $form_get_value = $form_state->getUserInput('mytable');
+  /*$form_get_value = $form_state->getUserInput('mytable');
   $form_state->set('mytable', $form_get_value);
   $form_state->setRebuild();
+  */
   //return "Hello World " ;
+  $form_state['mytable'] = $form_state['input']['mytable'];
+  $form_state['rebuild'] = TRUE;
 }
 
 /**
@@ -430,7 +433,7 @@ function buildForm_validate($form, &$form_state) {
 
 
  function sitecatalyst_variables_form(&$form, $existing_variables = array()) {
-  $form['sitecatalyst_variables'] = [
+ /* $form['sitecatalyst_variables'] = [
    // '#type' => 'markup',
     '#tree' => FALSE,
     '#prefix' => '<div id="sitecatalyst-variables-wrapper">',
@@ -438,8 +441,20 @@ function buildForm_validate($form, &$form_state) {
     '#theme' => 'sitecatalyst_variables',
     //'#element_validate' => array('sitecatalyst_variables_form_validate'),
   ];
+  */
   // Add existing variables to the form unless they are empty.
 
+  $headers = array(t('Name'), t('Value'));
+  $rows = array();
+  foreach (\Drupal\Core\Render\Element::children($form) as $key) {
+   $rows[] = array(\Drupal::service("renderer")->render($form[$key]['name']), \Drupal::service("renderer")->render($form[$key]['value']));
+  }
+
+  $form['mytable'] = [
+   '#type' => 'table', 
+   '#header' => $headers,
+   '#rows' => $rows,
+  ];
   foreach ($existing_variables as $key => $data) {
     sitecatalyst_variable_form($form, $key, $data);
 
@@ -476,17 +491,7 @@ function buildForm_validate($form, &$form_state) {
 }
 
 public function sitecatalyst_variable_form(&$form, $key, $data = array()) {
-  $headers = array(t('Name'), t('Value'));
-  $rows = array();
-  foreach (\Drupal\Core\Render\Element::children($form) as $key) {
-   $rows[] = array(\Drupal::service("renderer")->render($form[$key]['name']), \Drupal::service("renderer")->render($form[$key]['value']));
-  }
-
-  $form['mytable'] = [
-   '#type' => 'table', 
-   '#header' => $headers,
-   '#rows' => $rows,
-  ];
+  
   
  $form['mytable'][$key]['name'] = [
     '#type' => 'textfield',
