@@ -174,15 +174,15 @@ function sitecatalyst_page_alter(&$page) {
 
   $page['page_bottom']['sitecatalyst'] =  array(
     'header'=> array(
-      '#type' => 'markup',
+      //'#type' => 'markup',
       '#markup' => $header,
     ),
     'variables'=> array(
-      '#type' => 'markup',
+      //'#type' => 'markup',
       '#markup' => $extra_variables_formatted,
     ),
     'footer'=> array(
-      '#type' => 'markup',
+      //'#type' => 'markup',
       '#markup' => $footer,
     ),
   );
@@ -394,9 +394,10 @@ function sitecatalyst_add_another_variable_js($form, $form_state) {
  */
 
 function sitecatalyst_add_another_variable_submit($form, &$form_state) {
-  $form_get_value = $form_state->getUserInput('sitecatalyst_variables');
-  $form_state->set('sitecatalyst_variables', $form_get_value);
+  $form_get_value = $form_state->getUserInput('mytable');
+  $form_state->set('mytable', $form_get_value);
   $form_state->setRebuild();
+  //return "Hello World " ;
 }
 
 /**
@@ -428,14 +429,14 @@ function buildForm_validate($form, &$form_state) {
 
 
 
-public function sitecatalyst_variables_form(&$form, $existing_variables = array()) {
+ function sitecatalyst_variables_form(&$form, $existing_variables = array()) {
   $form['sitecatalyst_variables'] = [
-    '#type' => 'markup',
+   // '#type' => 'markup',
     '#tree' => FALSE,
     '#prefix' => '<div id="sitecatalyst-variables-wrapper">',
     '#suffix' => '</div>',
     '#theme' => 'sitecatalyst_variables',
-    '#element_validate' => array('sitecatalyst_variables_form_validate'),
+    //'#element_validate' => array('sitecatalyst_variables_form_validate'),
   ];
   // Add existing variables to the form unless they are empty.
 
@@ -445,17 +446,24 @@ public function sitecatalyst_variables_form(&$form, $existing_variables = array(
  }
   // Add one blank set of variable fields.
  $this->sitecatalyst_variable_form($form, count($existing_variables));
- $form['add_another_variable'] = [
+ $form['submit'] = [
     '#type' => 'submit',
     '#value' => t('Add another variable'),
-    '#submit' => ['sitecatalyst_add_another_variable_submit'],
-    '#limit_validation_errors' => [],
     '#ajax' => [
+    'callback' => 'sitecatalyst_add_another_variable_js',
+      'wrapper' => 'sitecatalyst-variables-wrapper',
+      'effect' => 'fade', ]
+    ];
+    $form['#submit'][] = array($this ,'sitecatalyst_add_another_variable_submit');
+   /* $form['#submit']['#ajax'] = [
       'callback' => 'sitecatalyst_add_another_variable_js',
       'wrapper' => 'sitecatalyst-variables-wrapper',
-      'effect' => 'fade',
-    ],
-  ];
+      'effect' => 'fade', ];
+    */
+   /* '#limit_validation_errors' => [],
+    
+   // dpm($form['add_another_variable']),
+    */
   $form['tokens'] = [
     '#theme' => 'token_tree',
     '#token_types' => array('node', 'menu', 'term', 'user'),
@@ -463,6 +471,7 @@ public function sitecatalyst_variables_form(&$form, $existing_variables = array(
     '#click_insert' => TRUE,
     '#dialog' => TRUE,
   ];
+  
 
 }
 
@@ -488,7 +497,7 @@ public function sitecatalyst_variable_form(&$form, $key, $data = array()) {
     '#default_value' => !($data['name']) ? $data['name'] : '',
    '#parents' => ['mytable', $key, 'name'],
    '#attributes' => ['class' => ['field-variable-name']],
-   '#element_validate' => ['sitecatalyst_validate_variable_name'],
+  // '#element_validate' => ['sitecatalyst_validate_variable_name'],
    //'#theme' => 'sitecatalyst_variables',
   ];
   $form['mytable'][$key]['value'] = [
