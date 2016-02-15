@@ -48,6 +48,107 @@ function sitecatalyst_menu() {
 
   return $items;
 }
+function sitecatalyst_page_attachments(array &$attachments) {
+  $attachments['#attached']['library'][] = 'sitecatalyst/global-s_code-js';
+}
+/*
+function sitecatalyst_page_alter(&$page) {
+  $user = \Drupal::currentUser();
+
+  // Check if we should track the currently active user's role.
+  $track = 0;
+  if (is_array($user->roles)) {
+    foreach ($user->roles as $role) {
+      $role = str_replace(' ', '_', $role);
+      // @FIXME
+// // @FIXME
+// // The correct configuration object could not be determined. You'll need to
+// // rewrite this call manually.
+// $track += variable_get("sitecatalyst_track_{$role}", FALSE);
+
+    }
+  }
+
+  $tracking_type = \Drupal::config('sitecatalyst.settings')->get('sitecatalyst_role_tracking_type');
+  $track = $tracking_type == 'inclusive' ? $track > 0 : $track <= 0;
+
+  // Don't track page views in the admin sections, or for certain roles.
+  if (path_is_admin(\Drupal\Core\Url::fromRoute("<current>")->toString()) || !$track) {
+    return;
+  }
+
+  // Like drupal_add_js, add a query string to the end of the js file location.
+  // @FIXME
+// // @FIXME
+// // This looks like another module's variable. You'll need to rewrite this call
+// // to ensure that it uses the correct configuration object.
+// $query_string = '?' . variable_get('css_js_query_string', '0');
+
+  $js_file_location = \Drupal\Component\Utility\SafeMarkup::checkPlain(\Drupal::config('sitecatalyst.settings')->get("sitecatalyst_js_file_location"));
+
+  // Add any custom code snippets if specified and replace any tokens.
+  $context = _sitecatalyst_get_token_context();
+  $codesnippet = sitecatalyst_token_replace(\Drupal::config('sitecatalyst.settings')->get('sitecatalyst_codesnippet'), $context, array(
+    'clear' => TRUE,
+    'sanitize' => TRUE,
+  )) . "\n";
+
+  // Format and combine variables in the "right" order
+  // Right order is the code file (list likely to be maintained)
+  // Then admin settings with codesnippet first and finally taxonomy->vars
+  $extra_variables_formatted = $codesnippet;
+
+  $header = "<!-- SiteCatalyst code version: ";
+  $header .= \Drupal\Component\Utility\SafeMarkup::checkPlain(\Drupal::config('sitecatalyst.settings')->get("sitecatalyst_version"));
+  $header .= "\nCopyright 1996-" . date('Y') . " Adobe, Inc. -->\n";
+  $header .= "<script type=\"text/javascript\" src=\"";
+  $header .= $js_file_location . $query_string;
+  $header .= "\"></script>\n";
+  $header .= "<script type=\"text/javascript\"><!--\n";
+
+  $footer = '/************* DO NOT ALTER ANYTHING BELOW THIS LINE ! **************/
+  /*'."\n";
+  $footer .= 'var s_code=s.t();if(s_code)document.write(s_code)//--></script>'."\n";
+  $footer .= '<script type="text/javascript"><!--'."\n";
+  $footer .= "if(navigator.appVersion.indexOf('MSIE')>=0)document.write(unescape('%3C')+'\!-'+'-')"."\n";
+  $footer .= '//--></script>' . "\n";
+  $nojs = \Drupal::config('sitecatalyst.settings')->get("sitecatalyst_image_file_location");
+  if (!empty($nojs)) {
+    $footer .= '<noscript><img src="' . check_url($nojs . '/' . rand(0, 10000000)) . '" height="1" width="1" alt=""></noscript>' . "\n";
+  }
+  $footer .= '<!--/DO NOT REMOVE/-->' . "\n";
+  $footer .= '<!-- End SiteCatalyst code version: ';
+  $footer .=  \Drupal\Component\Utility\SafeMarkup::checkPlain(\Drupal::config('sitecatalyst.settings')->get("sitecatalyst_version"));
+  $footer .= ' -->'."\n";
+
+  if ($sitecatalyst_hooked_vars = \Drupal::moduleHandler()->invokeAll('sitecatalyst_variables', [$page])) {
+    if (isset($sitecatalyst_hooked_vars['header'])) {
+      $header = $sitecatalyst_hooked_vars['header'];
+    }
+    if (isset($sitecatalyst_hooked_vars['variables'])) {
+      $extra_variables_formatted .= _sitecatalyst_format_variables($sitecatalyst_hooked_vars['variables']);
+    }
+    if (isset($sitecatalyst_hooked_vars['footer'])) {
+      $footer = $sitecatalyst_hooked_vars['footer'];
+    }
+  }
+
+  $page['page_bottom']['sitecatalyst'] =  array(
+    'header'=> array(
+      '#type' => 'markup',
+      '#markup' => $header,
+    ),
+    'variables'=> array(
+      '#type' => 'markup',
+      '#markup' => $extra_variables_formatted,
+    ),
+    'footer'=> array(
+      '#type' => 'markup',
+      '#markup' => $footer,
+    ),
+  );
+}
+
 
 /**
  * Implements hook_theme().
@@ -119,8 +220,7 @@ $settings_variables = \Drupal::config('sitecatalyst.settings')->get('sitecatalys
   return array('variables' => $variables);
 }
 
-/**
- * Implements hook_page_alter().
+Implements hook_page_alter().
  
 function sitecatalyst_page_alter(&$page) {
   $user = \Drupal::currentUser();

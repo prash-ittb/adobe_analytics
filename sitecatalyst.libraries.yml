@@ -1,0 +1,3 @@
+global-s_code-js:
+  js:
+    js/s_code.js: {}

@@ -92,19 +92,28 @@ $settings_variables = \Drupal::config('sitecatalyst.settings')->get('sitecatalys
 
   return array('variables' => $variables);
 }
-function sitecatalyst_page_alter(&$page) {
+/*
+function sitecatalyst_page_bottom(array &$page_bottom) {
+  $page_bottom['sitecatalyst'] = ['#markup' => 'This is the bottom.'];
+}
+*/
+
+function sitecatalyst_page_attachments(array &$attachments) {
   $user = \Drupal::currentUser();
+   $attachments['#attached']['library'][] = 'core/assets/vendor/sitecatalyst';
+
+}
 
   // Check if we should track the currently active user's role.
-  $track = 0;
-  if (is_array($user->roles)) {
-    foreach ($user->roles as $role) {
+/*  $track = 0;
+  if (is_array($user->user__roles)) {
+    foreach ($user->user__roles as $role) {
       $role = str_replace(' ', '_', $role);
       // @FIXME
 // // @FIXME
 // // The correct configuration object could not be determined. You'll need to
 // // rewrite this call manually.
-// $track += variable_get("sitecatalyst_track_{$role}", FALSE);
+ $track += \Drupal::config('sitecatalyst.settings')->get("sitecatalyst_track_{$role}", FALSE);
 
     }
   }
@@ -113,7 +122,7 @@ function sitecatalyst_page_alter(&$page) {
   $track = $tracking_type == 'inclusive' ? $track > 0 : $track <= 0;
 
   // Don't track page views in the admin sections, or for certain roles.
-  if (path_is_admin(\Drupal\Core\Url::fromRoute("<current>")->toString()) || !$track) {
+ if (path_is_admin(\Drupal\Core\Url::fromRoute("<current>")->toString()) || !$track) {
     return;
   }
 
@@ -122,7 +131,7 @@ function sitecatalyst_page_alter(&$page) {
 // // @FIXME
 // // This looks like another module's variable. You'll need to rewrite this call
 // // to ensure that it uses the correct configuration object.
-// $query_string = '?' . variable_get('css_js_query_string', '0');
+ $query_string = '?' . \Drupal::config('sitecatalyst.settings')->get('css_js_query_string', '0');
 
   $js_file_location = \Drupal\Component\Utility\SafeMarkup::checkPlain(\Drupal::config('sitecatalyst.settings')->get("sitecatalyst_js_file_location"));
 
@@ -146,7 +155,7 @@ function sitecatalyst_page_alter(&$page) {
   $header .= "\"></script>\n";
   $header .= "<script type=\"text/javascript\"><!--\n";
 
-  $footer = '/************* DO NOT ALTER ANYTHING BELOW THIS LINE ! **************/'."\n";
+  $footer = '/************* DO NOT ALTER ANYTHING BELOW THIS LINE ! **************//*'."\n";
   $footer .= 'var s_code=s.t();if(s_code)document.write(s_code)//--></script>'."\n";
   $footer .= '<script type="text/javascript"><!--'."\n";
   $footer .= "if(navigator.appVersion.indexOf('MSIE')>=0)document.write(unescape('%3C')+'\!-'+'-')"."\n";
@@ -172,22 +181,23 @@ function sitecatalyst_page_alter(&$page) {
     }
   }
 
-  $page['page_bottom']['sitecatalyst'] =  array(
+  $attachments['#attached']['sitecatalyst'] =  array(
     'header'=> array(
-      //'#type' => 'markup',
+      '#type' => 'markup',
       '#markup' => $header,
     ),
     'variables'=> array(
-      //'#type' => 'markup',
+      '#type' => 'markup',
       '#markup' => $extra_variables_formatted,
     ),
     'footer'=> array(
-      //'#type' => 'markup',
+      '#type' => 'markup',
       '#markup' => $footer,
     ),
   );
+  return $attachments;
 }
-
+*/
 
 
 
@@ -399,8 +409,9 @@ function sitecatalyst_add_another_variable_submit($form, &$form_state) {
   $form_state->setRebuild();
   */
   //return "Hello World " ;
-  $form_state['mytable'] = $form_state['input']['mytable'];
-  $form_state['rebuild'] = TRUE;
+  //$form_state['mytable'] = $form_state['input']['mytable'];
+  $form_state->setRebuild();
+  \Drupal::$formBuilder()->buildForm('Drupal\sitecatalyst\Form\SitecatalystAdminSettings',$form_state);
 }
 
 /**
@@ -708,14 +719,21 @@ function sitecatalyst_get_token_context() {
 public function submitForm(array &$form, FormStateInterface $form_state) {
     $config = $this->config('sitecatalyst.settings');
 
-    foreach (Element::children($form) as $variable) {
-      $config->set($variable, $form_state->getValue($form[$variable]['#parents']));
-    }
+    //foreach (Element::children($form) as $variable) {
+      $config->set('sitecatalyst_js_file_location', $form_state->getValue('sitecatalyst_js_file_location'));
+      $config->set('sitecatalyst_image_file_location', $form_state->getValue('sitecatalyst_image_file_location'));
+      $config->set('sitecatalyst_version', $form_state->getValue('sitecatalyst_version'));
+      $config->set('sitecatalyst_token_cache_lifetime', $form_state->getValue('sitecatalyst_token_cache_lifetime'));
+
+   //   $config->set($variable, $form_state->getValue($form[$variable]['#parents']));
+    //}
     $config->save();
 
-    if (method_exists($this, '_submitForm')) {
+   /* if (method_exists($this, '_submitForm')) {
       $this->_submitForm($form, $form_state);
     }
+    */
+    
 
     parent::submitForm($form, $form_state);
 
