@@ -1,0 +1,158 @@
+<?php
+/**
+ * @file
+ * Installs the module, AdobeAnalytics.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function adobeanalytics_install() {
+  $t = 't';
+
+  adobeanalytics_update_7001();
+
+  // On installation, track all the existing roles.
+  $result = db_select('role', 'r')
+    ->fields('r')
+    ->orderBy('name', 'ASC')
+    ->execute();
+
+  foreach ($result as $role) {
+    $role_varname = str_replace(" ", "_", $role->name);
+    $adobeanalytics_role = "adobeanalytics_track_{$role_varname}";
+
+    // Check if variable is not already set from a previous install.
+    // @FIXME
+// // @FIXME
+// // The correct configuration object could not be determined. You'll need to
+// // rewrite this call manually.
+// if (strpos(variable_get($adobeanalytics_role, 'new'), 'new') !== FALSE) {
+//       // @FIXME
+// // // @FIXME
+// // // The correct configuration object could not be determined. You'll need to
+// // // rewrite this call manually.
+// // variable_set($adobeanalytics_role, TRUE);
+// 
+//       drupal_set_message($t('Role %rolename is now being tracked by AdobeAnalytics.', array('%rolename' => $role->name)));
+//     }
+
+  }
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function adobeanalytics_uninstall() {
+  // @FIXME
+// $result = db_select('variable', 'v')
+//     ->fields('v')
+//     ->condition('v.name', 'adobeanalytics_%', 'LIKE')
+//     ->execute();
+
+
+  foreach ($result as $variable) {
+    // @FIXME
+// // @FIXME
+// // The correct configuration object could not be determined. You'll need to
+// // rewrite this call manually.
+// variable_del($variable->name);
+
+  }
+}
+
+/**
+ * Update to Drupal 7. Set the version number for new installs.
+ */
+function adobeanalytics_update_7000() {
+  $ret = array();
+  return $ret;
+}
+
+/**
+ * Update from Omniture to AdobeAnalytics.
+ */
+function adobeanalytics_update_7001() {
+  $t = 't';
+
+  // Perform an update from the old omniture module.
+  if (\Drupal::moduleHandler()->moduleExists('omniture')) {
+    // Look for any legacy "omniture_*" variables and rename them.
+    // @FIXME
+// $result = db_select('variable', 'v')
+//       ->fields('v')
+//       ->condition('v.name', 'omniture_%', 'LIKE')
+//       ->execute();
+
+
+    foreach ($result as $variable) {
+      $new_name = str_replace('omniture', 'adobeanalytics', $variable->name);
+      // @FIXME
+// // @FIXME
+// // The correct configuration object could not be determined. You'll need to
+// // rewrite this call manually.
+// variable_set($new_name, unserialize($variable->value));
+
+      // @FIXME
+// // @FIXME
+// // The correct configuration object could not be determined. You'll need to
+// // rewrite this call manually.
+// variable_del($variable->name);
+
+    }
+
+    // Migrate any existing contexts that refer to the old omniture variables.
+    if (\Drupal::moduleHandler()->moduleExists('context')) {
+      $contexts = context_load();
+      foreach ($contexts as $cid => &$context) {
+        if (isset($context->reactions)) {
+          foreach ($context->reactions as $reaction_name => $reaction) {
+            if ($reaction_name == 'omniture_vars') {
+              $context->reactions['adobeanalytics_vars'] = $context->reactions['omniture_vars'];
+              $context->reactions['adobeanalytics_vars']['adobeanalytics_variables'] = $context->reactions['adobeanalytics_vars']['omniture_variables'];
+              unset($context->reactions['omniture_vars']);
+              unset($context->reactions['adobeanalytics_vars']['omniture_variables']);
+              context_save($context);
+            }
+          }
+        }
+      }
+    }
+    cache_clear_all('*', 'cache', TRUE);
+
+    // Check if any modules exist that depend on Omniture. This will typically
+    // happen when you have a feature.
+    $modules = system_list('module_enabled');
+    $flagged_modules = array();
+    foreach ($modules as $module) {
+      if (_adobeanalytics_module_includes_omniture($module->info)) {
+        $flagged_modules[] = $module->name;
+      }
+    }
+    if (!empty($flagged_modules)) {
+      drupal_set_message($t('The following modules may depend on Omniture: @modules. If any of these are features, you should re-export them immediately to avoid loosing analytics data.', array('@modules' => implode(', ', $flagged_modules))), 'warning');
+    }
+
+    drupal_set_message($t('Now that you are using the AdobeAnalytics module, you should disable and uninstall the Omniture module.'), 'warning');
+  }
+}
+
+/**
+ * Helper function to determine if the given module is a feature containing any
+ * omniture specific elements.
+ *
+ * @param  array $info
+ *   An array from $module->info as returned by system_list('module_enabled').
+ * @return bool
+ */
+function _adobeanalytics_module_includes_omniture($info) {
+  foreach ($info as $key => $value) {
+    if (is_array($value)) {
+      _adobeanalytics_module_includes_omniture($value);
+    }
+    elseif (stripos('omniture', $value) !== FALSE) {
+      return TRUE;
+    }
+  }
+  return FALSE;
+}

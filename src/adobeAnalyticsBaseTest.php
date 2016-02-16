@@ -1,5 +1,5 @@
 <?php
-namespace Drupal\adobeanalytics\Tests;
+namespace Drupal\adobeanalytics;
 
 /**
  * @file

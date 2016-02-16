@@ -1,0 +1,6 @@
+name: AdobeAnalytics
+description: 'Adds AdobeAnalytics javascript tracking code to your site''s pages.'
+type: module
+core: 8.x
+libraries:
+ - adobeanalytics/s_code-js
