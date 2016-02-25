@@ -774,22 +774,22 @@ function _adobeanalytics_variable_form(&$form, $key, $data = array())
     $form['adobeanalytics_variables'][$key]['value']['#description'] = t('Example: [current-page:title]');
   }
 }
-
+*/
 /**
  * Create a data array to be used by token_replace().
  *
  * @return array
- 
-function _adobeanalytics_get_token_context() {
-  $context = &drupal_static(__function__);
-
-  if (is_null($context)) {
-    $context['node'] = \Drupal::routeMatch()->getParameter('node');
-    $context['term'] = \Drupal::routeMatch()->getParameter('taxonomy_term', 2);
-    if (\Drupal::moduleHandler()->moduleExists('menu')) {
-      $context['menu'] = menu_load('main-menu');
-    }
-  }
-
-  return $context;
-}
+ * function _adobeanalytics_get_token_context() {
+ * $context = &drupal_static(__function__);
+ *
+ * if (is_null($context)) {
+ *  $context['node'] = \Drupal::routeMatch()->getParameter('node');
+ * $context['term'] = \Drupal::routeMatch()->getParameter('taxonomy_term', 2);
+ *  if (\Drupal::moduleHandler()->moduleExists('menu')) {
+ * $context['menu'] = menu_load('main-menu');
+ * }
+ * }
+ *
+ * return $context;
+ * }
+ */

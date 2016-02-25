@@ -7,11 +7,11 @@
 
 namespace Drupal\adobeanalytics\Form;
 
-use Drupal\Core\Form\ConfigFormBase;
+use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 
-class AdobeanalyticsAdminSettings extends ConfigFormBase {
+class AdobeanalyticsAdminSettings extends FormBase {
 
   /**
    * {@inheritdoc}
@@ -202,7 +202,7 @@ function adobeanalytics_page_attachments(array &$attachments) {
 
 
 
-  public function buildForm(array $form, \Drupal\Core\Form\FormStateInterface $form_state) {  
+  public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('adobeanalytics.settings');
 
 
@@ -254,7 +254,7 @@ function adobeanalytics_page_attachments(array &$attachments) {
         'inclusive' => t('Add to the selected roles only'),
         'exclusive' => t('Add to all roles except the ones selected'),
       ],
-      '#default_value' => \Drupal::config('adobeanalytics.settings')->get("adobeanalytics_role_tracking_type"),
+      '#default_value' => \Drupal::config('adobeanalytics.settings')->get("adobeanalytics_role_tracking_type",'inclusive'),
     ];
   $roles = user_roles();
       // role table no longer exists in Drupal 8 , user__roles is used instead    
@@ -274,7 +274,7 @@ function adobeanalytics_page_attachments(array &$attachments) {
             '#type' => 'checkboxes',
             '#title' => $user__roles->roles_target_id,
             '#options' => $options,
-           // '#default_value' => \Drupal::config('adobeanalytics.settings')->get("adobeanalytics_user_role_name"),
+           '#default_value' => \Drupal::config('adobeanalytics.settings')->get("adobeanalytics_track_{$user__role_varname}",FALSE),
     ];
 
     $form['variables'] = [
@@ -290,8 +290,9 @@ function adobeanalytics_page_attachments(array &$attachments) {
    
     // config/install/adobeanalytics.settings.yml and config/schema/adobeanalytics.schema.yml.
 
-	$existing_variables = ![$form_state->getUserInput('mytable')] ? $form_state->getUserInput('mytable') : \Drupal::config('adobeanalytics.settings')->get('adobeanalytics_variables');
-	$this->adobeanalytics_variables_form($form['variables'], $existing_variables);
+    $input = \Drupal::config('adobeanalytics.settings');
+    $existing_variables = ![$input] ? $input : \Drupal::config('adobeanalytics.settings')->get('adobeanalytics_variables',array());
+    $this->adobeanalytics_variables_form($form['variables'], $existing_variables);
 	//$this->theme_adobeanalytics_variables($variables);
 	//dpm(theme_adobeanalytics_variables($variables));
     
@@ -340,11 +341,122 @@ function adobeanalytics_page_attachments(array &$attachments) {
       '#click_insert' => TRUE,
       '#dialog' => TRUE,
     ];
+    $form['submit'] = array(
+        '#type' => 'submit',
+        '#value' => 'Save configuration',
+    );
 
-    return parent::buildForm($form, $form_state);
+    return $form;
 }
+  function adobeanalytics_variables_form(&$form, $existing_variables = array()) {
+    /* $form['adobeanalytics_variables'] = [
+      // '#type' => 'markup',
+       '#tree' => FALSE,
+       '#prefix' => '<div id="adobeanalytics-variables-wrapper">',
+       '#suffix' => '</div>',
+       '#theme' => 'adobeanalytics_variables',
+       //'#element_validate' => array('adobeanalytics_variables_form_validate'),
+     ];
+     */
+    // Add existing variables to the form unless they are empty.
 
-/**
+    $headers = array(t('Name'), t('Value'));
+    $rows = array();
+    foreach (\Drupal\Core\Render\Element::children($form) as $key) {
+      $rows[] = array(\Drupal::service("renderer")->render($form[$key]['name']), \Drupal::service("renderer")->render($form[$key]['value']));
+    }
+
+    $form['adobeanalytics_variables'] = [
+        '#type' => 'table',
+        '#header' => $headers,
+        '#rows' => $rows,
+    ];
+    foreach ($existing_variables as $key => $data) {
+      adobeanalytics_variable_form($form, $key, $data);
+
+    }
+    // Add one blank set of variable fields.
+    $this->adobeanalytics_variable_form($form, count($existing_variables));
+    $form['submit'] = [
+        '#type' => 'submit',
+        '#value' => t('Add another variable'),
+        '#submit' => array('adobeanalytics_add_another_variable_submit'),
+        '#ajax' => [
+            'callback' => 'adobeanalytics_add_another_variable_js',
+            'wrapper' => 'adobeanalytics-variables-wrapper',
+            'effect' => 'fade', ]
+    ];
+    $form['#submit']['#ajax'] = [
+        'callback' => 'adobeanalytics_add_another_variable_js',
+        'wrapper' => 'adobeanalytics-variables-wrapper',
+        'effect' => 'fade', ];
+    /* '#limit_validation_errors' => [],
+
+// dpm($form['add_another_variable']),
+ */
+    $form['tokens'] = [
+        '#theme' => 'token_tree',
+        '#token_types' => array('node', 'menu', 'term', 'user'),
+        '#global_types' => TRUE,
+        '#click_insert' => TRUE,
+        '#dialog' => TRUE,
+    ];
+
+  }
+
+  public function adobeanalytics_variable_form(&$form, $key, $data = array()) {
+    $name = \Drupal::config('adobeanalytics.settings')->get('adobeanalytics_name');
+    $value = \Drupal::config('adobeanalytics.settings')->get('adobeanalytics_value');
+    $form['adobeanalytics_variables'][$key]['name'] = [
+        '#type' => 'textfield',
+        '#size' => 40,
+        '#maxlength' => 40,
+      // '#title_display' => 'invisible',
+        '#title' => t('Name'),
+        '#default_value' => $name,
+        '#parents' => ['adobeanalytics_variables', $key, 'name'],
+        '#attributes' => ['class' => ['field-variable-name']],
+      // '#element_validate' => ['adobeanalytics_validate_variable_name'],
+      //'#theme' => 'adobeanalytics_variables',
+    ];
+    $form['adobeanalytics_variables'][$key]['value'] = [
+        '#type' => 'textfield',
+        '#size' => 40,
+        '#maxlength' => 40,
+      // '#title_display' => 'invisible',
+        '#title' => t('Value'),
+        '#default_value' => $value,
+        '#parents' => ['adobeanalytics_variables', $key, 'value'],
+        '#attributes' => ['class' => ['field-variable-value']],
+      // '#theme' => 'adobeanalytics_variables',
+    ];
+
+    if (empty($name) && empty($value)) {
+      $form['adobeanalytics_variables'][$key]['name']['#description'] = t('Example: prop1');
+      $form['adobeanalytics_variables'][$key]['value']['#description'] = t('Example: [current-page:title]');
+    }
+    return $form;
+    // dpm($debugging);
+  }
+
+  function adobeanalytics_add_another_variable_submit($form, $key, &$form_state) {
+    /*$form_get_value = $form_state->getUserInput('mytable');
+    $form_state->set('mytable', $form_get_value);
+    $form_state->setRebuild();
+    */
+    //return "Hello World " ;
+    //$form_state['mytable'] = $form_state['input']['mytable'];
+    $form_state['_adobeanalytics_variables'][$key]['name'] = $form_state->getUserInput('adobeanalytics_name');
+    $form_state['adobeanalytics_variables'][$key]['value']= $form_state->getUserInput('adobeanalytics_value');
+    $form_state->setRebuild();
+    \Drupal::$formBuilder()->buildForm('Drupal\adobeanalytics\Form\AdobeanalyticsAdminSettings',$form_state);
+  }
+
+  function adobeanalytics_add_another_variable_js($form, $form_state) {
+    // @todo By hard-coding, "variables" here it forces a generic name for the containing form element. This is awkward for the node edit form.
+    return $form['variables']['adobeanalytics_variables'];
+  }
+  /**
  * Validation function used by the variables form.
  */
 
@@ -394,25 +506,13 @@ function adobeanalytics_variables_trim_empties(&$values, $parent = 'adobeanalyti
  * AJAX callback function for adding variable fields to the settings form.
  */
 
-function adobeanalytics_add_another_variable_js($form, $form_state) {
-  // @todo By hard-coding, "variables" here it forces a generic name for the containing form element. This is awkward for the node edit form.
-  return $form['variables']['mytable'];
-}
+
 
 /**
  * Submit handler to add more variables.
  */
 
-function adobeanalytics_add_another_variable_submit($form, &$form_state) {
-  /*$form_get_value = $form_state->getUserInput('mytable');
-  $form_state->set('mytable', $form_get_value);
-  $form_state->setRebuild();
-  */
-  //return "Hello World " ;
-  //$form_state['mytable'] = $form_state['input']['mytable'];
-  $form_state->setRebuild();
-  \Drupal::$formBuilder()->buildForm('Drupal\adobeanalytics\Form\AdobeanalyticsAdminSettings',$form_state);
-}
+
 
 /**
  * Validation function for variable names.
@@ -438,104 +538,6 @@ function buildForm_validate($form, &$form_state) {
   }
   $form_state['values']['adobeanalytics_variables'] = array_values($form_state['values']['adobeanalytics_variables']);
 }
-
-
-
-
-
- function adobeanalytics_variables_form(&$form, $existing_variables = array()) {
- /* $form['adobeanalytics_variables'] = [
-   // '#type' => 'markup',
-    '#tree' => FALSE,
-    '#prefix' => '<div id="adobeanalytics-variables-wrapper">',
-    '#suffix' => '</div>',
-    '#theme' => 'adobeanalytics_variables',
-    //'#element_validate' => array('adobeanalytics_variables_form_validate'),
-  ];
-  */
-  // Add existing variables to the form unless they are empty.
-
-  $headers = array(t('Name'), t('Value'));
-  $rows = array();
-  foreach (\Drupal\Core\Render\Element::children($form) as $key) {
-   $rows[] = array(\Drupal::service("renderer")->render($form[$key]['name']), \Drupal::service("renderer")->render($form[$key]['value']));
-  }
-
-  $form['mytable'] = [
-   '#type' => 'table', 
-   '#header' => $headers,
-   '#rows' => $rows,
-  ];
-  foreach ($existing_variables as $key => $data) {
-    adobeanalytics_variable_form($form, $key, $data);
-
- }
-  // Add one blank set of variable fields.
- $this->adobeanalytics_variable_form($form, count($existing_variables));
- $form['submit'] = [
-    '#type' => 'submit',
-    '#value' => t('Add another variable'),
-    '#ajax' => [
-    'callback' => 'adobeanalytics_add_another_variable_js',
-      'wrapper' => 'adobeanalytics-variables-wrapper',
-      'effect' => 'fade', ]
-    ];
-    $form['#submit'][] = array($this ,'adobeanalytics_add_another_variable_submit');
-   /* $form['#submit']['#ajax'] = [
-      'callback' => 'adobeanalytics_add_another_variable_js',
-      'wrapper' => 'adobeanalytics-variables-wrapper',
-      'effect' => 'fade', ];
-    */
-   /* '#limit_validation_errors' => [],
-    
-   // dpm($form['add_another_variable']),
-    */
-  $form['tokens'] = [
-    '#theme' => 'token_tree',
-    '#token_types' => array('node', 'menu', 'term', 'user'),
-    '#global_types' => TRUE,
-    '#click_insert' => TRUE,
-    '#dialog' => TRUE,
-  ];
-  
-
-}
-
-public function adobeanalytics_variable_form(&$form, $key, $data = array()) {
-  
-  
- $form['mytable'][$key]['name'] = [
-    '#type' => 'textfield',
-    '#size' => 40,
-    '#maxlength' => 40,
-    '#title_display' => 'invisible',
-    '#title' => t('Name'),
-    '#default_value' => !($data['name']) ? $data['name'] : '',
-   '#parents' => ['mytable', $key, 'name'],
-   '#attributes' => ['class' => ['field-variable-name']],
-  // '#element_validate' => ['adobeanalytics_validate_variable_name'],
-   //'#theme' => 'adobeanalytics_variables',
-  ];
-  $form['mytable'][$key]['value'] = [
-    '#type' => 'textfield',
-    '#size' => 40,
-    '#maxlength' => 40,
-    '#title_display' => 'invisible',
-    '#title' => t('Value'),
-    '#default_value' => !($data['value']) ? $data['value'] : '',
-    '#parents' => ['mytable', $key, 'value'],
-    '#attributes' => ['class' => ['field-variable-value']],
-   // '#theme' => 'adobeanalytics_variables',
-  ];
-
-  if (empty($data)) {
-    $form['mytable'][$key]['name']['#description'] = t('Example: prop1');
-    $form['mytable'][$key]['value']['#description'] = t('Example: [current-page:title]');
-  }
-  return $form;
- // dpm($debugging); 
-}
-
 
 function adobeanalytics_set_variable($name = NULL, $value = NULL) {
   $variables = &drupal_static(__FUNCTION__, array());
@@ -717,27 +719,13 @@ function adobeanalytics_get_token_context() {
 }
 
 public function submitForm(array &$form, FormStateInterface $form_state) {
-    $config = $this->config('adobeanalytics.settings');
 
-    //foreach (Element::children($form) as $variable) {
-      $config->set('adobeanalytics_js_file_location', $form_state->getValue('adobeanalytics_js_file_location'));
-      $config->set('adobeanalytics_image_file_location', $form_state->getValue('adobeanalytics_image_file_location'));
-      $config->set('adobeanalytics_version', $form_state->getValue('adobeanalytics_version'));
-      $config->set('adobeanalytics_token_cache_lifetime', $form_state->getValue('adobeanalytics_token_cache_lifetime'));
-
-   //   $config->set($variable, $form_state->getValue($form[$variable]['#parents']));
-    //}
-    $config->save();
-
-   /* if (method_exists($this, '_submitForm')) {
-      $this->_submitForm($form, $form_state);
-    }
-    */
-    
-
-    parent::submitForm($form, $form_state);
+     \Drupal::configFactory()->getEditable('adobeanalytics.settings')->set('adobeanalytics_name', $form_state->getValue('adobeanalytics_variables')[0]['name'])->save();
+      \Drupal::configFactory()->getEditable('adobeanalytics.settings')->set('adobeanalytics_value', $form_state->getValue('adobeanalytics_variables')[0]['value'])->save();
+    \Drupal::configFactory()->getEditable('adobeanalytics.settings')->set('adobeanalytics_js_file_location', $form_state->getValue('adobeanalytics_js_file_location'))->save();
+     \Drupal::configFactory()->getEditable('adobeanalytics.settings')->set('adobeanalytics_image_file_location', $form_state->getValue('adobeanalytics_image_file_location'))->save();
+    \Drupal::configFactory()->getEditable('adobeanalytics.settings')->set('adobeanalytics_version', $form_state->getValue('adobeanalytics_version'))->save();
+     \Drupal::configFactory()->getEditable('adobeanalytics.settings')->set('adobeanalytics_token_cache_lifetime', $form_state->getValue('adobeanalytics_token_cache_lifetime'))->save();
 
   }
-  //dpm($markup);
-
 }

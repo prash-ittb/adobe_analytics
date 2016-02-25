@@ -16,5 +16,3 @@ adobeanalytics.settings:
       type: integer
     adobeanalytics_example_value:
       type: string
-    adobeanalytics_variables:
-      type: integer
