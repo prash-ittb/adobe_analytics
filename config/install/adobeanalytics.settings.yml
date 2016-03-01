@@ -6,5 +6,8 @@ adobeanalytics_image_file_location: 'http://mckinseyknowledge.122.2o7.net/b/ss/m
 adobeanalytics_token_cache_lifetime: 0
 adobeanalytics_name : { }
 adobeanalytics_value : { }
+adobeanalytics_track_administrator :
+adobeanalytics_track_authenticated_user :
+adobeanalytics_track_anonymous_user :
 
 

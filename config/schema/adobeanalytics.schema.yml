@@ -6,8 +6,6 @@ adobeanalytics.settings:
       type: string
     adobeanalytics_js_file_location:
       type: string
-    adobeanalytics_codesnippet:
-      type: string
     adobeanalytics_version:
       type: string
     adobeanalytics_image_file_location:
