@@ -1,13 +1,10 @@
 adobeanalytics_role_tracking_type: inclusive
-adobeanalytics_js_file_location: 'http://localhost/workspace/d8/module/contributed/adobeanalytics/s_code.js'
+adobeanalytics_js_file_location: ''
 adobeanalytics_codesnippet: ''
 adobeanalytics_version: H.20.3.
-adobeanalytics_image_file_location: 'http://mckinseyknowledge.122.2o7.net/b/ss/mckinseyfirmsecurity-dev/1/H.24.2--NS/0?[AQB]&cdp=3&[AQE]'
+adobeanalytics_image_file_location: ''
 adobeanalytics_token_cache_lifetime: 0
-adobeanalytics_name : { }
-adobeanalytics_value : { }
-adobeanalytics_track_administrator :
-adobeanalytics_track_authenticated_user :
-adobeanalytics_track_anonymous_user :
+adobeanalytics_extra_variables: { }
+adobeanalytics_track_roles:
 
 
