@@ -14,7 +14,7 @@ Adds the AdobeAnalytics analytics system to your website.
 Requirements
 ============
 
-* AdobeAnalytics user account
+* SiteCatalyst user account
 
 
 Installation
@@ -41,8 +41,8 @@ Note: Do not forget to rename the functions.
   function mymodule_adobeanalytics_variables() {
     // Initialize a variables array to be returned by this hook.
     $variables = array();
-
-    if (variable_get('adobeanalytics_track_search_engine', 0)) {
+	$configVar = \Drupal::config('adobeanalytics.settings')->get('adobeanalytics_track_search_engine',0);
+    if ($configVar) {
       $variables['referring_search_engine'] = 'none';
 
       // Create a list of possible search engines that my site cares about.
@@ -76,7 +76,7 @@ Note: Do not forget to rename the functions.
     $form['general']['adobeanalytics_track_search_engine'] = array(
       '#type' => 'checkbox',
       '#title' => t('Track the referring search engine for every request'),
-      '#default_value' => variable_get('adobeanalytics_track_search_engine', 0),
+      '#default_value' => \Drupal::config(adobeanalytics.settings)->get('adobeanalytics_track_search_engine', 0),
     );
   }
 
