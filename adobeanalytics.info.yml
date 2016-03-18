@@ -1,5 +1,5 @@
 name: Adobe Analytics
-description: 'Adds Adobe Analytics javascript tracking code to your site''s pages.'
+description: 'Adds Adobe Analytics javascript tracking code to your site's pages.'
 type: module
 core: 8.x
 configure: adobeanalytics.settings
