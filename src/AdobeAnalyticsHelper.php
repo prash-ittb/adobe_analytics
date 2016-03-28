@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains helpful functions for the module.
- */
-
 namespace Drupal\adobeanalytics;
 
 use \Drupal\Component\Utility\SafeMarkup;
@@ -26,7 +21,7 @@ class AdobeAnalyticsHelper {
         $context['menu'] = menu_load('main-menu');
       }
     }
-	return $context;
+    return $context;
   }
 
   /**

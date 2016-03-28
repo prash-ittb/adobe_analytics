@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\adobeanalytics\Form\AdobeanalyticsAdminSettings.
- */
-
 namespace Drupal\adobeanalytics\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
@@ -137,7 +132,6 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase {
 
     return $form;
   }
-
 
   /**
    * Get the extra variable form with some conditions.

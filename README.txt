@@ -39,34 +39,34 @@ Note: Do not forget to rename the functions.
    * Implements hook_adobeanalytics_variables().
    */
   function mymodule_adobeanalytics_variables() {
-    // Initialize a variables array to be returned by this hook.
-    $variables = array();
-	$configVar = \Drupal::config('adobeanalytics.settings')->get('adobeanalytics_track_search_engine',0);
-    if ($configVar) {
-      $variables['referring_search_engine'] = 'none';
+  // Initialize a variables array to be returned by this hook.
+  $variables = array();
+  $configVar = \Drupal::config('adobeanalytics.settings')->get('adobeanalytics_track_search_engine', 0);
+  if ($configVar) {
+    $variables['referring_search_engine'] = 'none';
 
-      // Create a list of possible search engines that my site cares about.
-      $search_engines = array('google.com', 'yahoo.com', 'bing.com', 'ask.com');
+    // Create a list of possible search engines that my site cares about.
+    $search_engines = array('google.com', 'yahoo.com', 'bing.com', 'ask.com');
 
-      // Get the refering URL.
-      $referer = $_SERVER['HTTP_REFERER'];
+    // Get the refering URL.
+    $referer = $_SERVER['HTTP_REFERER'];
 
-      // Check the refering URL to see if the request is coming from a search engine
-      // and if it is, change the value of my "referring_search_engine" variable.
-      foreach ($search_strings as $engine)  {
-        if (stripos($referer, $engine) !== FALSE) {
-          $variables['referring_search_engine'] = $engine;
-          break;
-        }
+    // Check the URL to see if the request is coming from a search engine
+    // and if it is, change the value of my "referring_search_engine" variable.
+    foreach ($search_strings as $engine) {
+      if (stripos($referer, $engine) !== FALSE) {
+        $variables['referring_search_engine'] = $engine;
+        break;
       }
     }
+  }
 
-    // Lets assume we need a variable called "date" and that for some reason it
-    // *must* come before all the other variables. Note that if you have a
-    // variable that must come at the end you can use "footer" as well.
-    $header = array('date' => date('Ymd'));
+  // Lets assume we need a variable called "date" and that for some reason it
+  // *must* come before all the other variables. Note that if you have a
+  // variable that must come at the end you can use "footer" as well.
+  $header = array('date' => date('Ymd'));
 
-    return array('variables' => $variables, 'header' => $header);
+  return array('variables' => $variables, 'header' => $header);
   }
 
   /**
@@ -76,7 +76,7 @@ Note: Do not forget to rename the functions.
     $form['general']['adobeanalytics_track_search_engine'] = array(
       '#type' => 'checkbox',
       '#title' => t('Track the referring search engine for every request'),
-      '#default_value' => \Drupal::config(adobeanalytics.settings)->get('adobeanalytics_track_search_engine', 0),
+      '#default_value' => \Drupal::config(adobeanalytics . settings)->get('adobeanalytics_track_search_engine', 0),
     );
   }
 

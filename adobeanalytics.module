@@ -16,9 +16,6 @@ use \Drupal\Core\Render\Markup;
 use \Drupal\Component\Utility\SafeMarkup;
 use \Drupal\Core\Routing\RouteMatchInterface;
 
-
-
-
 /**
  * Implements hook_help().
  */
@@ -28,7 +25,6 @@ function adobeanalytics_help($route_name, RouteMatchInterface $route_match) {
       return t("Settings for AdobeAnalytics.");
   }
 }
-
 
 /**
  * Implements template_preprocess_html().
@@ -93,7 +89,6 @@ function adobeanalytics_preprocess_html(&$variables) {
   $header = "<!-- AdobeAnalytics code version: ";
   $header .= $safeMarkup::checkPlain($config->get("adobeanalytics_version"));
   $header .= "\nCopyright 1996-" . date('Y') . " Adobe, Inc. -->\n";
-  // $header .= "<script type='text/javascript' src='" . $config->get('adobeanalytics_js_file_location') . "'></script>'";.
   $header .= "<script type=\"text/javascript\" src=\"";
   $header .= $js_file_location . $query_string;
   $header .= "\"></script>\n";
@@ -141,8 +136,6 @@ function adobeanalytics_preprocess_html(&$variables) {
     ),
   );
 }
-
-
 
 /**
  * Implementation of hook_adobeanalytics_variables().
