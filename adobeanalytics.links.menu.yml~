@@ -1,6 +1,0 @@
-sitecatalyst.admin:
-  title: 'SiteCatalyst'
-  description: 'Configure the settings used to integrate SiteCatalyst analytics.'
-  parent: system.admin_config_system
-  route_name: sitecatalyst.content
-  weight: 100

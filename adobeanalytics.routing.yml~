@@ -1,7 +1,0 @@
-adobeanalytics.content:
-  path: '/admin/config/system/adobeanalytics'
-  defaults:
-    _title: 'AdobeAnalytics'
-    _form: '\Drupal\adobeanalytics\Form\AdobeanalyticsAdminSettings'
-  requirements:
-    _permission: 'administer AdobeAnalytics configuration'
