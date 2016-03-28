@@ -1,7 +1,0 @@
-sitecatalyst.content:
-  path: '/admin/config/system/sitecatalyst'
-  defaults:
-    _title: 'SiteCatalyst'
-    _form: '\Drupal\sitecatalyst\Form\SitecatalystAdminSettings'
-  requirements:
-    _permission: 'administer SiteCatalyst configuration'
