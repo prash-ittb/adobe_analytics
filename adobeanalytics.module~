@@ -4,10 +4,7 @@
  * @file
  * Drupal Module: AdobeAnalytics Stats
  * Adds the required Javascript to the bottom of your Drupal pages to allow
- * tracking by the AdobeAnalytics analytics package. 
- */
-/**
- * The original code for this
+ * tracking by the AdobeAnalytics analytics package. The original code for this
  * module came from the Omniture module which was based on Google Analytics
  * package by Mike Carter.
  */
@@ -35,8 +32,8 @@ function adobeanalytics_help($route_name, RouteMatchInterface $route_match) {
 function adobeanalytics_preprocess_html(&$variables) {
   $user = \Drupal::currentUser();
   $config = \Drupal::config('adobeanalytics.settings');
-  $safeMarkup = new SafeMarkup();
-  $adobeAnalyticsHelper = new AdobeAnalyticsHelper();
+  $safe_markup = new SafeMarkup();
+  $adobeanalytics_helper = new AdobeAnalyticsHelper();
 
   // Check if we should track the currently active user's role.
   $track_user = TRUE;
@@ -75,11 +72,11 @@ function adobeanalytics_preprocess_html(&$variables) {
 
   // $query_string = '?' . variable_get('css_js_query_string', '0');.
   $query_string = '';
-  $js_file_location = $safeMarkup::checkPlain($config->get("adobeanalytics_js_file_location"));
+  $js_file_location = $safe_markup::checkPlain($config->get("adobeanalytics_js_file_location"));
 
   // Add any custom code snippets if specified and replace any tokens.
-  $context = $adobeAnalyticsHelper->adobeAnalyticsGetTokenContext();
-  $codesnippet = $adobeAnalyticsHelper->adobeAnalyticsTokenReplace($config->get('adobeanalytics_codesnippet'), $context, array(
+  $context = $adobeanalytics_helper->adobeAnalyticsGetTokenContext();
+  $codesnippet = $adobeanalytics_helper->adobeAnalyticsTokenReplace($config->get('adobeanalytics_codesnippet'), $context, array(
     'clear' => TRUE,
     'sanitize' => TRUE,
   )) . "\n";
@@ -90,7 +87,7 @@ function adobeanalytics_preprocess_html(&$variables) {
   $extra_variables_formatted = $codesnippet;
 
   $header = "<!-- AdobeAnalytics code version: ";
-  $header .= $safeMarkup::checkPlain($config->get("adobeanalytics_version"));
+  $header .= $safe_markup::checkPlain($config->get("adobeanalytics_version"));
   $header .= "\nCopyright 1996-" . date('Y') . " Adobe, Inc. -->\n";
   $header .= "<script type=\"text/javascript\" src=\"";
   $header .= $js_file_location . $query_string;
@@ -108,7 +105,7 @@ function adobeanalytics_preprocess_html(&$variables) {
   }
   $footer .= '<!--/DO NOT REMOVE/-->' . "\n";
   $footer .= '<!-- End AdobeAnalytics code version: ';
-  $footer .= $safeMarkup::checkPlain($config->get("adobeanalytics_version"));
+  $footer .= $safe_markup::checkPlain($config->get("adobeanalytics_version"));
   $footer .= ' -->' . "\n";
 
   if ($adobeanalytics_hooked_vars = \Drupal::moduleHandler()->invokeAll('adobeanalytics_variables', $variables)) {
@@ -116,7 +113,7 @@ function adobeanalytics_preprocess_html(&$variables) {
       $header = $adobeanalytics_hooked_vars['header'];
     }
     if (isset($adobeanalytics_hooked_vars['variables'])) {
-      $extra_variables_formatted .= $adobeAnalyticsHelper->adobeAnalyticsFormatVariables($adobeanalytics_hooked_vars['variables']);
+      $extra_variables_formatted .= $adobeanalytics_helper->adobeAnalyticsFormatVariables($adobeanalytics_hooked_vars['variables']);
     }
     if (isset($adobeanalytics_hooked_vars['footer'])) {
       $footer = $adobeanalytics_hooked_vars['footer'];
@@ -146,7 +143,7 @@ function adobeanalytics_preprocess_html(&$variables) {
 function adobeanalytics_adobeanalytics_variables() {
   $variables = array();
   $config = Drupal::config('adobeanalytics.settings');
-  $adobeAnalyticsHelper = new AdobeAnalyticsHelper();
+  $adobeanalytics_helper = new AdobeAnalyticsHelper();
 
   // Include variables set using the context module.
   if (\Drupal::moduleHandler()->moduleExists('context')) {
@@ -158,7 +155,7 @@ function adobeanalytics_adobeanalytics_variables() {
   // Include variables from the "custom variables" section of the settings form.
   $settings_variables = $config->get('adobeanalytics_extra_variables');
   foreach ($settings_variables as $key => $value) {
-    $variables[$key] = $adobeAnalyticsHelper->adobeAnalyticsTokenReplace($value);
+    $variables[$key] = $adobeanalytics_helper->adobeAnalyticsTokenReplace($value);
   }
   return array('variables' => $variables);
 }
