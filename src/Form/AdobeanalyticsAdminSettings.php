@@ -125,12 +125,7 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase {
       '#click_insert' => TRUE,
       '#dialog' => TRUE,
     ];
-    $form['submit'] = array(
-      '#type' => 'submit',
-      '#value' => 'Save configuration',
-    );
-
-    return $form;
+    return parent::buildForm($form, $form_state);
   }
 
   /**
@@ -216,14 +211,15 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase {
       }
     }
     // Save other variables.
-    $config->set('adobeanalytics_extra_variables', $extra_vars)->save();
-    $config->set('adobeanalytics_js_file_location', $form_state->getValue('adobeanalytics_js_file_location'))->save();
-    $config->set('adobeanalytics_image_file_location', $form_state->getValue('adobeanalytics_image_file_location'))->save();
-    $config->set('adobeanalytics_version', $form_state->getValue('adobeanalytics_version'))->save();
-    $config->set('adobeanalytics_token_cache_lifetime', $form_state->getValue('adobeanalytics_token_cache_lifetime'))->save();
-    $config->set('adobeanalytics_codesnippet', $form_state->getValue('adobeanalytics_codesnippet'))->save();
-    $config->set('adobeanalytics_role_tracking_type', $form_state->getValue('adobeanalytics_role_tracking_type'))->save();
-    $config->set('adobeanalytics_track_roles', $form_state->getValue('adobeanalytics_track_roles'))->save();
+    $config->set('adobeanalytics_extra_variables', $extra_vars)
+      ->set('adobeanalytics_js_file_location', $form_state->getValue('adobeanalytics_js_file_location'))
+      ->set('adobeanalytics_image_file_location', $form_state->getValue('adobeanalytics_image_file_location'))
+      ->set('adobeanalytics_version', $form_state->getValue('adobeanalytics_version'))
+      ->set('adobeanalytics_token_cache_lifetime', $form_state->getValue('adobeanalytics_token_cache_lifetime'))
+      ->set('adobeanalytics_codesnippet', $form_state->getValue('adobeanalytics_codesnippet'))
+      ->set('adobeanalytics_role_tracking_type', $form_state->getValue('adobeanalytics_role_tracking_type'))
+      ->set('adobeanalytics_track_roles', $form_state->getValue('adobeanalytics_track_roles'))->save();
+    parent::submitForm($form, $form_state);
   }
 
 }
