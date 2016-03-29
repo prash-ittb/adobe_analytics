@@ -44,8 +44,6 @@ class AdobeAnalyticsHelper {
     $safe_markup = new SafeMarkup();
 
     // Create context data to be used by token.
-    $context = !empty($variables) ? $this->adobeAnalyticsGetTokenContext() : array();
-
     $variables_formatted = '';
     foreach ($variables as $key => $value) {
       if (is_array($value)) {
