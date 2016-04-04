@@ -129,12 +129,11 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase {
   }
 
   /**
-   * Get the extra variable form with some conditions.
+   * Form for getting extra variables.
    */
   public function adobeAnalyticsExtraVariablesForm(&$form) {
     $config = $this->config('adobeanalytics.settings');
     $existing_variables = $config->get('adobeanalytics_extra_variables');
-    // $existing_variables = unserialize($extra_variables);
     $headers = array(t('Name'), t('Value'));
     $form['variables']['adobeanalytics_variables'] = [
       '#type' => 'table',
@@ -168,7 +167,7 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase {
   }
 
   /**
-   * Get the extra variable form inputs.
+   * Get inputs in the extra variables form.
    */
   public function adobeAnalyticsExtraVariableInputs($form, $index, $key_name, $key_value) {
     $form['variables']['adobeanalytics_variables'][$index]['name'] = [
@@ -210,7 +209,7 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase {
         $extra_vars[$vars['name']] = $vars['value'];
       }
     }
-    // Save other variables.
+    // Save all the config variables.
     $config->set('adobeanalytics_extra_variables', $extra_vars)
       ->set('adobeanalytics_js_file_location', $form_state->getValue('adobeanalytics_js_file_location'))
       ->set('adobeanalytics_image_file_location', $form_state->getValue('adobeanalytics_image_file_location'))
