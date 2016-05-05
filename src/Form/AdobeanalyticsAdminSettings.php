@@ -85,10 +85,12 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase {
     foreach (user_roles() as $role) {
       $roles[$role->id()] = $role->label();
     }
+    
+    $adobeanalytics_config_track_roles = $config->get("adobeanalytics_track_roles");
     $form['roles']["adobeanalytics_track_roles"] = [
       '#type' => 'checkboxes',
       '#options' => $roles,
-      '#default_value' => empty($config->get("adobeanalytics_track_roles")) ? array_keys($roles) : $config->get("adobeanalytics_track_roles"),
+      '#default_value' => empty($adobeanalytics_config_track_roles) ? array_keys($roles) : $config->get("adobeanalytics_track_roles"),
     ];
 
     $form['variables'] = [
