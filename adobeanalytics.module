@@ -39,7 +39,6 @@ function adobeanalytics_preprocess_html(&$variables) {
   $track_user = TRUE;
   $tracking_type = $config->get('adobeanalytics_role_tracking_type');
   $stored_roles = $config->get('adobeanalytics_track_roles');
-  var_dump($stored_roles);
   if ($stored_roles) {
     $get_roles = array();
     foreach ($stored_roles as $key => $value) {

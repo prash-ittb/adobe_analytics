@@ -18,7 +18,7 @@ class AdobeAnalyticsHelper {
       $context['node'] = \Drupal::routeMatch()->getParameter('node');
       $context['term'] = \Drupal::routeMatch()->getParameter('taxonomy_term', 2);
       if (\Drupal::moduleHandler()->moduleExists('menu')) {
-        $context['menu'] = menu_load('main-menu');
+        $context['menu'] = menu_ui_load('main-menu');
       }
     }
     return $context;

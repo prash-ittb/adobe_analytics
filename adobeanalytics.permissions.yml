@@ -1,4 +1,5 @@
 administer AdobeAnalytics configuration:
   title: 'Configure Adobe Analytics settings'
   description: 'Configure Adobe Analytics settings.'
-  restrict access: true
+  #access to Configure the Adobeanalytics form is restricted to admin only.
+  restrict access: true   
