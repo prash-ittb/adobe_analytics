@@ -41,7 +41,6 @@ class AdobeAnalyticsHelper {
    */
   public function adobeAnalyticsFormatVariables($variables = array()) {
     $extra_variables = $this->adobeAnalyticsGetVariables();
-    $safe_markup = new SafeMarkup();
 
     // Create context data to be used by token.
     $variables_formatted = '';
@@ -55,7 +54,7 @@ class AdobeAnalyticsHelper {
         $value = $extra_variables[$key];
       }
 
-      $key = $safe_markup::checkPlain($key);
+      $key = ['#plain_text' => $key];
       $value = $this->adobeAnalyticsTokenReplace($value);
       $variables_formatted .= "{$key}=\"{$value}\";\n";
     }
