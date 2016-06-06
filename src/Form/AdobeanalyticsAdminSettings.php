@@ -56,7 +56,9 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase
 
         $form['general']['adobeanalytics_version'] = [
         '#type' => 'textfield',
-        '#title' => t("AdobeAnalytics version (used by adobeanalytics for debugging)"),
+        '#title' => t(
+            "AdobeAnalytics version (used by adobeanalytics for debugging)"
+        ),
         '#default_value' => $config->get("adobeanalytics_version"),
         ];
 
@@ -64,14 +66,21 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase
         '#type' => 'textfield',
         '#title' => t("Token cache lifetime"),
         '#default_value' => $config->get("adobeanalytics_token_cache_lifetime"),
-        '#description' => t('The time, in seconds, that the AdobeAnalytics token cache will be valid for. The token cache will always be cleared at the next system cron run after this time period, or when this form is saved.'),
+        '#description' => t(
+            'The time, in seconds, that the AdobeAnalytics token 
+          cache will be valid for. The token cache will always be cleared at the 
+          next system cron run after this time period, or when this form is saved.'
+        ),
         ];
 
         $form['roles'] = [
         '#type' => 'details',
         '#title' => t('User role tracking'),
         '#open' => true,
-        '#description' => t('Define which user roles should, or should not be tracked by AdobeAnalytics.'),
+        '#description' => t(
+            'Define which user roles should, or should not be tracked
+         by AdobeAnalytics.'
+        ),
         '#weight' => '-6',
         ];
 
@@ -82,19 +91,25 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase
         'inclusive' => t('Add to the selected roles only'),
         'exclusive' => t('Add to all roles except the ones selected'),
         ],
-        '#default_value' => $config->get("adobeanalytics_role_tracking_type", 'inclusive'),
+        '#default_value' => $config->get(
+            "adobeanalytics_role_tracking_type", 'inclus
+          ive'
+        ),
         ];
 
         $roles = array();
         foreach (user_roles() as $role) {
             $roles[$role->id()] = $role->label();
         }
-        $adobeanalytics_config_track_roles = $config->get("adobeanalytics_track_roles");
+        $adobeanalytics_config_track_roles = $config->get(
+            "adobeanalytics_track_roles"
+        );
 
         $form['roles']["adobeanalytics_track_roles"] = [
         '#type' => 'checkboxes',
         '#options' => $roles,
-        '#default_value' => empty($adobeanalytics_config_track_roles) ? array_keys($roles) : $config->get("adobeanalytics_track_roles"),
+        '#default_value' => empty($adobeanalytics_config_track_roles) ? 
+        array_keys($roles) : $config->get("adobeanalytics_track_roles"),
         ];
 
         $form['variables'] = [
@@ -114,8 +129,10 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase
         '#weight' => '-2',
         ];
 
-        $description = 'Example : <br/> - if ([current-date:custom:N] >= 6) { s.prop5 = "weekend"; }<br/>';
-        $description .= '- if ("[current-page:url:path]" == "node") {s.prop9 = "homepage";} else {s.prop9 = "[current-page:title]";}';
+        $description = 'Example : <br/> - if ([current-date:custom:N] >= 6) { s.prop5
+         = "weekend"; }<br/>';
+        $description .= '- if ("[current-page:url:path]" == "node") {s.prop9 = "homep
+        age";} else {s.prop9 = "[current-page:title]";}';
         $form['advanced']['adobeanalytics_codesnippet'] = [
         '#type' => 'textarea',
         '#title' => t('JavaScript Code'),
@@ -150,7 +167,10 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase
         $number = 0;
         if (!empty($existing_variables)) {
             foreach ($existing_variables as $key_name => $key_value) {
-                $form = $this->adobeAnalyticsExtraVariableInputs($form, $number, $key_name, $key_value);
+                $form = $this->adobeAnalyticsExtraVariableInputs(
+                    $form, $number, 
+                    $key_name, $key_value
+                );
                 $number++;
             }
         }
@@ -160,8 +180,12 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase
 
         // Check if the last row empty.
         $total_extra = count($form['variables']['adobeanalytics_variables']);
-        if (!isset($form['variables']['adobeanalytics_variables'][$total_extra]['name'])) {
-            $form = $this->adobeAnalyticsExtraVariableInputs($form, $total_extra + 1, '', '');
+        if (!isset($form['variables']['adobeanalytics_variables'][$total_extra]['name'])
+        ) {
+            $form = $this->adobeAnalyticsExtraVariableInputs(
+                $form, $total_extra + 1,
+                '', ''
+            );
         }
 
         $form['variables']['tokens'] = [
@@ -176,8 +200,10 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase
     /**
    * Get inputs in the extra variables form.
    */
-    public function adobeAnalyticsExtraVariableInputs($form, $index, $key_name, $key_value) 
-    {
+    public function adobeAnalyticsExtraVariableInputs($form, $index, $key_name, 
+        $key_value
+    ) { 
+    
         $form['variables']['adobeanalytics_variables'][$index]['name'] = [
         '#type' => 'textfield',
         '#size' => 40,
@@ -198,8 +224,10 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase
         ];
 
         if (empty($key_name) && empty($key_value)) {
-            $form['variables']['adobeanalytics_variables'][$index]['name']['#description'] = t('Example: prop1');
-            $form['variables']['adobeanalytics_variables'][$index]['value']['#description'] = t('Example: [current-page:title]');
+            $form['variables']['adobeanalytics_variables'][$index]['name']
+            ['#description'] = t('Example: prop1');
+            $form['variables']['adobeanalytics_variables'][$index]['value']
+            ['#description'] = t('Example: [current-page:title]');
         }
         return $form;
     }
@@ -222,11 +250,23 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase
         $config->set('adobeanalytics_extra_variables', $extra_vars)
             ->set('adobeanalytics_js_file_location', $form_state->getValue('adobeanalytics_js_file_location'))
             ->set('adobeanalytics_image_file_location', $form_state->getValue('adobeanalytics_image_file_location'))
-            ->set('adobeanalytics_version', $form_state->getValue('adobeanalytics_version'))
+            ->set(
+                'adobeanalytics_version', $form_state->getValue(
+                    'adobeanalytics_version'
+                )
+            )
             ->set('adobeanalytics_token_cache_lifetime', $form_state->getValue('adobeanalytics_token_cache_lifetime'))
-            ->set('adobeanalytics_codesnippet', $form_state->getValue('adobeanalytics_codesnippet'))
+            ->set(
+                'adobeanalytics_codesnippet', $form_state->getValue(
+                    'adobeanalytics_codesnippet'
+                )
+            )
             ->set('adobeanalytics_role_tracking_type', $form_state->getValue('adobeanalytics_role_tracking_type'))
-            ->set('adobeanalytics_track_roles', $form_state->getValue('adobeanalytics_track_roles'))->save();
+            ->set(
+                'adobeanalytics_track_roles', $form_state->getValue(
+                    'adobeanalytics_track_roles'
+                )
+            )->save();
         parent::submitForm($form, $form_state);
     }
 
