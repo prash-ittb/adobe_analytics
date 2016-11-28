@@ -9,9 +9,6 @@ use \Drupal\adobeanalytics\AdobeAnalyticsHelper;
 use \Drupal\Core\Render\Markup;
 use \Drupal\Core\Routing\RouteMatchInterface;
 
-// To allow tracking by the AdobeAnalytics package.
-const ADOBEANALYTICS_TOKEN_CACHE = 'adobeanalytics:tag_token_results';
-
 /**
  * Implements hook_help().
  */

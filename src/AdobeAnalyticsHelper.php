@@ -7,6 +7,9 @@ namespace Drupal\adobeanalytics;
  */
 class AdobeAnalyticsHelper {
 
+  // To allow tracking by the AdobeAnalytics package.
+  const ADOBEANALYTICS_TOKEN_CACHE = 'adobeanalytics:tag_token_results';
+
   /**
    * Get the context.
    */
