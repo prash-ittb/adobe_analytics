@@ -125,7 +125,7 @@ function adobeanalytics_preprocess_html(&$variables) {
     }
     if (isset($adobeanalytics_hooked_vars['variables'])) {
       $extra_variables_formatted .= $adobeanalytics_helper
-            ->adobeAnalyticsFormatVariables(
+        ->adobeAnalyticsFormatVariables(
             $adobeanalytics_hooked_vars['variables']
             );
     }

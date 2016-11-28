@@ -21,7 +21,7 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase {
   /**
    * Get Editable configuratons.
    *
-   * @return 'adobeanalytics.settings'
+   * @return adobeanalyticssettings
    *   Gets the configuration names that will be editable
    */
   protected function getEditableConfigNames() {
@@ -251,21 +251,21 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase {
     }
     // Save all the config variables.
     $config->set('adobeanalytics_extra_variables', $extra_vars)
-            ->set('adobeanalytics_js_file_location', $form_state->getValue('adobeanalytics_js_file_location'))
-            ->set('adobeanalytics_image_file_location', $form_state->getValue('adobeanalytics_image_file_location'))
-            ->set(
+      ->set('adobeanalytics_js_file_location', $form_state->getValue('adobeanalytics_js_file_location'))
+      ->set('adobeanalytics_image_file_location', $form_state->getValue('adobeanalytics_image_file_location'))
+      ->set(
               'adobeanalytics_version', $form_state->getValue(
                   'adobeanalytics_version'
               )
             )
-            ->set('adobeanalytics_token_cache_lifetime', $form_state->getValue('adobeanalytics_token_cache_lifetime'))
-            ->set(
+      ->set('adobeanalytics_token_cache_lifetime', $form_state->getValue('adobeanalytics_token_cache_lifetime'))
+      ->set(
               'adobeanalytics_codesnippet', $form_state->getValue(
                   'adobeanalytics_codesnippet'
               )
             )
-            ->set('adobeanalytics_role_tracking_type', $form_state->getValue('adobeanalytics_role_tracking_type'))
-            ->set(
+      ->set('adobeanalytics_role_tracking_type', $form_state->getValue('adobeanalytics_role_tracking_type'))
+      ->set(
               'adobeanalytics_track_roles', $form_state->getValue(
                   'adobeanalytics_track_roles'
               )
