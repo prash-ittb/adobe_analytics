@@ -39,26 +39,26 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase {
     $form['general'] = [
         // Fieldset changed to details in drupal 8.
       '#type' => 'details',
-      '#title' => t('General settings'),
+      '#title' => $this->t('General settings'),
       '#open' => TRUE,
       '#weight' => '-10',
     ];
 
     $form['general']['adobeanalytics_js_file_location'] = [
       '#type' => 'textfield',
-      '#title' => t("Complete path to AdobeAnalytics Javascript file"),
+      '#title' => $this->t("Complete path to AdobeAnalytics Javascript file"),
       '#default_value' => $config->get("adobeanalytics_js_file_location"),
     ];
 
     $form['general']['adobeanalytics_image_file_location'] = [
       '#type' => 'textfield',
-      '#title' => t("Complete path to AdobeAnalytics Image file"),
+      '#title' => $this->t("Complete path to AdobeAnalytics Image file"),
       '#default_value' => $config->get("adobeanalytics_image_file_location"),
     ];
 
     $form['general']['adobeanalytics_version'] = [
       '#type' => 'textfield',
-      '#title' => t(
+      '#title' => $this->t(
           "AdobeAnalytics version (used by adobeanalytics for debugging)"
       ),
       '#default_value' => $config->get("adobeanalytics_version"),
@@ -66,9 +66,9 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase {
 
     $form['general']['adobeanalytics_token_cache_lifetime'] = [
       '#type' => 'textfield',
-      '#title' => t("Token cache lifetime"),
+      '#title' => $this->t("Token cache lifetime"),
       '#default_value' => $config->get("adobeanalytics_token_cache_lifetime"),
-      '#description' => t(
+      '#description' => $this->t(
           'The time, in seconds, that the AdobeAnalytics token 
           cache will be valid for. The token cache will always be cleared at the 
           next system cron run after this time period, or when this form is saved.'
@@ -77,9 +77,9 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase {
 
     $form['roles'] = [
       '#type' => 'details',
-      '#title' => t('User role tracking'),
+      '#title' => $this->t('User role tracking'),
       '#open' => TRUE,
-      '#description' => t(
+      '#description' => $this->t(
           'Define which user roles should, or should not be tracked
          by AdobeAnalytics.'
       ),
@@ -88,10 +88,10 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase {
 
     $form['roles']['adobeanalytics_role_tracking_type'] = [
       '#type' => 'select',
-      '#title' => t('Add tracking for specific roles'),
+      '#title' => $this->t('Add tracking for specific roles'),
       '#options' => [
-        'inclusive' => t('Add to the selected roles only'),
-        'exclusive' => t('Add to all roles except the ones selected'),
+        'inclusive' => $this->t('Add to the selected roles only'),
+        'exclusive' => $this->t('Add to all roles except the ones selected'),
       ],
       '#default_value' => $config->get(
           "adobeanalytics_role_tracking_type", 'inclus
@@ -116,17 +116,17 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase {
 
     $form['variables'] = [
       '#type' => 'details',
-      '#title' => t('Custom Variables'),
+      '#title' => $this->t('Custom Variables'),
       '#open' => FALSE,
-      '#description' => t('You can define tracking variables here.'),
+      '#description' => $this->t('You can define tracking variables here.'),
       '#weight' => '-3',
     ];
     $this->adobeAnalyticsExtraVariablesForm($form);
 
     $form['advanced'] = [
       '#type' => 'details',
-      '#title' => t('Advanced'),
-      '#description' => t('You can add custom AdobeAnalytics code here.'),
+      '#title' => $this->t('Advanced'),
+      '#description' => $this->t('You can add custom AdobeAnalytics code here.'),
       '#open' => FALSE,
       '#weight' => '-2',
     ];
@@ -137,7 +137,7 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase {
         age";} else {s.prop9 = "[current-page:title]";}';
     $form['advanced']['adobeanalytics_codesnippet'] = [
       '#type' => 'textarea',
-      '#title' => t('JavaScript Code'),
+      '#title' => $this->t('JavaScript Code'),
       '#default_value' => $config->get('adobeanalytics_codesnippet'),
       '#rows' => 15,
       '#description' => $description,
@@ -160,7 +160,7 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase {
 
     $config = $this->config('adobeanalytics.settings');
     $existing_variables = $config->get('adobeanalytics_extra_variables');
-    $headers = array(t('Name'), t('Value'));
+    $headers = array($this->t('Name'), $this->t('Value'));
     $form['variables']['adobeanalytics_variables'] = [
       '#type' => 'table',
       '#header' => $headers,
@@ -214,7 +214,7 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase {
       '#size' => 40,
       '#maxlength' => 40,
       '#title_display' => 'invisible',
-      '#title' => t('Name'),
+      '#title' => $this->t('Name'),
       '#default_value' => ($key_name != '' ? $key_name : ''),
       '#attributes' => ['class' => ['field-variable-name']],
     ];
@@ -223,14 +223,14 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase {
       '#size' => 40,
       '#maxlength' => 40,
       '#title_display' => 'invisible',
-      '#title' => t('Value'),
+      '#title' => $this->t('Value'),
       '#default_value' => ($key_value != '' ? $key_value : ''),
       '#attributes' => ['class' => ['field-variable-value']],
     ];
 
     if (empty($key_name) && empty($key_value)) {
-      $form['variables']['adobeanalytics_variables'][$index]['name']['#description'] = t('Example: prop1');
-      $form['variables']['adobeanalytics_variables'][$index]['value']['#description'] = t('Example: [current-page:title]');
+      $form['variables']['adobeanalytics_variables'][$index]['name']['#description'] = $this->t('Example: prop1');
+      $form['variables']['adobeanalytics_variables'][$index]['value']['#description'] = $this->t('Example: [current-page:title]');
     }
     return $form;
   }
