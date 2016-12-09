@@ -21,7 +21,7 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase {
   /**
    * Get Editable configuratons.
    *
-   * @return adobeanalyticssettings
+   * @return array
    *   Gets the configuration names that will be editable
    */
   protected function getEditableConfigNames() {
@@ -37,7 +37,6 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase {
     $config = $this->config('adobeanalytics.settings');
 
     $form['general'] = [
-        // Fieldset changed to details in drupal 8.
       '#type' => 'details',
       '#title' => $this->t('General settings'),
       '#open' => TRUE,
@@ -46,32 +45,30 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase {
 
     $form['general']['adobeanalytics_js_file_location'] = [
       '#type' => 'textfield',
-      '#title' => $this->t("Complete path to AdobeAnalytics Javascript file"),
-      '#default_value' => $config->get("adobeanalytics_js_file_location"),
+      '#title' => $this->t('Complete path to AdobeAnalytics Javascript file'),
+      '#default_value' => $config->get('adobeanalytics_js_file_location'),
     ];
 
     $form['general']['adobeanalytics_image_file_location'] = [
       '#type' => 'textfield',
-      '#title' => $this->t("Complete path to AdobeAnalytics Image file"),
-      '#default_value' => $config->get("adobeanalytics_image_file_location"),
+      '#title' => $this->t('Complete path to AdobeAnalytics Image file'),
+      '#default_value' => $config->get('adobeanalytics_image_file_location'),
     ];
 
     $form['general']['adobeanalytics_version'] = [
       '#type' => 'textfield',
-      '#title' => $this->t(
-          "AdobeAnalytics version (used by adobeanalytics for debugging)"
-      ),
-      '#default_value' => $config->get("adobeanalytics_version"),
+      '#title' => $this->t('AdobeAnalytics version (used by adobeanalytics for debugging)'),
+      '#default_value' => $config->get('adobeanalytics_version'),
     ];
 
     $form['general']['adobeanalytics_token_cache_lifetime'] = [
       '#type' => 'textfield',
-      '#title' => $this->t("Token cache lifetime"),
-      '#default_value' => $config->get("adobeanalytics_token_cache_lifetime"),
+      '#title' => $this->t('Token cache lifetime'),
+      '#default_value' => $config->get('adobeanalytics_token_cache_lifetime'),
       '#description' => $this->t(
-          'The time, in seconds, that the AdobeAnalytics token 
-          cache will be valid for. The token cache will always be cleared at the 
-          next system cron run after this time period, or when this form is saved.'
+        'The time, in seconds, that the AdobeAnalytics token
+         cache will be valid for. The token cache will always be cleared at the
+         next system cron run after this time period, or when this form is saved.'
       ),
     ];
 
@@ -79,13 +76,11 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase {
       '#type' => 'details',
       '#title' => $this->t('User role tracking'),
       '#open' => TRUE,
-      '#description' => $this->t(
-          'Define which user roles should, or should not be tracked
-         by AdobeAnalytics.'
-      ),
+      '#description' => $this->t('Define which user roles should, or should not be tracked by AdobeAnalytics.'),
       '#weight' => '-6',
     ];
 
+    $default_value = ($config->get("adobeanalytics_role_tracking_type")) ? $config->get("adobeanalytics_role_tracking_type") : 'inclusive';
     $form['roles']['adobeanalytics_role_tracking_type'] = [
       '#type' => 'select',
       '#title' => $this->t('Add tracking for specific roles'),
@@ -93,25 +88,20 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase {
         'inclusive' => $this->t('Add to the selected roles only'),
         'exclusive' => $this->t('Add to all roles except the ones selected'),
       ],
-      '#default_value' => $config->get(
-          "adobeanalytics_role_tracking_type", 'inclus
-          ive'
-      ),
+      '#default_value' => $default_value,
     ];
 
     $roles = array();
     foreach (user_roles() as $role) {
       $roles[$role->id()] = $role->label();
     }
-    $adobeanalytics_config_track_roles = $config->get(
-          "adobeanalytics_track_roles"
-      );
+    $adobeanalytics_config_track_roles = $config->get('adobeanalytics_track_roles');
 
     $form['roles']["adobeanalytics_track_roles"] = [
       '#type' => 'checkboxes',
       '#options' => $roles,
       '#default_value' => empty($adobeanalytics_config_track_roles) ?
-      array_keys($roles) : $config->get("adobeanalytics_track_roles"),
+      array_keys($roles) : $config->get('adobeanalytics_track_roles'),
     ];
 
     $form['variables'] = [
@@ -202,12 +192,7 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase {
   /**
    * Get inputs in the extra variables form.
    */
-  public function adobeAnalyticsExtraVariableInputs(
-      $form,
-      $index,
-      $key_name,
-      $key_value
-  ) {
+  public function adobeAnalyticsExtraVariableInputs($form, $index, $key_name, $key_value) {
 
     $form['variables']['adobeanalytics_variables'][$index]['name'] = [
       '#type' => 'textfield',

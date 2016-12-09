@@ -5,8 +5,6 @@
  * Adds the Javascript to the bottom of Drupal page.
  */
 
-use \Drupal\adobeanalytics\AdobeAnalyticsHelper;
-use \Drupal\Core\Render\Markup;
 use \Drupal\Core\Routing\RouteMatchInterface;
 
 /**
@@ -16,21 +14,22 @@ function adobeanalytics_help($route_name, RouteMatchInterface $route_match) {
 
   switch ($route_name) {
     case 'help.page.adobeanalytics':
-      return t("Settings for AdobeAnalytics.");
+      return ['#markup' => "<p>" . t("Settings for AdobeAnalytics.") . "</p>"];
   }
 }
 
 /**
  * Implements template_preprocess_html().
  */
-function adobeanalytics_preprocess_html(&$variables) {
+function adobeanalytics_page_bottom(&$variables) {
 
   $user = \Drupal::currentUser();
   $config = \Drupal::config('adobeanalytics.settings');
-  $adobeanalytics_helper = new AdobeAnalyticsHelper();
+  $adobeanalytics_helper = \Drupal::service('adobeanalytics.adobe_analytics_helper');
 
   // Check if we should track the currently active user's role.
   $track_user = TRUE;
+  $get_roles = array();
   $tracking_type = $config->get('adobeanalytics_role_tracking_type');
   $stored_roles = $config->get('adobeanalytics_track_roles');
   if ($stored_roles) {
@@ -67,7 +66,7 @@ function adobeanalytics_preprocess_html(&$variables) {
   $adobeanalytics_js_file_location = $config->get(
         "adobeanalytics_js_file_location"
     );
-  $js_file_location = ['#plain_text' => $adobeanalytics_js_file_location];
+  $js_file_location = $adobeanalytics_js_file_location;
 
   // Add any custom code snippets if specified and replace any tokens.
   $context = $adobeanalytics_helper->adobeAnalyticsGetTokenContext();
@@ -85,7 +84,7 @@ function adobeanalytics_preprocess_html(&$variables) {
   $adobeanalytics_version = $config->get("adobeanalytics_version");
 
   $header = "<!-- AdobeAnalytics code version: ";
-  $header .= ['#plain_text' => $adobeanalytics_version];
+  $header .= $adobeanalytics_version;
   $header .= "\nCopyright 1996-" . date('Y') . " Adobe, Inc. -->\n";
   $header .= "<script type=\"text/javascript\" src=\"";
   $header .= $js_file_location;
@@ -94,11 +93,9 @@ function adobeanalytics_preprocess_html(&$variables) {
 
   $footer = '/************* DO NOT ALTER ANYTHING BELOW THIS LINE ! **************/
     ' . "\n";
-  $footer .= 'var s_code=s.t();if(s_code)document.write(s_code)//--></script>' . "\
-    n";
+  $footer .= 'var s_code=s.t();if(s_code)document.write(s_code)//--></script>' . "\n";
   $footer .= '<script type="text/javascript"><!--' . "\n";
-  $footer .= "if(navigator.appVersion.indexOf('MSIE')>=0)document.write(unescape('%
-    3C')+'\!-'+'-')" . "\n";
+  $footer .= "if(navigator.appVersion.indexOf('MSIE')>=0)document.write(unescape('%3C')+'\!-'+'-')" . "\n";
   $footer .= '//--></script>' . "\n";
   $nojs = $config->get("adobeanalytics_image_file_location");
   if (!empty($nojs)) {
@@ -108,7 +105,7 @@ function adobeanalytics_preprocess_html(&$variables) {
   }
   $footer .= '<!--/DO NOT REMOVE/-->' . "\n";
   $footer .= '<!-- End AdobeAnalytics code version: ';
-  $footer .= ['#plain_text' => $adobeanalytics_version];
+  $footer .= $adobeanalytics_version;
   $footer .= ' -->' . "\n";
 
   if ($adobeanalytics_hooked_vars = \Drupal::moduleHandler()->invokeAll(
@@ -128,19 +125,18 @@ function adobeanalytics_preprocess_html(&$variables) {
     }
   }
 
-  $markup = new Markup();
-  $variables['page_bottom']['adobeanalytics'] = array(
+  $variables['adobeanalytics'] = array(
     'header' => array(
       '#type' => 'markup',
-      '#markup' => $markup->create($header),
+      '#markup' => $header,
     ),
     'variables' => array(
       '#type' => 'markup',
-      '#markup' => $markup->create($extra_variables_formatted),
+      '#markup' => $extra_variables_formatted,
     ),
     'footer' => array(
       '#type' => 'markup',
-      '#markup' => $markup->create($footer),
+      '#markup' => $footer,
     ),
   );
 }
@@ -152,14 +148,15 @@ function adobeanalytics_adobeanalytics_variables() {
 
   $variables = array();
   $config = Drupal::config('adobeanalytics.settings');
-  $adobeanalytics_helper = new AdobeAnalyticsHelper();
+  $adobeanalytics_helper = \Drupal::service('adobeanalytics.adobe_analytics_helper');
 
   // Include variables set using the context module.
-  if (\Drupal::moduleHandler()->moduleExists('context')) {
-    if ($plugin = context_get_plugin('reaction', 'adobeanalytics_vars')) {
-      $plugin->execute($variables);
-    }
-  }
+  /*
+   * @TODO support context module.
+   *
+   * Removing block of code for now until that module is in a stable place to
+   * implement the correct way.  The implementation removed was out of date.
+   */
 
   // Include variables from the "custom variables" section of the settings form.
   $settings_variables = $config->get('adobeanalytics_extra_variables');

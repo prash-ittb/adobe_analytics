@@ -2,10 +2,58 @@
 
 namespace Drupal\adobeanalytics;
 
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Routing\CurrentRouteMatch;
+use Drupal\Core\Utility\Token;
+use Drupal\system\Entity\Menu;
+
 /**
  * Class to provide helpful function.
  */
 class AdobeAnalyticsHelper {
+  /**
+   * The CurrentRouteMatch service.
+   *
+   * @var \Drupal\Core\Routing\CurrentRouteMatch
+   */
+  protected $currentRouteMatch;
+
+  /**
+   * The ModuleHandler service.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
+   * The Token replacement object.
+   *
+   * @var \Drupal\Core\Utility\Token
+   */
+  protected $token;
+
+  /**
+   * Array of variables.
+   *
+   * @var array
+   */
+  protected $variables;
+
+  /**
+   * Context array.
+   *
+   * @var array
+   */
+  protected $context;
+
+  /**
+   * Constructs an AdobeAnalyticsHelper object.
+   */
+  public function __construct(CurrentRouteMatch $currentRouteMatch, ModuleHandlerInterface $moduleHandler, Token $token) {
+    $this->currentRouteMatch = $currentRouteMatch;
+    $this->moduleHandler = $moduleHandler;
+    $this->token = $token;
+  }
 
   // To allow tracking by the AdobeAnalytics package.
   const ADOBEANALYTICS_TOKEN_CACHE = 'adobeanalytics:tag_token_results';
@@ -15,15 +63,13 @@ class AdobeAnalyticsHelper {
    */
   public function adobeAnalyticsGetTokenContext() {
 
-    $context = &drupal_static(__function__);
-    if (is_null($context)) {
-      $context['node'] = \Drupal::routeMatch()->getParameter('node');
-      $context['term'] = \Drupal::routeMatch()->getParameter('taxonomy_term', 2);
-      if (\Drupal::moduleHandler()->moduleExists('menu')) {
-        $context['menu'] = menu_ui_load('main-menu');
-      }
+    if (is_null($this->context)) {
+      $this->context['node'] = $this->currentRouteMatch->getParameter('node');
+      $this->context['term'] = ($this->currentRouteMatch->getParameter('taxonomy_term')) ? $this->currentRouteMatch->getParameter('taxonomy_term') : 2;
+      $this->context['menu'] = Menu::load('main-menu');
     }
-    return $context;
+
+    return $this->context;
   }
 
   /**
@@ -32,7 +78,7 @@ class AdobeAnalyticsHelper {
   public function adobeAnalyticsTokenReplace($text, $data = array(), array $options = array()) {
 
     // Short-circuit the degenerate case, just like token_replace() does.
-    $text_tokens = \Drupal::token()->replace($text);
+    $text_tokens = $this->token->replace($text);
     if (!empty($text_tokens)) {
       return $text_tokens;
     }
@@ -43,7 +89,7 @@ class AdobeAnalyticsHelper {
    */
   public function adobeAnalyticsFormatVariables($variables = array()) {
 
-    $extra_variables = $this->adobeAnalyticsGetVariables();
+    $extra_variables = $this->getVariables();
 
     // Create context data to be used by token.
     $variables_formatted = '';
@@ -74,29 +120,21 @@ class AdobeAnalyticsHelper {
    *    Extra variable name.
    * @param string $value
    *    Value of the the name variable.
-   *
-   * @return variables
-   *    Return the variables.
    */
-  public function adobeAnalyticsSetVariable($name = NULL, $value = NULL) {
-
-    $variables = &drupal_static(__FUNCTION__, array());
-
-    if (empty($name)) {
-      return $variables;
+  public function setVariable($name = NULL, $value = NULL) {
+    if (!empty($name)) {
+      $this->variables[$name] = $value;
     }
-    else {
-      $variables[$name] = $value;
-    }
-
   }
 
   /**
    * Return variables.
+   *
+   * @return array
+   *   The array of variables.
    */
-  public function adobeAnalyticsGetVariables() {
-
-    return $this->adobeAnalyticsSetVariable();
+  public function getVariables() {
+    return $this->variables;
   }
 
 }
