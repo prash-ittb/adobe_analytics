@@ -41,7 +41,7 @@ Note: Do not forget to rename the functions.
   function mymodule_adobeanalytics_variables() {
   // Initialize a variables array to be returned by this hook.
   $variables = array();
-  $config_var = \Drupal::config('adobeanalytics.settings')->get('adobeanalytics_track_search_engine', 0);
+  $config_var = \Drupal::config('adobeanalytics.settings')->get('track_search_engine', 0);
   if ($config_var) {
     $variables['referring_search_engine'] = 'none';
 
@@ -76,7 +76,7 @@ Note: Do not forget to rename the functions.
     $form['general']['adobeanalytics_track_search_engine'] = array(
       '#type' => 'checkbox',
       '#title' => t('Track the referring search engine for every request'),
-      '#default_value' => \Drupal::config(adobeanalytics . settings)->get('adobeanalytics_track_search_engine', 0),
+      '#default_value' => \Drupal::config(adobeanalytics . settings)->get('track_search_engine', 0),
     );
   }
 

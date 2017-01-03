@@ -1,8 +1,8 @@
-adobeanalytics_role_tracking_type: inclusive
-adobeanalytics_js_file_location: ''
-adobeanalytics_codesnippet: ''
-adobeanalytics_version: H.20.3.
-adobeanalytics_image_file_location: ''
-adobeanalytics_token_cache_lifetime: 0
-adobeanalytics_extra_variables: { }
-adobeanalytics_track_roles: { }
+role_tracking_type: inclusive
+js_file_location: ''
+codesnippet: ''
+version: H.20.3.
+image_file_location: ''
+token_cache_lifetime: 0
+extra_variables: { }
+track_roles: { }

@@ -11,6 +11,10 @@ use Drupal\system\Entity\Menu;
  * Class to provide helpful function.
  */
 class AdobeAnalyticsHelper {
+
+  // To allow tracking by the AdobeAnalytics package.
+  const ADOBEANALYTICS_TOKEN_CACHE = 'adobeanalytics:tag_token_results';
+
   /**
    * The CurrentRouteMatch service.
    *
@@ -54,9 +58,6 @@ class AdobeAnalyticsHelper {
     $this->moduleHandler = $moduleHandler;
     $this->token = $token;
   }
-
-  // To allow tracking by the AdobeAnalytics package.
-  const ADOBEANALYTICS_TOKEN_CACHE = 'adobeanalytics:tag_token_results';
 
   /**
    * Get the context.
