@@ -158,10 +158,9 @@ function adobeanalytics_adobeanalytics_variables() {
 
   // Include variables from the "custom variables" section of the settings form.
   $settings_variables = $config->get('extra_variables');
-  foreach ($settings_variables as $key => $value) {
-    $variables[$key] = $adobeanalytics_helper->adobeAnalyticsTokenReplace(
-          $value
-      );
+  foreach ($settings_variables as $key => $data) {
+    $variables[$data['name']] = $adobeanalytics_helper->adobeAnalyticsTokenReplace($data['value']);
   }
+
   return array('variables' => $variables);
 }

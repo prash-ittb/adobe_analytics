@@ -100,8 +100,7 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase {
     $form['roles']['track_roles'] = [
       '#type' => 'checkboxes',
       '#options' => $roles,
-      '#default_value' => empty($config_track_roles) ?
-        array_keys($roles) : $config->get('track_roles'),
+      '#default_value' => empty($config_track_roles) ? array_keys($roles) : $config->get('track_roles'),
     ];
 
     $form['variables'] = [
@@ -110,8 +109,23 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase {
       '#open' => FALSE,
       '#description' => $this->t('You can define tracking variables here.'),
       '#weight' => '-3',
+      '#prefix' => '<div id="variables-details-wrapper">',
+      '#suffix' => '</div>',
     ];
-    $this->adobeAnalyticsExtraVariablesForm($form);
+    $this->adobeAnalyticsExtraVariablesForm($form, $form_state);
+
+    $form['variables']['actions'] = [
+      '#type' => 'actions',
+    ];
+    $form['variables']['actions']['add_variable'] = [
+      '#type' => 'submit',
+      '#value' => t('Add variable'),
+      '#submit' => array('::addVariable'),
+      '#ajax' => [
+        'callback' => '::addVariableCallback',
+        'wrapper' => 'variables-details-wrapper',
+      ],
+    ];
 
     $form['advanced'] = [
       '#type' => 'details',
@@ -147,39 +161,31 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase {
   /**
    * Form for getting extra variables.
    */
-  public function adobeAnalyticsExtraVariablesForm(&$form) {
+  public function adobeAnalyticsExtraVariablesForm(&$form, FormStateInterface $form_state) {
 
     $config = $this->config('adobeanalytics.settings');
-    $existing_variables = $config->get('extra_variables');
+    $existing_vars = $config->get('extra_variables');
+
+    if (empty($existing_vars)) {
+      $existing_vars = [];
+    }
+
+    $values = $form_state->get('variables');
+    $existing_variables = isset($values) ? $values : $existing_vars;
+
     $headers = [$this->t('Name'), $this->t('Value')];
+
     $form['variables']['variables'] = [
       '#type' => 'table',
       '#header' => $headers,
     ];
 
-    $number = 0;
-    if (!empty($existing_variables)) {
-      foreach ($existing_variables as $key_name => $key_value) {
-        $form = $this->adobeAnalyticsExtraVariableInputs(
-          $form, $number,
-          $key_name, $key_value
-        );
-        $number++;
-      }
-    }
-    else {
-      $form = $this->adobeAnalyticsExtraVariableInputs($form, $number, '', '');
+    foreach ($existing_variables as $key => $data) {
+      $form = $this->adobeAnalyticsExtraVariableInputs($form, $key, $data);
     }
 
-    // Check if the last row empty.
-    $total_extra = count($form['variables']['variables']);
-    if (!isset($form['variables']['variables'][$total_extra]['name'])
-    ) {
-      $form = $this->adobeAnalyticsExtraVariableInputs(
-        $form, $total_extra + 1,
-        '', ''
-      );
-    }
+    // Always add a blank line at the end.
+    $form = $this->adobeAnalyticsExtraVariableInputs($form, count($existing_variables));
 
     $form['variables']['tokens'] = [
       '#theme' => 'token_tree_link',
@@ -193,7 +199,7 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase {
   /**
    * Get inputs in the extra variables form.
    */
-  public function adobeAnalyticsExtraVariableInputs($form, $index, $key_name, $key_value) {
+  public function adobeAnalyticsExtraVariableInputs($form, $index, $data = []) {
 
     $form['variables']['variables'][$index]['name'] = [
       '#type' => 'textfield',
@@ -201,7 +207,7 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase {
       '#maxlength' => 40,
       '#title_display' => 'invisible',
       '#title' => $this->t('Name'),
-      '#default_value' => ($key_name != '' ? $key_name : ''),
+      '#default_value' => isset($data['name']) ? $data['name'] : '',
       '#attributes' => ['class' => ['field-variable-name']],
     ];
     $form['variables']['variables'][$index]['value'] = [
@@ -210,15 +216,39 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase {
       '#maxlength' => 40,
       '#title_display' => 'invisible',
       '#title' => $this->t('Value'),
-      '#default_value' => ($key_value != '' ? $key_value : ''),
+      '#default_value' => isset($data['value']) ? $data['value'] : '',
       '#attributes' => ['class' => ['field-variable-value']],
     ];
 
-    if (empty($key_name) && empty($key_value)) {
+    if (empty($data)) {
       $form['variables']['variables'][$index]['name']['#description'] = $this->t('Example: prop1');
       $form['variables']['variables'][$index]['value']['#description'] = $this->t('Example: [current-page:title]');
     }
     return $form;
+  }
+
+  /**
+   * Callback for both ajax-enabled buttons.
+   *
+   * Selects and returns the fieldset with the names in it.
+   */
+  public function addVariableCallback(array &$form, FormStateInterface $form_state) {
+
+    // Leave the fieldset open.
+    $form['variables']['#open'] = TRUE;
+    return $form['variables'];
+  }
+
+  /**
+   * Submit handler for the "add-one-more" button.
+   *
+   * Increments the max counter and causes a rebuild.
+   */
+  public function addVariable(array &$form, FormStateInterface $form_state) {
+
+    $input = $form_state->getUserInput();
+    $form_state->set('variables', $input['variables']);
+    $form_state->setRebuild();
   }
 
   /**
@@ -230,9 +260,9 @@ class AdobeanalyticsAdminSettings extends ConfigFormBase {
 
     // Save extra variables.
     $extra_vars = [];
-    foreach ($form_state->getValue('variables') as $vars) {
-      if (!empty($vars['name']) && !empty($vars['value'])) {
-        $extra_vars[$vars['name']] = $vars['value'];
+    foreach ($form_state->getValue('variables') as $variable) {
+      if (!empty($variable['name']) && !empty($variable['value'])) {
+        $extra_vars[] = ['name' => $variable['name'], 'value' => $variable['value']];
       }
     }
 
