@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\adobeanalytics;
+namespace Drupal\adobe_analytics;
 
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Routing\CurrentRouteMatch;
@@ -13,7 +13,7 @@ use Drupal\system\Entity\Menu;
 class AdobeAnalyticsHelper {
 
   // To allow tracking by the AdobeAnalytics package.
-  const ADOBEANALYTICS_TOKEN_CACHE = 'adobeanalytics:tag_token_results';
+  const ADOBEANALYTICS_TOKEN_CACHE = 'adobe_analytics:tag_token_results';
 
   /**
    * The CurrentRouteMatch service.
@@ -115,7 +115,7 @@ class AdobeAnalyticsHelper {
    * Used to replace the value.
    *
    * AdobeAnalytics variables the variables need to be
-   * defined with hook_adobeanalytics_variables().
+   * defined with hook_adobe_analytics_variables().
    *
    * @param string $name
    *    Extra variable name.

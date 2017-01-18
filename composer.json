@@ -1,5 +1,5 @@
 {
-    "name": "drupal/adobeanalytics",
+    "name": "drupal/adobe_analytics",
     "description": "Adds Adobe Analytics javascript tracking code to your site's pages.",
     "type": "drupal-module",
     "license": "GPL-2.0+"

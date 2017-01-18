@@ -1,4 +1,0 @@
-services:
-  adobeanalytics.adobe_analytics_helper:
-    class: Drupal\adobeanalytics\AdobeAnalyticsHelper
-    arguments: ['@current_route_match', '@module_handler', '@token']

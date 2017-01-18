@@ -10,10 +10,10 @@ use \Drupal\Core\Routing\RouteMatchInterface;
 /**
  * Implements hook_help().
  */
-function adobeanalytics_help($route_name, RouteMatchInterface $route_match) {
+function adobe_analytics_help($route_name, RouteMatchInterface $route_match) {
 
   switch ($route_name) {
-    case 'help.page.adobeanalytics':
+    case 'help.page.adobe_analytics':
       return ['#markup' => '<p>' . t('Settings for AdobeAnalytics.') . '</p>'];
   }
 }
@@ -21,11 +21,11 @@ function adobeanalytics_help($route_name, RouteMatchInterface $route_match) {
 /**
  * Implements template_preprocess_html().
  */
-function adobeanalytics_page_bottom(&$variables) {
+function adobe_analytics_page_bottom(&$variables) {
 
   $user = \Drupal::currentUser();
-  $config = \Drupal::config('adobeanalytics.settings');
-  $adobeanalytics_helper = \Drupal::service('adobeanalytics.adobe_analytics_helper');
+  $config = \Drupal::config('adobe_analytics.settings');
+  $adobe_analytics_helper = \Drupal::service('adobe_analytics.adobe_analytics_helper');
 
   // Check if we should track the currently active user's role.
   $track_user = TRUE;
@@ -63,12 +63,12 @@ function adobeanalytics_page_bottom(&$variables) {
     return;
   }
 
-  $adobeanalytics_js_file_location = $config->get('js_file_location');
-  $js_file_location = $adobeanalytics_js_file_location;
+  $adobe_analytics_js_file_location = $config->get('js_file_location');
+  $js_file_location = $adobe_analytics_js_file_location;
 
   // Add any custom code snippets if specified and replace any tokens.
-  $context = $adobeanalytics_helper->adobeAnalyticsGetTokenContext();
-  $codesnippet = $adobeanalytics_helper->adobeAnalyticsTokenReplace(
+  $context = $adobe_analytics_helper->adobeAnalyticsGetTokenContext();
+  $codesnippet = $adobe_analytics_helper->adobeAnalyticsTokenReplace(
         $config->get('codesnippet'), $context, array(
           'clear' => TRUE,
           'sanitize' => TRUE,
@@ -79,10 +79,10 @@ function adobeanalytics_page_bottom(&$variables) {
   // Right order is the code file (list likely to be maintained)
   // Then admin settings with codesnippet first and finally taxonomy->vars.
   $extra_variables_formatted = $codesnippet;
-  $adobeanalytics_version = $config->get("version");
+  $adobe_analytics_version = $config->get("version");
 
   $header = "<!-- AdobeAnalytics code version: ";
-  $header .= $adobeanalytics_version;
+  $header .= $adobe_analytics_version;
   $header .= "\nCopyright 1996-" . date('Y') . " Adobe, Inc. -->\n";
   $header .= "<script type=\"text/javascript\" src=\"";
   $header .= $js_file_location;
@@ -103,27 +103,27 @@ function adobeanalytics_page_bottom(&$variables) {
   }
   $footer .= '<!--/DO NOT REMOVE/-->' . "\n";
   $footer .= '<!-- End AdobeAnalytics code version: ';
-  $footer .= $adobeanalytics_version;
+  $footer .= $adobe_analytics_version;
   $footer .= ' -->' . "\n";
 
-  if ($adobeanalytics_hooked_vars = \Drupal::moduleHandler()->invokeAll(
-        'adobeanalytics_variables', $variables
+  if ($adobe_analytics_hooked_vars = \Drupal::moduleHandler()->invokeAll(
+        'adobe_analytics_variables', $variables
     )) {
-    if (isset($adobeanalytics_hooked_vars['header'])) {
-      $header = $adobeanalytics_hooked_vars['header'];
+    if (isset($adobe_analytics_hooked_vars['header'])) {
+      $header = $adobe_analytics_hooked_vars['header'];
     }
-    if (isset($adobeanalytics_hooked_vars['variables'])) {
-      $extra_variables_formatted .= $adobeanalytics_helper
+    if (isset($adobe_analytics_hooked_vars['variables'])) {
+      $extra_variables_formatted .= $adobe_analytics_helper
         ->adobeAnalyticsFormatVariables(
-            $adobeanalytics_hooked_vars['variables']
+            $adobe_analytics_hooked_vars['variables']
             );
     }
-    if (isset($adobeanalytics_hooked_vars['footer'])) {
-      $footer = $adobeanalytics_hooked_vars['footer'];
+    if (isset($adobe_analytics_hooked_vars['footer'])) {
+      $footer = $adobe_analytics_hooked_vars['footer'];
     }
   }
 
-  $variables['adobeanalytics'] = array(
+  $variables['adobe_analytics'] = array(
     'header' => array(
       '#type' => 'markup',
       '#markup' => $header,
@@ -140,13 +140,13 @@ function adobeanalytics_page_bottom(&$variables) {
 }
 
 /**
- * Implements hook_adobeanalytics_variables().
+ * Implements hook_adobe_analytics_variables().
  */
-function adobeanalytics_adobeanalytics_variables() {
+function adobe_analytics_adobe_analytics_variables() {
 
   $variables = array();
-  $config = Drupal::config('adobeanalytics.settings');
-  $adobeanalytics_helper = \Drupal::service('adobeanalytics.adobe_analytics_helper');
+  $config = Drupal::config('adobe_analytics.settings');
+  $adobe_analytics_helper = \Drupal::service('adobe_analytics.adobe_analytics_helper');
 
   // Include variables set using the context module.
   /*
@@ -159,7 +159,7 @@ function adobeanalytics_adobeanalytics_variables() {
   // Include variables from the "custom variables" section of the settings form.
   $settings_variables = $config->get('extra_variables');
   foreach ($settings_variables as $key => $data) {
-    $variables[$data['name']] = $adobeanalytics_helper->adobeAnalyticsTokenReplace($data['value']);
+    $variables[$data['name']] = $adobe_analytics_helper->adobeAnalyticsTokenReplace($data['value']);
   }
 
   return array('variables' => $variables);

@@ -1,4 +1,4 @@
-adoboanalystics.settings:
+adobe_analytics.settings:
   type: config_object
   label: 'Adobe Analytics settings'
   mapping:

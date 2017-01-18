@@ -8,40 +8,42 @@ who based code on the Google Analytics module by Mike Carter www.ixis.co.uk
 
 Description
 ===========
-Adds the AdobeAnalytics analytics system to your website.
+Adds the Adobe Analytics system to your website.
 
 
 Requirements
 ============
 
-* SiteCatalyst user account
+* Adobe Analytics user account
 
 
 Installation
 ============
-* Copy the 'adobeanalytics' module directory in to your Drupal
+* Copy the 'adobe_analytics' module directory in to your Drupal
 modules directory as usual.
 
 
 Customization
 =============
 Here is an example of module code that you can use to create variables more
-suited to tracking your needs by utilizing hook_adobeanalytics_variables(). This
-code should go in your custom module's .module file and modified accordingly.
-For illustration purposes we are adding a setting to the adobeanalytics
-administration form to allow site administrators to control whether or not they
-want to track our custom "referring_search_engine" variable.
+suited to tracking your needs by utilizing hook_adobe_analytics_variables().
+This code should go in your custom module's .module file and modified
+accordingly.  For illustration purposes we are adding a setting to the
+adobe_anlaytics administration form to allow site administrators to control
+whether or not they want to track our custom "referring_search_engine"
+variable.
+
 Note: Do not forget to rename the functions.
 
 <?php
 
   /**
-   * Implements hook_adobeanalytics_variables().
+   * Implements hook_adobe_analytics_variables().
    */
-  function mymodule_adobeanalytics_variables() {
+  function mymodule_adobe_analytics_variables() {
   // Initialize a variables array to be returned by this hook.
   $variables = array();
-  $config_var = \Drupal::config('adobeanalytics.settings')->get('track_search_engine', 0);
+  $config_var = \Drupal::config('adobe_anlaytics.settings')->get('track_search_engine', 0);
   if ($config_var) {
     $variables['referring_search_engine'] = 'none';
 
@@ -72,11 +74,11 @@ Note: Do not forget to rename the functions.
   /**
    * Implements hook_form_FORM_ID_alter().
    */
-  function mymodule_form_adobeanalytics_admin_settings_alter(&$form, &$form_state) {
-    $form['general']['adobeanalytics_track_search_engine'] = array(
+  function mymodule_form_adobe_anlaytics_admin_settings_alter(&$form, &$form_state) {
+    $form['general']['adobe_anlaytics_track_search_engine'] = array(
       '#type' => 'checkbox',
       '#title' => t('Track the referring search engine for every request'),
-      '#default_value' => \Drupal::config(adobeanalytics . settings)->get('track_search_engine', 0),
+      '#default_value' => \Drupal::config(adobe_anlaytics . settings)->get('track_search_engine', 0),
     );
   }
 
