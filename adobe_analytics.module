@@ -6,6 +6,9 @@
  */
 
 use \Drupal\Core\Routing\RouteMatchInterface;
+use \Drupal\Core\Render\Markup;
+use \Drupal\Component\Utility\Html;
+use \Drupal\Component\Utility\UrlHelper;
 
 /**
  * Implements hook_help().
@@ -25,7 +28,7 @@ function adobe_analytics_page_bottom(&$variables) {
 
   $user = \Drupal::currentUser();
   $config = \Drupal::config('adobe_analytics.settings');
-  $adobe_analytics_helper = \Drupal::service('adobe_analytics.adobe_analytics_helper');
+  $helper = \Drupal::service('adobe_analytics.adobe_analytics_helper');
 
   // Check if we should track the currently active user's role.
   $track_user = TRUE;
@@ -63,79 +66,93 @@ function adobe_analytics_page_bottom(&$variables) {
     return;
   }
 
-  $adobe_analytics_js_file_location = $config->get('js_file_location');
-  $js_file_location = $adobe_analytics_js_file_location;
-
-  // Add any custom code snippets if specified and replace any tokens.
-  $context = $adobe_analytics_helper->adobeAnalyticsGetTokenContext();
-  $codesnippet = $adobe_analytics_helper->adobeAnalyticsTokenReplace(
-        $config->get('codesnippet'), $context, array(
-          'clear' => TRUE,
-          'sanitize' => TRUE,
-        )
-    ) . "\n";
+  $js_file_location = $config->get('js_file_location');
+  $codesnippet = $config->get('codesnippet');
+  $version = $config->get("version");
+  $nojs = $config->get("image_file_location");
 
   // Format and combine variables in the "right" order
   // Right order is the code file (list likely to be maintained)
   // Then admin settings with codesnippet first and finally taxonomy->vars.
-  $extra_variables_formatted = $codesnippet;
-  $adobe_analytics_version = $config->get("version");
+  $formatted_vars = '';
+  $adobe_analytics_hooked_vars = \Drupal::moduleHandler()->invokeAll('adobe_analytics_variables', $variables);
 
-  $header = "<!-- AdobeAnalytics code version: ";
-  $header .= $adobe_analytics_version;
-  $header .= "\nCopyright 1996-" . date('Y') . " Adobe, Inc. -->\n";
-  $header .= "<script type=\"text/javascript\" src=\"";
-  $header .= $js_file_location;
-  $header .= "\"></script>\n";
-  $header .= "<script type=\"text/javascript\"><!--\n";
-
-  $footer = '/************* DO NOT ALTER ANYTHING BELOW THIS LINE ! **************/
-    ' . "\n";
-  $footer .= 'var s_code=s.t();if(s_code)document.write(s_code)//--></script>' . "\n";
-  $footer .= '<script type="text/javascript"><!--' . "\n";
-  $footer .= "if(navigator.appVersion.indexOf('MSIE')>=0)document.write(unescape('%3C')+'\!-'+'-')" . "\n";
-  $footer .= '//--></script>' . "\n";
-  $nojs = $config->get("image_file_location");
-  if (!empty($nojs)) {
-    $footer .= '<noscript><img src="' . check_url(
-          $nojs . '/' . rand(0, 10000000)
-      ) . '" height="1" width="1" alt=""></noscript>' . "\n";
-  }
-  $footer .= '<!--/DO NOT REMOVE/-->' . "\n";
-  $footer .= '<!-- End AdobeAnalytics code version: ';
-  $footer .= $adobe_analytics_version;
-  $footer .= ' -->' . "\n";
-
-  if ($adobe_analytics_hooked_vars = \Drupal::moduleHandler()->invokeAll(
-        'adobe_analytics_variables', $variables
-    )) {
-    if (isset($adobe_analytics_hooked_vars['header'])) {
-      $header = $adobe_analytics_hooked_vars['header'];
-    }
-    if (isset($adobe_analytics_hooked_vars['variables'])) {
-      $extra_variables_formatted .= $adobe_analytics_helper
-        ->adobeAnalyticsFormatVariables(
-            $adobe_analytics_hooked_vars['variables']
-            );
-    }
-    if (isset($adobe_analytics_hooked_vars['footer'])) {
-      $footer = $adobe_analytics_hooked_vars['footer'];
-    }
+  if (!empty($adobe_analytics_hooked_vars['header'])) {
+    $formatted_vars = $helper->adobeAnalyticsFormatVariables($adobe_analytics_hooked_vars['header']);
   }
 
-  $variables['adobe_analytics'] = array(
-    'header' => array(
-      '#type' => 'markup',
-      '#markup' => $header,
-    ),
-    'variables' => array(
-      '#type' => 'markup',
-      '#markup' => $extra_variables_formatted,
-    ),
-    'footer' => array(
-      '#type' => 'markup',
-      '#markup' => $footer,
-    ),
+  if (!empty($codesnippet)) {
+    // Add any custom code snippets if specified and replace any tokens.
+    $context = $helper->adobeAnalyticsGetTokenContext();
+    $formatted_vars .= $helper->adobeAnalyticsTokenReplace(
+      $config->get('codesnippet'), $context, array(
+        'clear' => TRUE,
+        'sanitize' => TRUE,
+      )
+    ) . "\n";
+  }
+
+  if (!empty($adobe_analytics_hooked_vars['variables'])) {
+    $formatted_vars .= $helper->adobeAnalyticsFormatVariables($adobe_analytics_hooked_vars['variables']);
+  }
+
+  if (!empty($adobe_analytics_hooked_vars['footer'])) {
+    $formatted_vars .= $helper->adobeAnalyticsFormatVariables($adobe_analytics_hooked_vars['footer']);
+  }
+
+  $variables['adobe_analytics']['comments'] = array(
+    '#prefix' => Markup::create("<!-- "),
+    '#plain_text' => "AdobeAnalytics code version: $version \nCopyright 1996-" . date('Y') . " Adobe, Inc.",
+    '#suffix' => Markup::create(" -->\n"),
+  );
+
+  $variables['adobe_analytics']['external_js'] = array(
+    '#type' => 'html_tag',
+    '#tag' => 'script',
+    '#value' => '',
+    '#attributes' => array('src' => $js_file_location),
+  );
+
+  $variables['adobe_analytics']['scode_js'] = array(
+    '#prefix' => Markup::create("\n<script><!-- "),
+    '#markup' => "\n$formatted_vars \n/************* DO NOT ALTER ANYTHING BELOW THIS LINE ! **************/\n var s_code=s.t();if(s_code)document.write(s_code)",
+    '#suffix' => Markup::create(" //--></script>\n"),
+  );
+
+  $variables['adobe_analytics']['ie_js'] = array(
+    '#prefix' => Markup::create("<script><!-- "),
+    '#markup' => Markup::create("\n if(navigator.appVersion.indexOf('MSIE')>=0)document.write(unescape('%3C')+'\!-'+'-')\n"),
+    '#suffix' => Markup::create(" //--></script>\n"),
+  );
+
+  if ($nojs) {
+    $img = array(
+      '#type' => 'html_tag',
+      '#tag' => 'img',
+      '#attributes' => array(
+        'src' => Html::escape(UrlHelper::stripDangerousProtocols($nojs)) . '/' . rand(0, 10000000),
+        'height' => 1,
+        'width' => 1,
+      ),
+    );
+
+    $variables['adobe_analytics']['noscript'] = array(
+      '#type' => 'html_tag',
+      '#tag' => 'noscript',
+      '#value' => \Drupal::service('renderer')->renderPlain($img),
+    );
+  }
+
+  $variables['adobe_analytics']['warning'] = array(
+    '#prefix' => Markup::create("<!--"),
+    '#plain_text' => "/DO NOT REMOVE/",
+    '#suffix' => Markup::create("-->\n"),
+  );
+
+  $variables['adobe_analytics']['end_version'] = array(
+    '#prefix' => Markup::create("<!-- "),
+    '#plain_text' => "End AdobeAnalytics code version: $version",
+    '#suffix' => Markup::create(" -->\n"),
   );
 }
 

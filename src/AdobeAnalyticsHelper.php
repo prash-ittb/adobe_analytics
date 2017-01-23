@@ -104,7 +104,7 @@ class AdobeAnalyticsHelper {
         $value = $extra_variables[$key];
       }
 
-      $key = ['#plain_text' => $key];
+      $key = htmlspecialchars($key, ENT_NOQUOTES, 'UTF-8');
       $value = $this->adobeAnalyticsTokenReplace($value);
       $variables_formatted .= "{$key}=\"{$value}\";\n";
     }
