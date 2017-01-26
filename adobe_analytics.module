@@ -6,9 +6,6 @@
  */
 
 use \Drupal\Core\Routing\RouteMatchInterface;
-use \Drupal\Core\Render\Markup;
-use \Drupal\Component\Utility\Html;
-use \Drupal\Component\Utility\UrlHelper;
 
 /**
  * Implements hook_help().
@@ -22,7 +19,23 @@ function adobe_analytics_help($route_name, RouteMatchInterface $route_match) {
 }
 
 /**
- * Implements template_preprocess_html().
+ * Implements hook_theme().
+ */
+function adobe_analytics_theme($existing, $type, $theme, $path) {
+  return array(
+    'analytics_code' => array(
+      'variables' => array(
+        'js_file_location' => NULL,
+        'formatted_vars' => NULL,
+        'version' => NULL,
+        'image_location' => NULL,
+      )
+    )
+  );
+}
+
+/**
+ * Implements hook_page_bottom().
  */
 function adobe_analytics_page_bottom(&$variables) {
 
@@ -69,7 +82,7 @@ function adobe_analytics_page_bottom(&$variables) {
   $js_file_location = $config->get('js_file_location');
   $codesnippet = $config->get('codesnippet');
   $version = $config->get("version");
-  $nojs = $config->get("image_file_location");
+  $nojs = !empty($config->get("image_file_location")) ? $config->get("image_file_location") : NULL;
 
   // Format and combine variables in the "right" order
   // Right order is the code file (list likely to be maintained)
@@ -100,60 +113,16 @@ function adobe_analytics_page_bottom(&$variables) {
     $formatted_vars .= $helper->adobeAnalyticsFormatVariables($adobe_analytics_hooked_vars['footer']);
   }
 
-  $variables['adobe_analytics']['comments'] = array(
-    '#prefix' => Markup::create("<!-- "),
-    '#plain_text' => "AdobeAnalytics code version: $version \nCopyright 1996-" . date('Y') . " Adobe, Inc.",
-    '#suffix' => Markup::create(" -->\n"),
-  );
-
-  $variables['adobe_analytics']['external_js'] = array(
-    '#type' => 'html_tag',
-    '#tag' => 'script',
-    '#value' => '',
-    '#attributes' => array('src' => $js_file_location),
-  );
-
-  $variables['adobe_analytics']['scode_js'] = array(
-    '#prefix' => Markup::create("\n<script><!-- "),
-    '#markup' => "\n$formatted_vars \n/************* DO NOT ALTER ANYTHING BELOW THIS LINE ! **************/\n var s_code=s.t();if(s_code)document.write(s_code)",
-    '#suffix' => Markup::create(" //--></script>\n"),
-  );
-
-  $variables['adobe_analytics']['ie_js'] = array(
-    '#prefix' => Markup::create("<script><!-- "),
-    '#markup' => Markup::create("\n if(navigator.appVersion.indexOf('MSIE')>=0)document.write(unescape('%3C')+'\!-'+'-')\n"),
-    '#suffix' => Markup::create(" //--></script>\n"),
-  );
-
-  if ($nojs) {
-    $img = array(
-      '#type' => 'html_tag',
-      '#tag' => 'img',
-      '#attributes' => array(
-        'src' => Html::escape(UrlHelper::stripDangerousProtocols($nojs)) . '/' . rand(0, 10000000),
-        'height' => 1,
-        'width' => 1,
-      ),
-    );
-
-    $variables['adobe_analytics']['noscript'] = array(
-      '#type' => 'html_tag',
-      '#tag' => 'noscript',
-      '#value' => \Drupal::service('renderer')->renderPlain($img),
-    );
-  }
-
-  $variables['adobe_analytics']['warning'] = array(
-    '#prefix' => Markup::create("<!--"),
-    '#plain_text' => "/DO NOT REMOVE/",
-    '#suffix' => Markup::create("-->\n"),
-  );
-
-  $variables['adobe_analytics']['end_version'] = array(
-    '#prefix' => Markup::create("<!-- "),
-    '#plain_text' => "End AdobeAnalytics code version: $version",
-    '#suffix' => Markup::create(" -->\n"),
-  );
+  $variables['adobe_analtics'] = [
+    '#theme' => 'analytics_code',
+    '#cache' => [
+      'contexts' => ['user', 'route']
+    ],
+    '#js_file_location' => $js_file_location,
+    '#version' => $version,
+    '#image_location' => $nojs,
+    '#formatted_vars' => $formatted_vars,
+  ];
 }
 
 /**
