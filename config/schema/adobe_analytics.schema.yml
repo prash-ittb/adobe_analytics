@@ -18,8 +18,17 @@ adobe_analytics.settings:
       type: string
       label: 'Image file location'
     token_cache_lifetime:
-    extra_variables: { }
-    track_roles: { }
-    admin_only:
-      type: boolean
-      label: 'Only apply to admin pages'
+      type: integer
+      label: 'Token cache lifetime'
+    extra_variables:
+      type: sequence
+      label: 'Extra variables'
+      sequence:
+        type: string
+        label: 'The extra variables'
+    track_roles:
+      type: sequence
+      label: 'Track roles'
+      sequence:
+        type: string
+        label: 'Roles to track or not track'
