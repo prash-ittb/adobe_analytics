@@ -1,4 +1,4 @@
-role_tracking_type: inclusive
+role_tracking_type: exclusive
 js_file_location: ''
 codesnippet: ''
 version: H.20.3.

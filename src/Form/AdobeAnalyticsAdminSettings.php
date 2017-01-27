@@ -85,8 +85,8 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#type' => 'select',
       '#title' => $this->t('Add tracking for specific roles'),
       '#options' => [
-        'inclusive' => $this->t('Add to the selected roles only'),
         'exclusive' => $this->t('Add to all roles except the ones selected'),
+        'inclusive' => $this->t('Add to the selected roles only'),
       ],
       '#default_value' => $default_value,
     ];
@@ -95,12 +95,11 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
     foreach (user_roles() as $role) {
       $roles[$role->id()] = $role->label();
     }
-    $config_track_roles = $config->get('track_roles');
 
     $form['roles']['track_roles'] = [
       '#type' => 'checkboxes',
       '#options' => $roles,
-      '#default_value' => empty($config_track_roles) ? array_keys($roles) : $config->get('track_roles'),
+      '#default_value' => $config->get('track_roles'),
     ];
 
     $form['variables'] = [
