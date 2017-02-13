@@ -29,8 +29,8 @@ function adobe_analytics_theme($existing, $type, $theme, $path) {
         'formatted_vars' => NULL,
         'version' => NULL,
         'image_location' => NULL,
-      )
-    )
+      ),
+    ),
   );
 }
 
@@ -38,90 +38,9 @@ function adobe_analytics_theme($existing, $type, $theme, $path) {
  * Implements hook_page_bottom().
  */
 function adobe_analytics_page_bottom(&$variables) {
-
-  $user = \Drupal::currentUser();
-  $config = \Drupal::config('adobe_analytics.settings');
-  $helper = \Drupal::service('adobe_analytics.adobe_analytics_helper');
-
-  // Check if we should track the currently active user's role.
-  $track_user = TRUE;
-  $get_roles = array();
-  $tracking_type = $config->get('role_tracking_type');
-  $stored_roles = $config->get('track_roles');
-  if ($stored_roles) {
-    $get_roles = array();
-    foreach ($stored_roles as $key => $value) {
-      if ($value) {
-        // Get all the selected roles.
-        $get_roles[$key] = $key;
-      }
-    }
-  }
-
-  // Compare the roles with current user.
-  if (is_array($user->getRoles())) {
-    foreach ($user->getRoles() as $role) {
-      if (array_key_exists($role, $get_roles)) {
-        if ($tracking_type == 'inclusive') {
-          $track_user = TRUE;
-        }
-        if ($tracking_type == 'exclusive') {
-          $track_user = FALSE;
-        }
-        break;
-      }
-    }
-  }
-
-  // Don't track page views in the admin sections, or for certain roles.
-  $is_admin = \Drupal::service('router.admin_context')->isAdminRoute();
-  if ($is_admin || $track_user == FALSE) {
-    return;
-  }
-
-  $js_file_location = $config->get('js_file_location');
-  $codesnippet = $config->get('codesnippet');
-  $version = $config->get("version");
-  $nojs = !empty($config->get("image_file_location")) ? $config->get("image_file_location") : NULL;
-
-  // Format and combine variables in the "right" order
-  // Right order is the code file (list likely to be maintained)
-  // Then admin settings with codesnippet first and finally taxonomy->vars.
-  $formatted_vars = '';
-  $adobe_analytics_hooked_vars = \Drupal::moduleHandler()->invokeAll('adobe_analytics_variables', $variables);
-
-  if (!empty($adobe_analytics_hooked_vars['header'])) {
-    $formatted_vars = $helper->adobeAnalyticsFormatVariables($adobe_analytics_hooked_vars['header']);
-  }
-
-  if (!empty($codesnippet)) {
-    // Add any custom code snippets if specified and replace any tokens.
-    $context = $helper->adobeAnalyticsGetTokenContext();
-    $formatted_vars .= $helper->adobeAnalyticsTokenReplace(
-      $config->get('codesnippet'), $context, array(
-        'clear' => TRUE,
-        'sanitize' => TRUE,
-      )
-    ) . "\n";
-  }
-
-  if (!empty($adobe_analytics_hooked_vars['variables'])) {
-    $formatted_vars .= $helper->adobeAnalyticsFormatVariables($adobe_analytics_hooked_vars['variables']);
-  }
-
-  if (!empty($adobe_analytics_hooked_vars['footer'])) {
-    $formatted_vars .= $helper->adobeAnalyticsFormatVariables($adobe_analytics_hooked_vars['footer']);
-  }
-
   $variables['adobe_analtics'] = [
-    '#theme' => 'analytics_code',
-    '#cache' => [
-      'contexts' => ['user', 'route']
-    ],
-    '#js_file_location' => $js_file_location,
-    '#version' => $version,
-    '#image_location' => $nojs,
-    '#formatted_vars' => $formatted_vars,
+    '#lazy_builder' => ['adobe_analytics.adobe_analytics_helper:renderMarkup', []],
+    '#create_placeholder' => TRUE,
   ];
 }
 

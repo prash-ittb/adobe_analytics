@@ -2,8 +2,10 @@
 
 namespace Drupal\adobe_analytics;
 
+use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Routing\CurrentRouteMatch;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Utility\Token;
 use Drupal\system\Entity\Menu;
 
@@ -51,12 +53,28 @@ class AdobeAnalyticsHelper {
   protected $context;
 
   /**
+   * Current user object.
+   *
+   * @var \Drupal\Core\Session\AccountProxyInterface
+   */
+  protected $currentUser;
+
+  /**
+   * Adobe config settings.
+   *
+   * @var \Drupal\Core\Config\ImmutableConfig
+   */
+  protected $config;
+
+  /**
    * Constructs an AdobeAnalyticsHelper object.
    */
-  public function __construct(CurrentRouteMatch $currentRouteMatch, ModuleHandlerInterface $moduleHandler, Token $token) {
+  public function __construct(CurrentRouteMatch $currentRouteMatch, ModuleHandlerInterface $moduleHandler, Token $token, AccountProxyInterface $current_user, ConfigFactory $config_factory) {
     $this->currentRouteMatch = $currentRouteMatch;
     $this->moduleHandler = $moduleHandler;
     $this->token = $token;
+    $this->currentUser = $current_user;
+    $this->config = $config_factory->get('adobe_analytics.settings');
   }
 
   /**
@@ -136,6 +154,109 @@ class AdobeAnalyticsHelper {
    */
   public function getVariables() {
     return $this->variables;
+  }
+
+  /**
+   * Lazy builder callback to render markup.
+   *
+   * @return array
+   *   Build array.
+   */
+  public function renderMarkup() {
+
+    if ($this->skipTracking()) {
+      return [];
+    }
+
+    $js_file_location = $this->config->get('js_file_location');
+    $codesnippet = $this->config->get('codesnippet');
+    $version = $this->config->get("version");
+    $nojs = !empty($this->config->get("image_file_location")) ? $this->config->get("image_file_location") : NULL;
+
+    // Format and combine variables in the "right" order
+    // Right order is the code file (list likely to be maintained)
+    // Then admin settings with codesnippet first and finally taxonomy->vars.
+    $formatted_vars = '';
+    $adobe_analytics_hooked_vars = \Drupal::moduleHandler()->invokeAll('adobe_analytics_variables', []);
+
+    if (!empty($adobe_analytics_hooked_vars['header'])) {
+      $formatted_vars = $this->adobeAnalyticsFormatVariables($adobe_analytics_hooked_vars['header']);
+    }
+
+    if (!empty($codesnippet)) {
+      // Add any custom code snippets if specified and replace any tokens.
+      $context = $this->adobeAnalyticsGetTokenContext();
+      $formatted_vars .= $this->adobeAnalyticsTokenReplace(
+          $this->config->get('codesnippet'), $context, array(
+            'clear' => TRUE,
+            'sanitize' => TRUE,
+          )
+        ) . "\n";
+    }
+
+    if (!empty($adobe_analytics_hooked_vars['variables'])) {
+      $formatted_vars .= $this->adobeAnalyticsFormatVariables($adobe_analytics_hooked_vars['variables']);
+    }
+
+    if (!empty($adobe_analytics_hooked_vars['footer'])) {
+      $formatted_vars .= $this->adobeAnalyticsFormatVariables($adobe_analytics_hooked_vars['footer']);
+    }
+
+    $build = [
+      '#theme' => 'analytics_code',
+      '#cache' => [
+        'max-age' => 0,
+      ],
+      '#js_file_location' => $js_file_location,
+      '#version' => $version,
+      '#image_location' => $nojs,
+      '#formatted_vars' => $formatted_vars,
+    ];
+
+    return $build;
+  }
+
+  /**
+   * Determines whether or not to skip adding analytics code.
+   */
+  public function skipTracking() {
+    // Check if we should track the currently active user's role.
+    $track_user = TRUE;
+    $get_roles = array();
+    $tracking_type = $this->config->get('role_tracking_type');
+    $stored_roles = $this->config->get('track_roles');
+    if ($stored_roles) {
+      $get_roles = array();
+      foreach ($stored_roles as $key => $value) {
+        if ($value) {
+          // Get all the selected roles.
+          $get_roles[$key] = $key;
+        }
+      }
+    }
+
+    // Compare the roles with current user.
+    if (is_array($this->currentUser->getRoles())) {
+      foreach ($this->currentUser->getRoles() as $role) {
+        if (array_key_exists($role, $get_roles)) {
+          if ($tracking_type == 'inclusive') {
+            $track_user = TRUE;
+          }
+          if ($tracking_type == 'exclusive') {
+            $track_user = FALSE;
+          }
+          break;
+        }
+      }
+    }
+
+    // Don't track page views in the admin sections, or for certain roles.
+    $is_admin = \Drupal::service('router.admin_context')->isAdminRoute();
+    if ($is_admin || $track_user == FALSE) {
+      return TRUE;
+    }
+
+    return FALSE;
   }
 
 }
