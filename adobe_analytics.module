@@ -5,7 +5,7 @@
  * Adds the Javascript to the bottom of Drupal page.
  */
 
-use \Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
  * Implements hook_help().
@@ -22,16 +22,16 @@ function adobe_analytics_help($route_name, RouteMatchInterface $route_match) {
  * Implements hook_theme().
  */
 function adobe_analytics_theme($existing, $type, $theme, $path) {
-  return array(
-    'analytics_code' => array(
-      'variables' => array(
+  return [
+    'analytics_code' => [
+      'variables' => [
         'js_file_location' => NULL,
         'formatted_vars' => NULL,
         'version' => NULL,
         'image_location' => NULL,
-      ),
-    ),
-  );
+      ],
+    ],
+  ];
 }
 
 /**
@@ -41,6 +41,10 @@ function adobe_analytics_page_bottom(&$variables) {
   $variables['adobe_analtics'] = [
     '#lazy_builder' => ['adobe_analytics.adobe_analytics_helper:renderMarkup', []],
     '#create_placeholder' => TRUE,
+    '#cache' => [
+      'contexts' => ['user.roles'],
+      'tags' => \Drupal::config('adobe_analytics.settings')->getCacheTags(),
+    ],
   ];
 }
 
@@ -49,7 +53,7 @@ function adobe_analytics_page_bottom(&$variables) {
  */
 function adobe_analytics_adobe_analytics_variables() {
 
-  $variables = array();
+  $variables = [];
   $config = Drupal::config('adobe_analytics.settings');
   $adobe_analytics_helper = \Drupal::service('adobe_analytics.adobe_analytics_helper');
 
@@ -63,9 +67,9 @@ function adobe_analytics_adobe_analytics_variables() {
 
   // Include variables from the "custom variables" section of the settings form.
   $settings_variables = $config->get('extra_variables');
-  foreach ($settings_variables as $key => $data) {
+  foreach ($settings_variables as $data) {
     $variables[$data['name']] = $adobe_analytics_helper->adobeAnalyticsTokenReplace($data['value']);
   }
 
-  return array('variables' => $variables);
+  return ['variables' => $variables];
 }
