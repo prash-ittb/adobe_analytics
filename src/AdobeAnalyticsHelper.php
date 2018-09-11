@@ -68,11 +68,18 @@ class AdobeAnalyticsHelper {
   protected $context;
 
   /**
-   * Adobe config settings.
+   * CDN and general config settings.
    *
    * @var \Drupal\Core\Config\ImmutableConfig
    */
-  protected $config;
+  protected $cdnConfig;
+
+  /**
+   * Datalayer config settings.
+   *
+   * @var \Drupal\Core\Config\ImmutableConfig
+   */
+  protected $datalayerConfig;
 
   /**
    * Constructs an AdobeAnalyticsHelper object.
@@ -91,7 +98,8 @@ class AdobeAnalyticsHelper {
    *   The token service.
    */
   public function __construct(ConfigFactory $config_factory, CurrentRouteMatch $currentRouteMatch, AccountProxyInterface $current_user, ModuleHandlerInterface $moduleHandler, AdminContext $admin_context, Token $token) {
-    $this->config = $config_factory->get('adobe_analytics.settings');
+    $this->cdnConfig = $config_factory->get('adobe_analytics.settings');
+    $this->datalayerConfig = $config_factory->get('adobe_analytics.data_layer');
     $this->currentRouteMatch = $currentRouteMatch;
     $this->currentUser = $current_user;
     $this->moduleHandler = $moduleHandler;
@@ -103,7 +111,6 @@ class AdobeAnalyticsHelper {
    * Get the context.
    */
   public function adobeAnalyticsGetTokenContext() {
-
     if (is_null($this->context)) {
       $this->context['node'] = $this->currentRouteMatch->getParameter('node');
       $this->context['term'] = ($this->currentRouteMatch->getParameter('taxonomy_term')) ? $this->currentRouteMatch->getParameter('taxonomy_term') : 2;
@@ -185,60 +192,144 @@ class AdobeAnalyticsHelper {
    *   Build array.
    */
   public function renderMarkup() {
-    if ($this->skipTracking()) {
+
+    $build = [];
+    $build['#theme'] = 'analytics_code';
+
+    if ($this->cdnConfig->get('mode') == 'cdn') {
+      $build = $this->renderCdnMarkup($build);
+    }
+
+    if ($this->datalayerConfig->get('data_layer_enabled') == 1) {
+      $build = $this->renderDatalayerMarkup($build);
+    }
+
+    if ($this->cdnConfig->get('mode') == 'general') {
+
+      if ($this->skipTracking(1)) {
+        return [];
+      }
+
+      // Extract module settings.
+      $js_file_location = $this->cdnConfig->get('js_file_location');
+      $codesnippet = $this->cdnConfig->get('codesnippet');
+      $version = $this->cdnConfig->get("version");
+      $nojs = !empty($this->cdnConfig->get("image_file_location")) ? $this->cdnConfig->get("image_file_location") : NULL;
+
+      // Extract entity overrides.
+      list ($include_main_codesnippet, $include_custom_variables, $entity_snippet) = $this->extractEntityOverrides();
+
+      // Format and combine variables in the "right" order
+      // Right order is the code file (list likely to be maintained)
+      // Then admin settings with codesnippet first and finally taxonomy->vars.
+      $formatted_vars = '';
+
+      // Load variables implemented by modules.
+      $adobe_analytics_hooked_vars = $this->moduleHandler->invokeAll('adobe_analytics_variables', []);
+
+      // Append header variables.
+      if ($include_custom_variables && !empty($adobe_analytics_hooked_vars['header'])) {
+        $formatted_vars = $this->adobeAnalyticsFormatVariables($adobe_analytics_hooked_vars['header']);
+      }
+
+      // Append main JavaScript snippet.
+      if ($include_main_codesnippet && !empty($codesnippet)) {
+        $formatted_vars .= $this->formatJsSnippet($codesnippet);
+      }
+
+      // Append main variables.
+      if ($include_custom_variables && !empty($adobe_analytics_hooked_vars['variables'])) {
+        $formatted_vars .= $this->adobeAnalyticsFormatVariables($adobe_analytics_hooked_vars['variables']);
+      }
+
+      // Append footer variables.
+      if ($include_custom_variables && !empty($adobe_analytics_hooked_vars['footer'])) {
+        $formatted_vars .= $this->adobeAnalyticsFormatVariables($adobe_analytics_hooked_vars['footer']);
+      }
+
+      // Append entity's custom snippet.
+      if (!empty($entity_snippet)) {
+        $formatted_vars .= $this->formatJsSnippet($entity_snippet);
+      }
+
+      $build['#general_status'] = TRUE;
+      $build['#js_file_location'] = $js_file_location;
+      $build['#version'] = $version;
+      $build['#image_location'] = $nojs;
+      $build['#formatted_vars'] = $formatted_vars;
+
+    }
+
+    return $build;
+  }
+
+  /**
+   * Function to render cdn markup.
+   *
+   * @return array
+   *   Build array.
+   */
+  protected function renderCdnMarkup($build) {
+
+    if ($this->skipTracking(1)) {
       return [];
     }
 
-    // Extract module settings.
-    $js_file_location = $this->config->get('js_file_location');
-    $codesnippet = $this->config->get('codesnippet');
-    $version = $this->config->get("version");
-    $nojs = !empty($this->config->get("image_file_location")) ? $this->config->get("image_file_location") : NULL;
+    $environment = \Drupal::config('adobe_analytics')->get('mode');
 
-
-    // Extract entity overrides.
-    list ($include_main_codesnippet, $include_custom_variables, $entity_snippet) = $this->extractEntityOverrides();
-
-    // Format and combine variables in the "right" order
-    // Right order is the code file (list likely to be maintained)
-    // Then admin settings with codesnippet first and finally taxonomy->vars.
-    $formatted_vars = '';
-
-    // Load variables implemented by modules.
-    $adobe_analytics_hooked_vars = $this->moduleHandler->invokeAll('adobe_analytics_variables', []);
-
-    // Append header variables.
-    if ($include_custom_variables && !empty($adobe_analytics_hooked_vars['header'])) {
-      $formatted_vars = $this->adobeAnalyticsFormatVariables($adobe_analytics_hooked_vars['header']);
+    if ($environment == 'prod') {
+      $environment = 'production';
+    }
+    else {
+      $environment = 'development';
     }
 
-    // Append main JavaScript snippet.
-    if ($include_main_codesnippet && !empty($codesnippet)) {
-      $formatted_vars .= $this->formatJsSnippet($codesnippet);
+    $cdnType = $this->cdnConfig->get('cdn_install_type');
+
+    // For Amazon S3.
+    if ($cdnType == 'amazon') {
+      $build['#amazon_status'] = TRUE;
+      $build['#s_code_config_path'] = $this->cdnConfig->get($environment . '_s_code_config');
+      $build['#s_code_path'] = $this->cdnConfig->get($environment . '_s_code');
+      $build['#footer_js_code'] = $this->cdnConfig->get('footer_js_code');
+      $build['#custom_tracking_js_before'] = $this->cdnConfig->get('cdn_custom_tracking_js_before');
+      $build['#custom_tracking_js_after'] = $this->cdnConfig->get('cdn_custom_tracking_js_after');
+    }
+    else {
+      // For Tag Manager Tool.
+      $build['#tag_status'] = TRUE;
+      $build['#tag_manager_js_path'] = $this->cdnConfig->get($environment . '_tag_manager_container_path');
     }
 
-    // Append main variables.
-    if ($include_custom_variables && !empty($adobe_analytics_hooked_vars['variables'])) {
-      $formatted_vars .= $this->adobeAnalyticsFormatVariables($adobe_analytics_hooked_vars['variables']);
+    return $build;
+  }
+
+  /**
+   * Function to render datalayer markup.
+   *
+   * @return array
+   *   Build array.
+   */
+  protected function renderDatalayerMarkup($build) {
+
+    if ($this->skipTracking(2)) {
+      return [];
     }
 
-    // Append footer variables.
-    if ($include_custom_variables && !empty($adobe_analytics_hooked_vars['footer'])) {
-      $formatted_vars .= $this->adobeAnalyticsFormatVariables($adobe_analytics_hooked_vars['footer']);
-    }
+    // Get value of data layer variable.
+    $data_root_field = !empty($this->datalayerConfig->get('data_layer_root_field')) ? $this->datalayerConfig->get('data_layer_root_field') : 'pfAnalyticsData';
+    $data_layer_json = $this->datalayerConfig->get('data_layer_json_object');
 
-    // Append entity's custom snippet.
-    if (!empty($entity_snippet)) {
-      $formatted_vars .= $this->formatJsSnippet($entity_snippet);
+    // $node = \Drupal::request()->attributes->get('node');
+    if (empty($data_layer_json) || !\Drupal::moduleHandler()
+      ->moduleExists('token')
+    ) {
+      return [];
     }
-
-    $build = [
-      '#theme' => 'analytics_code',
-      '#js_file_location' => $js_file_location,
-      '#version' => $version,
-      '#image_location' => $nojs,
-      '#formatted_vars' => $formatted_vars,
-    ];
+    $build['#data_layer_status'] = TRUE;
+    $build['#data_layer_json'] = 'var ' . $data_root_field . ' = ' . $this->formatJsSnippet($data_layer_json);
+    $build['#custom_js'] = \Drupal::config('adobe_analytics.data_layer_custom_javascript')
+      ->get('data_layer_custom_javascript');
 
     return $build;
   }
@@ -246,12 +337,19 @@ class AdobeAnalyticsHelper {
   /**
    * Determines whether or not to skip adding analytics code.
    */
-  public function skipTracking() {
+  public function skipTracking($type) {
+
+    if ($type == 1) {
+      $config = $this->cdnConfig;
+    }
+    elseif ($type == 2) {
+      $config = $this->datalayerConfig;
+    }
     // Check if we should track the currently active user's role.
     $track_user = TRUE;
     $get_roles = [];
-    $tracking_type = $this->config->get('role_tracking_type');
-    $stored_roles = $this->config->get('track_roles');
+    $tracking_type = $config->get('role_tracking_type');
+    $stored_roles = $config->get('omniture_track_roles');
     if ($stored_roles) {
       $get_roles = [];
       foreach ($stored_roles as $key => $value) {
@@ -318,7 +416,11 @@ class AdobeAnalyticsHelper {
       $entity_snippet = $entity_values['codesnippet'];
     }
 
-    return [$include_main_codesnippet, $include_custom_variables, $entity_snippet];
+    return [
+      $include_main_codesnippet,
+      $include_custom_variables,
+      $entity_snippet,
+    ];
   }
 
   /**

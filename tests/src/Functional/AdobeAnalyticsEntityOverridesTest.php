@@ -125,4 +125,5 @@ class AdobeAnalyticsEntityOverridesTest extends JavascriptTestBase {
     $this->assertSession()->responseNotContains('extraVariableName');
     $this->assertSession()->responseContains('customVar');
   }
+
 }

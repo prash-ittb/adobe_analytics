@@ -2,6 +2,7 @@
 
 namespace Drupal\adobe_analytics\Form;
 
+use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -36,11 +37,229 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
 
     $config = $this->config('adobe_analytics.settings');
 
+    $form['mode'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Installation mode'),
+      '#default_value' => $config->get('mode') ? $config->get('mode') : 'cdn',
+      '#options' => [
+        'cdn' => $this->t('CDN'),
+        'general' => $this->t('Basic'),
+      ],
+      '#weight' => '-100',
+    ];
+    // CDN form elements.
+    $form['cdn_install_type'] = [
+      '#type' => 'radios',
+      '#title' => t('Installation Type'),
+      '#required' => '1',
+      '#default_value' => $config->get('cdn_install_type') ? $config->get('cdn_install_type') : 'amazon',
+      '#options' => [
+        'amazon' => t('Amazon S3 hosted'),
+        'tag' => t('Tag Manager Tool'),
+      ],
+      '#weight' => '-10',
+      '#states' => [
+        'visible' => [
+          ':input[name="mode"]' => ['value' => 'cdn'],
+        ],
+      ],
+    ];
+
+    $form['amazon_s_code_config'] = [
+      '#weight' => '-9',
+      '#description' => t('Enter the Amazon S3 hosted S code Configuration Path (s_code_config.js) for development and production environments.'),
+      '#type' => 'fieldset',
+      '#title' => $this->t('Omniture S code Configuration Path'),
+      '#collapsible' => '1',
+      '#collapsed' => '0',
+      '#states' => [
+        'visible' => [
+          'input[name="cdn_install_type"]' => ['value' => 'amazon'],
+        ],
+        'invisible' => [
+          ':input[name="mode"]' => ['value' => 'general'],
+        ],
+      ],
+    ];
+    $form['amazon_s_code_config']['development_s_code_config'] = [
+      '#required' => '0',
+      '#description' => t('Enter your development omniture tracking S code configuration path (s_code_config.js).'),
+      '#weight' => '0',
+      '#type' => 'textfield',
+      '#title' => t('Development'),
+      '#default_value' => $config->get('development_s_code_config'),
+    ];
+    $form['amazon_s_code_config']['production_s_code_config'] = [
+      '#required' => '0',
+      '#description' => t('Enter your production omniture tracking S code configuration path (s_code_config.js).'),
+      '#weight' => '1',
+      '#type' => 'textfield',
+      '#title' => t('Production'),
+      '#default_value' => $config->get('production_s_code_config'),
+    ];
+
+    $form['amazon_s_code'] = [
+      '#weight' => '-8',
+      '#description' => t('Enter the Amazon S3 hosted S code Path (s_code.js) for development and production environments.'),
+      '#type' => 'fieldset',
+      '#title' => t('Omniture S code Path'),
+      '#collapsible' => '1',
+      '#collapsed' => '0',
+      '#states' => [
+        'visible' => [
+          'input[name="cdn_install_type"]' => ['value' => 'amazon'],
+        ],
+        'invisible' => [
+          ':input[name="mode"]' => ['value' => 'general'],
+        ],
+      ],
+    ];
+    $form['amazon_s_code']['development_s_code'] = [
+      '#required' => '0',
+      '#description' => t('Enter your development omniture tracking S code path (s_code.js).'),
+      '#weight' => '0',
+      '#type' => 'textfield',
+      '#title' => t('Development'),
+      '#default_value' => $config->get('development_s_code'),
+    ];
+    $form['amazon_s_code']['production_s_code'] = [
+      '#required' => '0',
+      '#description' => t('Enter your production omniture tracking S code path (s_code.js).'),
+      '#weight' => '3',
+      '#type' => 'textfield',
+      '#title' => t('Production'),
+      '#default_value' => $config->get('production_s_code'),
+    ];
+
+    $form['amazon_footer_code'] = [
+      '#weight' => '-7',
+      '#type' => 'fieldset',
+      '#title' => t('Footer Code'),
+      '#collapsible' => '1',
+      '#collapsed' => '0',
+      '#states' => [
+        'visible' => [
+          'input[name="cdn_install_type"]' => ['value' => 'amazon'],
+        ],
+        'invisible' => [
+          ':input[name="mode"]' => ['value' => 'general'],
+        ],
+      ],
+    ];
+    $form['amazon_footer_code']['footer_js_code'] = [
+      '#required' => '0',
+      '#description' => t('Enter the path of footer code JS file on Amazon S3.'),
+      '#weight' => '0',
+      '#type' => 'textfield',
+      '#default_value' => $config->get('footer_js_code'),
+    ];
+
+    $form['amazon_custom_tracking'] = [
+      '#weight' => '-6',
+      '#type' => 'fieldset',
+      '#title' => t('Omniture custom tracking Javascript'),
+      '#collapsible' => '1',
+      '#collapsed' => '0',
+      '#states' => [
+        'visible' => [
+          'input[name="cdn_install_type"]' => ['value' => 'amazon'],
+        ],
+        'invisible' => [
+          ':input[name="mode"]' => ['value' => 'general'],
+        ],
+      ],
+    ];
+    $form['amazon_custom_tracking']['cdn_custom_tracking_js_before'] = [
+      '#required' => '0',
+      '#description' => t('Enter the path for custom JS file on Amazon S3. This JS will be added to all pages just before page view call i.e. s(t).'),
+      '#weight' => '0',
+      '#type' => 'textfield',
+      '#title' => t('Custom tracking javascript path (loaded before s.t())'),
+      '#default_value' => $config->get('cdn_custom_tracking_js_before'),
+    ];
+    $form['amazon_custom_tracking']['cdn_custom_tracking_js_after'] = [
+      '#required' => '0',
+      '#description' => t('Enter the path gor custom JS file on Amazon S3. This JS will be added to all pages just after page view call i.e. s(t).'),
+      '#weight' => '1',
+      '#type' => 'textfield',
+      '#title' => t('Custom tracking javascript path (loaded after s.t())'),
+      '#default_value' => $config->get('cdn_custom_tracking_js_after'),
+    ];
+
+    $form['tag_manager_container_path'] = [
+      '#weight' => '-5',
+      '#type' => 'fieldset',
+      '#title' => t('Tag manager tool container path'),
+      '#collapsible' => '1',
+      '#collapsed' => '0',
+      '#states' => [
+        'visible' => [
+          'input[name="cdn_install_type"]' => ['value' => 'tag'],
+        ],
+        'invisible' => [
+          ':input[name="mode"]' => ['value' => 'general'],
+        ],
+      ],
+    ];
+    $form['tag_manager_container_path']['development_tag_manager_container_path'] = [
+      '#required' => '0',
+      '#description' => t('Enter your development tag manager tool container path.'),
+      '#weight' => '0',
+      '#type' => 'textfield',
+      '#title' => t('Development'),
+      '#default_value' => $config->get('development_tag_manager_container_path'),
+    ];
+    $form['tag_manager_container_path']['production_tag_manager_container_path'] = [
+      '#required' => '0',
+      '#description' => t('Enter your production tag manager tool container path.'),
+      '#weight' => '1',
+      '#type' => 'textfield',
+      '#title' => t('Production'),
+      '#default_value' => $config->get('production_tag_manager_container_path'),
+    ];
+    $form['tag_manager_footer_code'] = [
+      '#weight' => '-4',
+      '#type' => 'fieldset',
+      '#title' => t('Footer Code'),
+      '#collapsible' => '1',
+      '#collapsed' => '0',
+      '#states' => [
+        'visible' => [
+          'input[name="cdn_install_type"]' => ['value' => 'tag'],
+        ],
+        'invisible' => [
+          ':input[name="mode"]' => ['value' => 'general'],
+        ],
+      ],
+    ];
+    $form['tag_manager_footer_code']['tag_manager_footer_js'] = [
+      '#required' => '0',
+      '#description' => t('Enter the path of footer code JS file on Amazon S3.'),
+      '#weight' => '0',
+      '#type' => 'textfield',
+      '#default_value' => $config->get('tag_manager_footer_js'),
+    ];
+    // General form elements.
+    $form['general_warning'] = [
+      '#type' => 'item',
+      '#markup' => "<div class='messages messages--warning'>" . $this->t("Use basic configuration for backward compatibility and its recommended to use CDN based analytics configuration.") . "</div>",
+      '#weight' => '-11',
+      '#states' => [
+        'visible' => [
+          ':input[name="mode"]' => ['value' => 'general'],
+        ],
+      ],
+    ];
     $form['general'] = [
       '#type' => 'details',
       '#title' => $this->t('General settings'),
       '#open' => TRUE,
       '#weight' => '-10',
+      '#states' => [
+        'visible' => [
+          ':input[name="mode"]' => ['value' => 'general'],
+        ],
+      ],
     ];
 
     $form['general']['js_file_location'] = [
@@ -72,36 +291,6 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       ),
     ];
 
-    $form['roles'] = [
-      '#type' => 'details',
-      '#title' => $this->t('User role tracking'),
-      '#open' => TRUE,
-      '#description' => $this->t('Define which user roles should, or should not be tracked by AdobeAnalytics.'),
-      '#weight' => '-6',
-    ];
-
-    $default_value = ($config->get("role_tracking_type")) ? $config->get("role_tracking_type") : 'inclusive';
-    $form['roles']['role_tracking_type'] = [
-      '#type' => 'select',
-      '#title' => $this->t('Add tracking for specific roles'),
-      '#options' => [
-        'exclusive' => $this->t('Add to all roles except the ones selected'),
-        'inclusive' => $this->t('Add to the selected roles only'),
-      ],
-      '#default_value' => $default_value,
-    ];
-
-    $roles = [];
-    foreach (user_roles() as $role) {
-      $roles[$role->id()] = $role->label();
-    }
-
-    $form['roles']['track_roles'] = [
-      '#type' => 'checkboxes',
-      '#options' => $roles,
-      '#default_value' => $config->get('track_roles'),
-    ];
-
     $form['variables'] = [
       '#type' => 'details',
       '#title' => $this->t('Custom Variables'),
@@ -110,6 +299,11 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#weight' => '-3',
       '#prefix' => '<div id="variables-details-wrapper">',
       '#suffix' => '</div>',
+      '#states' => [
+        'visible' => [
+          ':input[name="mode"]' => ['value' => 'general'],
+        ],
+      ],
     ];
     $this->adobeAnalyticsExtraVariablesForm($form, $form_state);
 
@@ -132,6 +326,11 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#description' => $this->t('You can add custom AdobeAnalytics code here.'),
       '#open' => FALSE,
       '#weight' => '-2',
+      '#states' => [
+        'visible' => [
+          ':input[name="mode"]' => ['value' => 'general'],
+        ],
+      ],
     ];
 
     $description = 'Example : <br/> - if ([current-date:custom:N] >= 6) { s.prop5
@@ -152,6 +351,36 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#global_types' => TRUE,
       '#click_insert' => TRUE,
       '#dialog' => TRUE,
+    ];
+
+    $form['roles'] = [
+      '#type' => 'details',
+      '#title' => $this->t('User role tracking'),
+      '#open' => TRUE,
+      '#description' => $this->t('Define which user roles should, or should not be tracked by AdobeAnalytics.'),
+      '#weight' => '0',
+    ];
+
+    $default_value = ($config->get("role_tracking_type")) ? $config->get("role_tracking_type") : 'inclusive';
+    $form['roles']['role_tracking_type'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Add tracking for specific roles'),
+      '#options' => [
+        'exclusive' => $this->t('Add to all roles except the ones selected'),
+        'inclusive' => $this->t('Add to the selected roles only'),
+      ],
+      '#default_value' => $default_value,
+    ];
+
+    $roles = [];
+    foreach (user_roles() as $role) {
+      $roles[$role->id()] = $role->label();
+    }
+
+    $form['roles']['track_roles'] = [
+      '#type' => 'checkboxes',
+      '#options' => $roles,
+      '#default_value' => $config->get('track_roles'),
     ];
 
     return parent::buildForm($form, $form_state);
@@ -274,6 +503,58 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    $amazon_s3_urls = [];
+    if ($form_state->getValue('mode') == 'cdn') {
+      if ($form_state->getValue('cdn_install_type') == 'amazon') {
+        $checks = [
+          'development_s_code_config' => t('Enter your development omniture tracking S Code Configuration Path.'),
+          'production_s_code_config' => t('Enter your production omniture tracking S Code Configuration Path.'),
+          'development_s_code' => t('Enter your development omniture tracking S Code Path.'),
+          'production_s_code' => t('Enter your production omniture tracking S Code Path.'),
+        ];
+        $amazon_s3_urls = [
+          'development_s_code_config',
+          'production_s_code_config',
+          'development_s_code',
+          'production_s_code',
+          'footer_js_code',
+          'cdn_custom_tracking_js_before',
+          'cdn_custom_tracking_js_after',
+        ];
+      }
+      else {
+        $checks = [
+          'development_tag_manager_container_path' => t('Enter your development Tag Manager Tool Container Path.'),
+          'production_tag_manager_container_path' => t('Enter your production Tag Manager Tool Container Path.'),
+        ];
+      }
+
+      foreach ($checks as $variable => $warning) {
+        if (empty($form_state->getValue([$variable]))) {
+          $form_state->setErrorByName($variable, $warning);
+        }
+      }
+
+      // Check file hosted only on amazon s3.
+      foreach ($amazon_s3_urls as $s3_url) {
+        if (!UrlHelper::isValid($form_state->getValue([$s3_url]), TRUE)) {
+          $form_state->setErrorByName($s3_url, t('The URL %url is invalid. Please enter a fully-qualified URL, such as https://s3.amazonaws.com/pfe_im/...', ['%url' => $form_state->getValue([$s3_url])]));
+        }
+        else {
+          if (!empty($form_state->getValue([$s3_url])) && strpos($form_state->getValue([$s3_url]), '//s3.amazonaws.com/pfe_im') === FALSE) {
+            $form_state->setErrorByName($s3_url, t("File should be hosted only on Amazon S3 e.g //s3.amazonaws.com/pfe_im/..."));
+          }
+        }
+      }
+    }
+
+    parent::validateForm($form, $form_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function submitForm(array &$form, FormStateInterface $form_state) {
 
     $config = $this->config('adobe_analytics.settings');
@@ -282,12 +563,28 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
     $extra_vars = [];
     foreach ($form_state->getValue('variables') as $variable) {
       if (!empty($variable['name']) && !empty($variable['value'])) {
-        $extra_vars[] = ['name' => $variable['name'], 'value' => $variable['value']];
+        $extra_vars[] = [
+          'name' => $variable['name'],
+          'value' => $variable['value'],
+        ];
       }
     }
 
     // Save all the config variables.
-    $config->set('extra_variables', $extra_vars)
+    $config
+      ->set('mode', $form_state->getValue('mode'))
+      ->set('cdn_install_type', $form_state->getValue('cdn_install_type'))
+      ->set('development_s_code_config', $form_state->getValue('development_s_code_config'))
+      ->set('production_s_code_config', $form_state->getValue('production_s_code_config'))
+      ->set('development_s_code', $form_state->getValue('development_s_code'))
+      ->set('production_s_code', $form_state->getValue('production_s_code'))
+      ->set('footer_js_code', $form_state->getValue('footer_js_code'))
+      ->set('cdn_custom_tracking_js_before', $form_state->getValue('cdn_custom_tracking_js_before'))
+      ->set('cdn_custom_tracking_js_after', $form_state->getValue('cdn_custom_tracking_js_after'))
+      ->set('development_tag_manager_container_path', $form_state->getValue('development_tag_manager_container_path'))
+      ->set('production_tag_manager_container_path', $form_state->getValue('production_tag_manager_container_path'))
+      ->set('tag_manager_footer_js', $form_state->getValue('tag_manager_footer_js'))
+      ->set('extra_variables', $extra_vars)
       ->set('js_file_location', $form_state->getValue('js_file_location'))
       ->set('image_file_location', $form_state->getValue('image_file_location'))
       ->set('version', $form_state->getValue('version'))

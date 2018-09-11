@@ -1,0 +1,12 @@
+ace:
+  version: 1.x
+  js:
+    js/ace/ace.js: {}
+
+codesnippet:
+  version: 1.x
+  js:
+    js/codesnippet.js: {}
+  dependencies:
+    - core/jquery
+    - adobe_analytics/ace

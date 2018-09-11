@@ -1,0 +1,23 @@
+# Add a tab for Adobe
+adobe_analytics.adobe_settings_form:
+  title: 'Adobe Analytics Settings'
+  route_name: adobe_analytics.settings
+  base_route: adobe_analytics.settings
+
+# Add a tab for Data layer
+adobe_analytics.data_layer_settings:
+  title: 'Data Layer Settings'
+  route_name: adobe_analytics.data_layer_form
+  base_route: adobe_analytics.settings
+
+# Add a tab for Data layer form
+adobe_analytics.data_layer_settings_form:
+  title: 'Data Layer'
+  route_name: adobe_analytics.data_layer_form
+  parent_id: adobe_analytics.data_layer_settings
+
+# Add a tab for Data layer custom js form
+adobe_analytics.data_layer_custom_js_settings_form:
+  title: 'Data Layer Custom Javascript'
+  route_name: adobe_analytics.data_layer_custom_javascript_form
+  parent_id: adobe_analytics.data_layer_settings
