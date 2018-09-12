@@ -299,6 +299,7 @@ class AdobeAnalyticsHelper {
       // For Tag Manager Tool.
       $build['#tag_status'] = TRUE;
       $build['#tag_manager_js_path'] = $this->cdnConfig->get($environment . '_tag_manager_container_path');
+      $build['#tag_manager_footer_js'] = $this->cdnConfig->get('tag_manager_footer_js');
     }
 
     return $build;
