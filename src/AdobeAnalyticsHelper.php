@@ -192,7 +192,6 @@ class AdobeAnalyticsHelper {
    *   Build array.
    */
   public function renderMarkup() {
-
     $build = [];
     $build['#theme'] = 'analytics_code';
 
@@ -205,7 +204,6 @@ class AdobeAnalyticsHelper {
     }
 
     if ($this->cdnConfig->get('mode') == 'general') {
-
       if ($this->skipTracking(1)) {
         return [];
       }
@@ -219,9 +217,9 @@ class AdobeAnalyticsHelper {
       // Extract entity overrides.
       list ($include_main_codesnippet, $include_custom_variables, $entity_snippet) = $this->extractEntityOverrides();
 
-      // Format and combine variables in the "right" order
-      // Right order is the code file (list likely to be maintained)
-      // Then admin settings with codesnippet first and finally taxonomy->vars.
+      // Format and combine variables in the "right" order right order is the
+      // code file (list likely to be maintained) then admin settings with
+      // codesnippet first and finally taxonomy->vars.
       $formatted_vars = '';
 
       // Load variables implemented by modules.
@@ -266,11 +264,12 @@ class AdobeAnalyticsHelper {
   /**
    * Function to render cdn markup.
    *
+   * @param array $build
+   *   Build array containing theme markup
    * @return array
    *   Build array.
    */
   protected function renderCdnMarkup($build) {
-
     if ($this->skipTracking(1)) {
       return [];
     }
@@ -308,6 +307,8 @@ class AdobeAnalyticsHelper {
   /**
    * Function to render datalayer markup.
    *
+   * @param array $build
+   *   Build array containing theme and cdn markup, if cdn is enabled
    * @return array
    *   Build array.
    */
@@ -335,9 +336,15 @@ class AdobeAnalyticsHelper {
     return $build;
   }
 
-  /**
-   * Determines whether or not to skip adding analytics code.
-   */
+    /**
+     * Determines whether or not to skip adding analytics code.
+     *
+     * @param int $type
+     *   type 1 will load cdn and general configuration,
+     *   and 2 will load datalayer configuration.
+     * @return bool
+     *   Skips the tracking if true.
+     */
   public function skipTracking($type) {
 
     if ($type == 1) {
