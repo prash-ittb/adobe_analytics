@@ -1,8 +1,20 @@
-role_tracking_type: exclusive
 js_file_location: ''
 codesnippet: ''
 version: H.20.3.
 image_file_location: ''
 token_cache_lifetime: 0
 extra_variables: { }
+mode: 'general'
+cdn_install_type: 'amazon'
+development_s_code_config: ''
+production_s_code_config: ''
+development_s_code: ''
+production_s_code: ''
+footer_js_code: ''
+cdn_custom_tracking_js_before: ''
+cdn_custom_tracking_js_after: ''
+development_tag_manager_container_path: ''
+production_tag_manager_container_path: ''
+tag_manager_footer_js: ''
+role_tracking_type: exclusive
 track_roles: { }

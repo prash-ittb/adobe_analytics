@@ -104,16 +104,13 @@ class DataLayerForm extends ConfigFormBase {
     ];
 
     $form['roles'] = [
-      '#weight' => '5',
-      '#type' => 'fieldset',
-      '#title' => t('User role tracking'),
+      '#type' => 'details',
+      '#title' => $this->t('User role tracking'),
       '#open' => TRUE,
-      '#description' => t('Define which user roles should be tracked by SiteCatalyst.'),
+      '#description' => $this->t('Define which user roles should, or should not be tracked by AdobeAnalytics.'),
+      '#weight' => '5',
     ];
-    $roles = [];
-    foreach (user_roles() as $role) {
-      $roles[$role->id()] = $role->label();
-    }
+
     $default_value = ($config->get("role_tracking_type")) ? $config->get("role_tracking_type") : 'inclusive';
     $form['roles']['role_tracking_type'] = [
       '#type' => 'select',
@@ -124,6 +121,12 @@ class DataLayerForm extends ConfigFormBase {
       ],
       '#default_value' => $default_value,
     ];
+
+    $roles = [];
+    foreach (user_roles() as $role) {
+      $roles[$role->id()] = $role->label();
+    }
+
     $form['roles']['track_roles'] = [
       '#type' => 'checkboxes',
       '#options' => $roles,

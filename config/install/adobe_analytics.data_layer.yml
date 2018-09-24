@@ -1,0 +1,5 @@
+data_layer_enabled: '0'
+data_layer_root_field: ''
+data_layer_json_object: ''
+role_tracking_type: exclusive
+track_roles: { }

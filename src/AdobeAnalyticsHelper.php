@@ -341,7 +341,7 @@ class AdobeAnalyticsHelper {
      *
      * @param int $type
      *   type 1 will load cdn and general configuration,
-     *   and 2 will load datalayer configuration.
+     *   and 2 will load data_layer configuration.
      * @return bool
      *   Skips the tracking if true.
      */
