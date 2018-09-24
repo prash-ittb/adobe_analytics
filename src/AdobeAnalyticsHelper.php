@@ -357,7 +357,7 @@ class AdobeAnalyticsHelper {
     $track_user = TRUE;
     $get_roles = [];
     $tracking_type = $config->get('role_tracking_type');
-    $stored_roles = $config->get('omniture_track_roles');
+    $stored_roles = $config->get('track_roles');
     if ($stored_roles) {
       $get_roles = [];
       foreach ($stored_roles as $key => $value) {

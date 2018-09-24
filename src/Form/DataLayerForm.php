@@ -47,7 +47,7 @@ class DataLayerForm extends ConfigFormBase {
 
     $form['data_layer_root_field'] = [
       '#required' => '0',
-      '#description' => t('Enter your development omniture tracking S code configuration path (s_code_config.js).'),
+      '#description' => t('Enter your development Adobe analytics tracking S code configuration path (s_code_config.js).'),
       '#weight' => '0',
       '#type' => 'textfield',
       '#title' => t('Data Layer Root Field'),
@@ -127,7 +127,7 @@ class DataLayerForm extends ConfigFormBase {
     $form['roles']['track_roles'] = [
       '#type' => 'checkboxes',
       '#options' => $roles,
-      '#default_value' => $config->get('omniture_track_roles'),
+      '#default_value' => $config->get('track_roles'),
     ];
 
     return parent::buildForm($form, $form_state);

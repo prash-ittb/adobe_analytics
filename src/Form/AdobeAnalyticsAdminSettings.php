@@ -40,7 +40,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
     $form['mode'] = [
       '#type' => 'select',
       '#title' => $this->t('Installation mode'),
-      '#default_value' => $config->get('mode') ? $config->get('mode') : 'cdn',
+      '#default_value' => $config->get('mode') ? $config->get('mode') : 'general',
       '#options' => [
         'cdn' => $this->t('CDN'),
         'general' => $this->t('Basic'),
@@ -69,7 +69,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#weight' => '-9',
       '#description' => t('Enter the Amazon S3 hosted S code Configuration Path (s_code_config.js) for development and production environments.'),
       '#type' => 'fieldset',
-      '#title' => $this->t('Omniture S code Configuration Path'),
+      '#title' => $this->t('Adobe analytics S code Configuration Path'),
       '#collapsible' => '1',
       '#collapsed' => '0',
       '#states' => [
@@ -83,7 +83,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
     ];
     $form['amazon_s_code_config']['development_s_code_config'] = [
       '#required' => '0',
-      '#description' => t('Enter your development omniture tracking S code configuration path (s_code_config.js).'),
+      '#description' => t('Enter your development Adobe analytics tracking S code configuration path (s_code_config.js).'),
       '#weight' => '0',
       '#type' => 'textfield',
       '#title' => t('Development'),
@@ -91,7 +91,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
     ];
     $form['amazon_s_code_config']['production_s_code_config'] = [
       '#required' => '0',
-      '#description' => t('Enter your production omniture tracking S code configuration path (s_code_config.js).'),
+      '#description' => t('Enter your production Adobe analytics tracking S code configuration path (s_code_config.js).'),
       '#weight' => '1',
       '#type' => 'textfield',
       '#title' => t('Production'),
@@ -102,7 +102,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#weight' => '-8',
       '#description' => t('Enter the Amazon S3 hosted S code Path (s_code.js) for development and production environments.'),
       '#type' => 'fieldset',
-      '#title' => t('Omniture S code Path'),
+      '#title' => t('Adobe analytics S code Path'),
       '#collapsible' => '1',
       '#collapsed' => '0',
       '#states' => [
@@ -116,7 +116,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
     ];
     $form['amazon_s_code']['development_s_code'] = [
       '#required' => '0',
-      '#description' => t('Enter your development omniture tracking S code path (s_code.js).'),
+      '#description' => t('Enter your development Adobe analytics tracking S code path (s_code.js).'),
       '#weight' => '0',
       '#type' => 'textfield',
       '#title' => t('Development'),
@@ -124,7 +124,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
     ];
     $form['amazon_s_code']['production_s_code'] = [
       '#required' => '0',
-      '#description' => t('Enter your production omniture tracking S code path (s_code.js).'),
+      '#description' => t('Enter your production Adobe analytics tracking S code path (s_code.js).'),
       '#weight' => '3',
       '#type' => 'textfield',
       '#title' => t('Production'),
@@ -157,7 +157,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
     $form['amazon_custom_tracking'] = [
       '#weight' => '-6',
       '#type' => 'fieldset',
-      '#title' => t('Omniture custom tracking Javascript'),
+      '#title' => t('Adobe analytics custom tracking Javascript'),
       '#collapsible' => '1',
       '#collapsed' => '0',
       '#states' => [
@@ -508,10 +508,10 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
     if ($form_state->getValue('mode') == 'cdn') {
       if ($form_state->getValue('cdn_install_type') == 'amazon') {
         $checks = [
-          'development_s_code_config' => t('Enter your development omniture tracking S Code Configuration Path.'),
-          'production_s_code_config' => t('Enter your production omniture tracking S Code Configuration Path.'),
-          'development_s_code' => t('Enter your development omniture tracking S Code Path.'),
-          'production_s_code' => t('Enter your production omniture tracking S Code Path.'),
+          'development_s_code_config' => t('Enter your development Adobe analytics tracking S Code Configuration Path.'),
+          'production_s_code_config' => t('Enter your production Adobe analytics tracking S Code Configuration Path.'),
+          'development_s_code' => t('Enter your development Adobe analytics tracking S Code Path.'),
+          'production_s_code' => t('Enter your production Adobe analytics tracking S Code Path.'),
         ];
         $amazon_s3_urls = [
           'development_s_code_config',
