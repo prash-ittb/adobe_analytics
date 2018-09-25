@@ -16,6 +16,9 @@ use Drupal\Tests\BrowserTestBase;
  * @group adobe_analytics
  */
 class AdobeAnalyticsFormSubmitTest extends BrowserTestBase {
+
+  private $dummyValue = 'https://s3.amazonaws.com/pfe_im/dummy/path.js';
+
   /**
    * {@inheritdoc}
    */
@@ -66,30 +69,57 @@ class AdobeAnalyticsFormSubmitTest extends BrowserTestBase {
     $edit = [
       'mode' => 'cdn',
       'cdn_install_type' => 'amazon',
-      'development_s_code_config' => 'https://s3.amazonaws.com/pfe_im/js/dev/pcc/custom/d8test/s_code_config.js',
-      'production_s_code_config' => 'https://s3.amazonaws.com/pfe_im/js/dev/pcc/custom/d8test/s_code_config.js',
-      'development_s_code' => 'https://s3.amazonaws.com/pfe_im/js/dev/pcc/custom/d8test/s_code_config.js',
-      'production_s_code' => 'https://s3.amazonaws.com/pfe_im/js/dev/pcc/s_code.js',
-      'footer_js_code' => 'https://s3.amazonaws.com/pfe_im/js/dev/pcc/custom/d8test/footer.js',
-      'cdn_custom_tracking_js_before' => 'https://s3.amazonaws.com/pfe_im/js/dev/pcc/custom/d8test/before_t.js',
-      'cdn_custom_tracking_js_after' => 'https://s3.amazonaws.com/pfe_im/js/dev/pcc/custom/d8test/after_t.js',
+      'development_s_code_config' => $this->dummyValue,
+      'production_s_code_config' => $this->dummyValue,
+      'development_s_code' => $this->dummyValue,
+      'production_s_code' => $this->dummyValue,
+      'footer_js_code' => $this->dummyValue,
+      'cdn_custom_tracking_js_before' => $this->dummyValue,
+      'cdn_custom_tracking_js_after' => $this->dummyValue,
     ];
     // Save settings form.
     $this->submitForm($edit, t('Save configuration'));
     $this->assertSession()
       ->pageTextContains('The configuration options have been saved.');
 
+    // Test form retains the values after saving.
+    $formIds = [
+      'edit-development-s-code-config',
+      'edit-production-s-code-config',
+      'edit-development-s-code',
+      'edit-production-s-code',
+      'edit-footer-js-code',
+      'edit-cdn-custom-tracking-js-before',
+      'edit-cdn-custom-tracking-js-after'
+    ];
+    foreach ($formIds as $formId) {
+      $codeElement = $this->xpath('//input[@id=:id]', [':id' => $formId]);
+      $this->assertEquals($this->dummyValue, $codeElement[0]->getValue());
+    }
+
+    // Test Tag manager submission.
     $edit = [
       'mode' => 'cdn',
       'cdn_install_type' => 'tag',
-      'development_tag_manager_container_path' => $this->randomGenerator->string(),
-      'production_tag_manager_container_path' => $this->randomGenerator->string(),
-      'tag_manager_footer_js' => $this->randomGenerator->string()
+      'development_tag_manager_container_path' => $this->dummyValue,
+      'production_tag_manager_container_path' => $this->dummyValue,
+      'tag_manager_footer_js' => $this->dummyValue
     ];
     // Save settings form.
     $this->submitForm($edit, t('Save configuration'));
     $this->assertSession()
       ->pageTextContains('The configuration options have been saved.');
+
+    // Test form retains the values after saving.
+    $formIds = [
+      'edit-development-tag-manager-container-path',
+      'edit-production-tag-manager-container-path',
+      'edit-tag-manager-footer-js'
+    ];
+    foreach ($formIds as $formId) {
+      $codeElement = $this->xpath('//input[@id=:id]', [':id' => $formId]);
+      $this->assertEquals($this->dummyValue, $codeElement[0]->getValue());
+    }
   }
 
   /**
@@ -102,13 +132,19 @@ class AdobeAnalyticsFormSubmitTest extends BrowserTestBase {
 
     $edit = [
       'data_layer_enabled' => '1',
-      'data_layer_root_field' => $this->randomGenerator->string(),
-      'data_layer_json_object' => $this->randomGenerator->string()
+      'data_layer_root_field' => $this->dummyValue,
+      'data_layer_json_object' => '[]',
     ];
     // Save settings form.
     $this->submitForm($edit, t('Save configuration'));
     $this->assertSession()
       ->pageTextContains('The configuration options have been saved.');
+
+    // Test form retains the values after saving.
+    $codeElement = $this->xpath('//input[@id="edit-data-layer-enabled-1"]');
+    $this->assertTrue(isset($codeElement[0]));
+    $codeElement = $this->xpath('//input[@id=:id]', [':id' => 'edit-data-layer-root-field']);
+    $this->assertEquals($this->dummyValue, $codeElement[0]->getValue());
   }
 
   /**
@@ -120,11 +156,19 @@ class AdobeAnalyticsFormSubmitTest extends BrowserTestBase {
     $this->assertSession()->statusCodeEquals(200);
 
     $edit = [
-      'data_layer_custom_javascript' => $this->randomGenerator->string(),
+      'data_layer_custom_javascript' => $this->dummyValue,
     ];
     // Save settings form.
     $this->submitForm($edit, t('Save configuration'));
     $this->assertSession()
       ->pageTextContains('The configuration options have been saved.');
+
+    $formIds = [
+      'edit-data-layer-custom-javascript',
+    ];
+    foreach ($formIds as $formId) {
+      $codeElement = $this->xpath('//input[@id=:id]', [':id' => $formId]);
+      $this->assertEquals($this->dummyValue, $codeElement[0]->getValue());
+    }
   }
 }

@@ -146,7 +146,7 @@ class DataLayerForm extends ConfigFormBase {
     $data_layer_keys = $form_state->getValue('data_layer_keys');
     $value = $form_state->getValue('data_layer_value');
     $check_option = $form_state->getValue('data_layer_level_option');
-    $data_layer_org = $config->get('data_layer_json_object') ? $config->get('data_layer_json_object') : [];
+    $data_layer_org = $config->get('data_layer_json_object') ? $config->get('data_layer_json_object') : '[]';
     if (!empty($data_layer_org)) {
       $data_layer_array = json_decode($data_layer_org, TRUE);
     }
