@@ -265,11 +265,12 @@ class AdobeAnalyticsHelper {
    * Function to render cdn markup.
    *
    * @param array $build
-   *   Build array containing theme markup
+   *   Build array containing theme markup.
+   *
    * @return array
    *   Build array.
    */
-  protected function renderCdnMarkup($build) {
+  protected function renderCdnMarkup(array $build) {
     if ($this->skipTracking(1)) {
       return [];
     }
@@ -308,11 +309,12 @@ class AdobeAnalyticsHelper {
    * Function to render datalayer markup.
    *
    * @param array $build
-   *   Build array containing theme and cdn markup, if cdn is enabled
+   *   Build array containing theme and cdn markup, if cdn is enabled.
+   *
    * @return array
    *   Build array.
    */
-  protected function renderDatalayerMarkup($build) {
+  protected function renderDatalayerMarkup(array $build) {
 
     if ($this->skipTracking(2)) {
       return [];
@@ -336,15 +338,16 @@ class AdobeAnalyticsHelper {
     return $build;
   }
 
-    /**
-     * Determines whether or not to skip adding analytics code.
-     *
-     * @param int $type
-     *   type 1 will load cdn and general configuration,
-     *   and 2 will load data_layer configuration.
-     * @return bool
-     *   Skips the tracking if true.
-     */
+  /**
+   * Determines whether or not to skip adding analytics code.
+   *
+   * @param int $type
+   *   Type 1 will load cdn and general configuration, and 2 will load
+   *   data_layer configuration.
+   *
+   * @return bool
+   *   Skips the tracking if true.
+   */
   public function skipTracking($type) {
 
     if ($type == 1) {

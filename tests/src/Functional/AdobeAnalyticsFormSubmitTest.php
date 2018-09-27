@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: malabya
- * Date: 24/09/18
- * Time: 6:54 PM
- */
 
 namespace Drupal\Tests\adobe_analytics\Functional;
 
@@ -24,7 +18,7 @@ class AdobeAnalyticsFormSubmitTest extends BrowserTestBase {
    */
   public static $modules = [
     'user',
-    'adobe_analytics'
+    'adobe_analytics',
   ];
 
   /**
@@ -65,7 +59,7 @@ class AdobeAnalyticsFormSubmitTest extends BrowserTestBase {
     $this->assertSession()
       ->pageTextContains('Please enter a fully-qualified URL, such as https://s3.amazonaws.com/pfe_im/...');
 
-    // Test form submit
+    // Test form submit.
     $edit = [
       'mode' => 'cdn',
       'cdn_install_type' => 'amazon',
@@ -90,7 +84,7 @@ class AdobeAnalyticsFormSubmitTest extends BrowserTestBase {
       'edit-production-s-code',
       'edit-footer-js-code',
       'edit-cdn-custom-tracking-js-before',
-      'edit-cdn-custom-tracking-js-after'
+      'edit-cdn-custom-tracking-js-after',
     ];
     foreach ($formIds as $formId) {
       $codeElement = $this->xpath('//input[@id=:id]', [':id' => $formId]);
@@ -103,7 +97,7 @@ class AdobeAnalyticsFormSubmitTest extends BrowserTestBase {
       'cdn_install_type' => 'tag',
       'development_tag_manager_container_path' => $this->dummyValue,
       'production_tag_manager_container_path' => $this->dummyValue,
-      'tag_manager_footer_js' => $this->dummyValue
+      'tag_manager_footer_js' => $this->dummyValue,
     ];
     // Save settings form.
     $this->submitForm($edit, t('Save configuration'));
@@ -114,7 +108,7 @@ class AdobeAnalyticsFormSubmitTest extends BrowserTestBase {
     $formIds = [
       'edit-development-tag-manager-container-path',
       'edit-production-tag-manager-container-path',
-      'edit-tag-manager-footer-js'
+      'edit-tag-manager-footer-js',
     ];
     foreach ($formIds as $formId) {
       $codeElement = $this->xpath('//input[@id=:id]', [':id' => $formId]);
@@ -163,12 +157,35 @@ class AdobeAnalyticsFormSubmitTest extends BrowserTestBase {
     $this->assertSession()
       ->pageTextContains('The configuration options have been saved.');
 
-    $formIds = [
-      'edit-data-layer-custom-javascript',
-    ];
-    foreach ($formIds as $formId) {
-      $codeElement = $this->xpath('//input[@id=:id]', [':id' => $formId]);
-      $this->assertEquals($this->dummyValue, $codeElement[0]->getValue());
-    }
+    $codeElement = $this->xpath('//input[@id=:id]', [':id' => 'edit-data-layer-custom-javascript']);
+    $this->assertEquals($this->dummyValue, $codeElement[0]->getValue());
   }
+
+  /**
+   * Test the Data layer custom javascript form submission.
+   */
+  public function testReportSuiteFormSubmit() {
+    // Access the Adobe analytics form.
+    $this->drupalGet('/admin/config/system/adobe_analytics/report_suite');
+    $this->assertSession()->statusCodeEquals(200);
+
+    $edit = [
+      'mode' => 'dev',
+      'development_report_suites' => $this->randomMachineName(),
+      'development_domains' => $this->randomMachineName(),
+      'production_report_suites' => $this->randomMachineName(),
+      'development_report_suites' => $this->randomMachineName(),
+      'site_section_prefix' => $this->randomMachineName(5),
+      'site_section_delimiter' => $this->randomMachineName(1),
+      'page_name_base' => $this->randomMachineName(),
+      'page_name_prefix' => $this->randomMachineName(5),
+      'page_name_delimiter' => $this->randomMachineName(1),
+      'page_name_homepage' => $this->randomMachineName(),
+    ];
+    // Save settings form.
+    $this->submitForm($edit, t('Save configuration'));
+    $this->assertSession()
+      ->pageTextContains('The configuration options have been saved.');
+  }
+
 }

@@ -99,6 +99,44 @@ adobe_analytics.data_layer_custom_javascript:
     data_layer_custom_javascript:
       type: string
       label: 'Adobe analytics data layer custom Javascript'
+adobe_analytics.report_suite:
+  type: config_object
+  label: 'Adobe analytics Report Suite'
+  mapping:
+    mode:
+      type: string
+      label: 'Mode'
+    development_report_suites:
+      type: string
+      label: 'Development report suites'
+    production_report_suites:
+      type: string
+      label: 'Production report suites'
+    development_domains:
+      type: string
+      label: 'Development domains'
+    production_domains:
+      type: string
+      label: 'Production domains'
+    site_section_prefix:
+      type: string
+      label: 'Site section prefix'
+    site_section_delimiter:
+      type: string
+      label: 'Site section delimiter'
+    page_name_base:
+      type: string
+      label: 'Page name base'
+    page_name_prefix:
+      type: string
+      label: 'Page name prefix'
+    page_name_delimiter:
+      type: string
+      label: 'Page name delimiter'
+    page_name_homepage:
+      type: string
+      label: 'Page name homepage'
+
 
 adobe_analytics.variable:
   type: config_object

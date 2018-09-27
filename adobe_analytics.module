@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Render\Markup;
 
 /**
  * Implements hook_help().
@@ -52,7 +53,10 @@ function adobe_analytics_theme($existing, $type, $theme, $path) {
  */
 function adobe_analytics_page_bottom(&$variables) {
   $variables['adobe_analytics'] = [
-    '#lazy_builder' => ['adobe_analytics.adobe_analytics_helper:renderMarkup', []],
+    '#lazy_builder' => [
+      'adobe_analytics.adobe_analytics_helper:renderMarkup',
+      [],
+    ],
     '#create_placeholder' => TRUE,
     '#cache' => [
       'contexts' => ['user.roles'],
@@ -85,4 +89,62 @@ function adobe_analytics_adobe_analytics_variables() {
   }
 
   return ['variables' => $variables];
+}
+
+/**
+ * Implements hook_page_attachments_alter().
+ */
+function adobe_analytics_page_attachments_alter(array &$attachments) {
+  $config = \Drupal::config('adobe_analytics.report_suite');
+
+  $mode = $config->get('mode');
+  $development_report_suites = $config->get('development_report_suites');
+  $production_report_suites = $config->get('production_report_suites');
+  $development_domains = $config->get('development_domains');
+  $production_domains = $config->get('production_domains');
+  $site_section_prefix = $config->get('site_section_prefix');
+  $site_section_delimiter = $config->get('site_section_delimiter');
+  $page_name_base = $config->get('page_name_base');
+  $page_name_prefix = $config->get('page_name_prefix');
+  $page_name_delimiter = $config->get('page_name_delimiter');
+  $page_name_homepage = $config->get('page_name_homepage');
+
+  $pfconfig = <<<EOT
+  var pfConfig = {
+    mode: '$mode',
+    reportSuites: {
+      dev: '$development_report_suites',
+      prod: '$production_report_suites'
+    },
+    domains: {
+      dev: '$development_domains',
+      prod: '$production_domains'
+    },
+    siteSection: {
+      prefix: '$site_section_prefix',
+      delimiter: '$site_section_delimiter'
+    },
+    pageName: {
+      base: '$page_name_base',
+      prefix: '$page_name_prefix',
+      delimiter: '$page_name_delimiter',
+      homePage: '$page_name_homepage'
+    },
+};
+EOT;
+
+  $attachments['#attached']['library'][] = 'adobe_analytics/urlconfig';
+
+  /*
+   * Need to use Markup::create() so that the delimiters don't get filtered.
+   * @TODO find a better way to do this.
+   */
+  $attachments['#attached']['html_head'][] = [
+    [
+      '#type' => 'html_tag',
+      '#tag' => 'script',
+      '#value' => Markup::create($pfconfig),
+    ],
+    'adobe_analytics',
+  ];
 }

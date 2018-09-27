@@ -26,3 +26,13 @@ adobe_analytics.data_layer_custom_javascript_form:
     _permission: 'administer adobe analytics configuration'
   options:
     _admin_route: TRUE
+
+adobe_analytics.report_suites_form:
+  path: '/admin/config/system/adobe_analytics/report_suite'
+  defaults:
+    _form: '\Drupal\adobe_analytics\Form\ReportSuiteForm'
+    _title: 'Report Suite'
+  requirements:
+    _permission: 'access administration pages'
+  options:
+    _admin_route: TRUE
