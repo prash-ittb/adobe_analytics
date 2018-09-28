@@ -1,0 +1,18 @@
+ace:
+  version: 1.x
+  js:
+    js/ace/ace.js: {}
+
+codesnippet:
+  version: 1.x
+  js:
+    js/codesnippet.js: {}
+  dependencies:
+    - core/jquery
+    - adobe_analytics/ace
+
+urlconfig:
+  version: 1.x
+  header: true
+  js:
+    js/urlconfig.js: {preprocess: false}

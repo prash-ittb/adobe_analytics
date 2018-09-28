@@ -2,6 +2,42 @@ adobe_analytics.settings:
   type: config_object
   label: 'Adobe Analytics settings'
   mapping:
+    mode:
+      type: string
+      label: 'Adobe analytics installation mode'
+    cdn_install_type:
+      type: string
+      label: 'Adobe analytics installation type'
+    development_s_code_config:
+      type: string
+      label: 'Development S code config path'
+    production_s_code_config:
+      type: string
+      label: 'Production S code config path'
+    development_s_code:
+      type: string
+      label: 'Development S code path'
+    production_s_code:
+      type: string
+      label: 'Production S code path'
+    footer_js_code:
+      type: string
+      label: 'Footer JS code'
+    cdn_custom_tracking_js_before:
+      type: string
+      label: 'Custom tracking JS code before'
+    cdn_custom_tracking_js_after:
+      type: string
+      label: 'Custom tracking JS code after'
+    development_tag_manager_container_path:
+      type: string
+      label: 'Development tag manager container path'
+    production_tag_manager_container_path:
+      type: string
+      label: 'Production tag manager container path'
+    tag_manager_footer_js:
+      type: string
+      label: 'Tag manager footer js code'
     role_tracking_type:
       type: string
       label: 'Role Tracking Type'
@@ -32,6 +68,75 @@ adobe_analytics.settings:
       sequence:
         type: string
         label: 'Roles to track or not track'
+
+adobe_analytics.data_layer:
+  type: config_object
+  label: 'Adobe Analytics data layer settings'
+  mapping:
+    data_layer_enabled:
+      type: string
+      label: 'Data layer enabled/disabled'
+    data_layer_root_field:
+      type: string
+      label: 'Data layer root field'
+    data_layer_json_object:
+      type: string
+      label: 'Data layer JSON string'
+    role_tracking_type:
+      type: string
+      label: 'Role Tracking Type'
+    track_roles:
+      type: sequence
+      label: 'Track roles'
+      sequence:
+        type: string
+        label: 'Roles to track or not track'
+
+adobe_analytics.data_layer_custom_javascript:
+  type: config_object
+  label: 'Adobe analytics data layer custom Javascript'
+  mapping:
+    data_layer_custom_javascript:
+      type: string
+      label: 'Adobe analytics data layer custom Javascript'
+adobe_analytics.report_suite:
+  type: config_object
+  label: 'Adobe analytics Report Suite'
+  mapping:
+    mode:
+      type: string
+      label: 'Mode'
+    development_report_suites:
+      type: string
+      label: 'Development report suites'
+    production_report_suites:
+      type: string
+      label: 'Production report suites'
+    development_domains:
+      type: string
+      label: 'Development domains'
+    production_domains:
+      type: string
+      label: 'Production domains'
+    site_section_prefix:
+      type: string
+      label: 'Site section prefix'
+    site_section_delimiter:
+      type: string
+      label: 'Site section delimiter'
+    page_name_base:
+      type: string
+      label: 'Page name base'
+    page_name_prefix:
+      type: string
+      label: 'Page name prefix'
+    page_name_delimiter:
+      type: string
+      label: 'Page name delimiter'
+    page_name_homepage:
+      type: string
+      label: 'Page name homepage'
+
 
 adobe_analytics.variable:
   type: config_object

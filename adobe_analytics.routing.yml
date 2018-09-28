@@ -1,7 +1,38 @@
 adobe_analytics.settings:
-  path: '/admin/config/system/adobeanalytics'
+  path: '/admin/config/system/adobe_analytics'
   defaults:
     _title: 'Adobe Analytics'
     _form: '\Drupal\adobe_analytics\Form\AdobeAnalyticsAdminSettings'
   requirements:
     _permission: 'administer adobe analytics configuration'
+
+adobe_analytics.data_layer_form:
+  path: '/admin/config/system/adobe_analytics/data_layer'
+  defaults:
+    _form: '\Drupal\adobe_analytics\Form\DataLayerForm'
+    _title: 'Data Layer'
+  requirements:
+    _permission: 'administer adobe analytics configuration'
+  options:
+    _admin_route: TRUE
+
+
+adobe_analytics.data_layer_custom_javascript_form:
+  path: '/admin/config/system/adobe_analytics/data_layer_custom_javascript'
+  defaults:
+    _form: '\Drupal\adobe_analytics\Form\DataLayerCustomJavascriptForm'
+    _title: 'Data Layer Custom Javascript'
+  requirements:
+    _permission: 'administer adobe analytics configuration'
+  options:
+    _admin_route: TRUE
+
+adobe_analytics.report_suites_form:
+  path: '/admin/config/system/adobe_analytics/report_suite'
+  defaults:
+    _form: '\Drupal\adobe_analytics\Form\ReportSuiteForm'
+    _title: 'Report Suite'
+  requirements:
+    _permission: 'access administration pages'
+  options:
+    _admin_route: TRUE

@@ -18,8 +18,6 @@ use Drupal\Core\Url;
  */
 class AdobeAnalyticsWidget extends WidgetBase {
 
-
-
   /**
    * {@inheritdoc}
    */
@@ -70,7 +68,7 @@ class AdobeAnalyticsWidget extends WidgetBase {
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   public function massageFormValues(array $values, array $form, FormStateInterface $form_state) {
     // Extract values from the fieldset.
