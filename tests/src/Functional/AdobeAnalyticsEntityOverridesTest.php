@@ -5,14 +5,14 @@ namespace Drupal\Tests\adobe_analytics\Functional;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\FunctionalJavascriptTests\DrupalSelenium2Driver;
-use Drupal\FunctionalJavascriptTests\JavascriptTestBase;
+use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
 
 /**
  * Tests entity overrides.
  *
  * @group adobe_analytics
  */
-class AdobeAnalyticsEntityOverridesTest extends JavascriptTestBase {
+class AdobeAnalyticsEntityOverridesTest extends WebDriverTestBase {
 
   /**
    * {@inheritdoc}

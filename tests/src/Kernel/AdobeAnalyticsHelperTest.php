@@ -129,12 +129,12 @@ class AdobeAnalyticsHelperTest extends KernelTestBase {
       ])
       ->set('role_tracking_type', 'inclusive')
       ->save();
-    $this->assertFalse($this->adobeAnalyticsHelper->skipTracking());
+    $this->assertFalse($this->adobeAnalyticsHelper->skipTracking('1'));
 
     \Drupal::configFactory()->getEditable('adobe_analytics.settings')
       ->set('role_tracking_type', 'exclusive')
       ->save();
-    $this->assertTrue($this->adobeAnalyticsHelper->skipTracking());
+    $this->assertTrue($this->adobeAnalyticsHelper->skipTracking('1'));
   }
 
   /**
@@ -170,6 +170,7 @@ class AdobeAnalyticsHelperTest extends KernelTestBase {
 
     $expected = [
       '#theme' => 'analytics_code',
+      '#general_status' => TRUE,
       '#js_file_location' => 'http://www.example.com/js/s_code_remote_h.js',
       '#version' => 'H.20.3.',
       '#image_location' => 'http://examplecom.112.2O7.net/b/ss/examplecom/1/H.20.3--NS/0',
