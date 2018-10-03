@@ -326,7 +326,7 @@ class AdobeAnalyticsHelper {
 
     // $node = \Drupal::request()->attributes->get('node');
     if (empty($data_layer_json) || !\Drupal::moduleHandler()
-      ->moduleExists('token')
+        ->moduleExists('token')
     ) {
       return [];
     }
@@ -349,12 +349,14 @@ class AdobeAnalyticsHelper {
    *   Skips the tracking if true.
    */
   public function skipTracking($type) {
-
     if ($type == 1) {
       $config = $this->cdnConfig;
     }
     elseif ($type == 2) {
       $config = $this->datalayerConfig;
+    }
+    else {
+      return FALSE;
     }
     // Check if we should track the currently active user's role.
     $track_user = TRUE;
