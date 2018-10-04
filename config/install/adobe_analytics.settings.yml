@@ -1,8 +1,8 @@
 js_file_location: ''
 codesnippet: ''
-version: H.20.3.
+version: ''
 image_file_location: ''
-token_cache_lifetime: 0
+token_cache_lifetime: ''
 extra_variables: { }
 mode: 'general'
 cdn_install_type: 'amazon'

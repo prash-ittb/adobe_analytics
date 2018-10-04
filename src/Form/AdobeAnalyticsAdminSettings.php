@@ -80,7 +80,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       ],
     ];
     $form['amazon_s_code_config']['development_s_code_config'] = [
-      '#required' => '0',
+      '#required' => TRUE,
       '#description' => t('Enter your development Adobe analytics tracking S code configuration path (s_code_config.js).'),
       '#weight' => '0',
       '#type' => 'textfield',
@@ -89,7 +89,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#default_value' => $config->get('development_s_code_config'),
     ];
     $form['amazon_s_code_config']['production_s_code_config'] = [
-      '#required' => '0',
+      '#required' => TRUE,
       '#description' => t('Enter your production Adobe analytics tracking S code configuration path (s_code_config.js).'),
       '#weight' => '1',
       '#type' => 'textfield',
@@ -113,7 +113,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       ],
     ];
     $form['amazon_s_code']['development_s_code'] = [
-      '#required' => '0',
+      '#required' => TRUE,
       '#description' => t('Enter your development Adobe analytics tracking S code path (s_code.js).'),
       '#weight' => '0',
       '#type' => 'textfield',
@@ -122,7 +122,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#default_value' => $config->get('development_s_code'),
     ];
     $form['amazon_s_code']['production_s_code'] = [
-      '#required' => '0',
+      '#required' => TRUE,
       '#description' => t('Enter your production Adobe analytics tracking S code path (s_code.js).'),
       '#weight' => '3',
       '#type' => 'textfield',
@@ -199,7 +199,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       ],
     ];
     $form['tag_manager_container_path']['development_tag_manager_container_path'] = [
-      '#required' => '0',
+      '#required' => TRUE,
       '#description' => t('Enter your development tag manager tool container path.'),
       '#weight' => '0',
       '#type' => 'textfield',
@@ -208,7 +208,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#default_value' => $config->get('development_tag_manager_container_path'),
     ];
     $form['tag_manager_container_path']['production_tag_manager_container_path'] = [
-      '#required' => '0',
+      '#required' => TRUE,
       '#description' => t('Enter your production tag manager tool container path.'),
       '#weight' => '1',
       '#type' => 'textfield',
@@ -240,7 +240,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
     // General form elements.
     $form['general_warning'] = [
       '#type' => 'item',
-      '#markup' => "<div class='messages messages--warning'>" . $this->t("Use basic configuration for backward compatibility and its recommended to use CDN based analytics configuration.") . "</div>",
+      '#markup' => "<div class='messages messages--warning'>" . $this->t("Please use CDN Installation Mode for Analytics setup. Do not use Basic Installation mode, it is provided for backwards compatibility only.") . "</div>",
       '#weight' => '-11',
       '#states' => [
         'visible' => [
@@ -498,58 +498,6 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
     if (!empty($variable_name) && !preg_match("/^[A-Za-z_$]{1}\S*$/", $variable_name)) {
       $form_state->setError($element, $this->t('This is not a valid variable name. It must start with a letter, $ or _ and cannot contain spaces.'));
     }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-    $amazon_s3_urls = [];
-    if ($form_state->getValue('mode') == 'cdn') {
-      if ($form_state->getValue('cdn_install_type') == 'amazon') {
-        $checks = [
-          'development_s_code_config' => t('Enter your development Adobe analytics tracking S Code Configuration Path.'),
-          'production_s_code_config' => t('Enter your production Adobe analytics tracking S Code Configuration Path.'),
-          'development_s_code' => t('Enter your development Adobe analytics tracking S Code Path.'),
-          'production_s_code' => t('Enter your production Adobe analytics tracking S Code Path.'),
-        ];
-        $amazon_s3_urls = [
-          'development_s_code_config',
-          'production_s_code_config',
-          'development_s_code',
-          'production_s_code',
-          'footer_js_code',
-          'cdn_custom_tracking_js_before',
-          'cdn_custom_tracking_js_after',
-        ];
-      }
-      else {
-        $checks = [
-          'development_tag_manager_container_path' => t('Enter your development Tag Manager Tool Container Path.'),
-          'production_tag_manager_container_path' => t('Enter your production Tag Manager Tool Container Path.'),
-        ];
-      }
-
-      foreach ($checks as $variable => $warning) {
-        if (empty($form_state->getValue([$variable]))) {
-          $form_state->setErrorByName($variable, $warning);
-        }
-      }
-
-      // Check file hosted only on amazon s3.
-      foreach ($amazon_s3_urls as $s3_url) {
-        if (!UrlHelper::isValid($form_state->getValue([$s3_url]), TRUE)) {
-          $form_state->setErrorByName($s3_url, t('The URL %url is invalid. Please enter a fully-qualified URL, such as https://s3.amazonaws.com/pfe_im/...', ['%url' => $form_state->getValue([$s3_url])]));
-        }
-        else {
-          if (!empty($form_state->getValue([$s3_url])) && strpos($form_state->getValue([$s3_url]), '//s3.amazonaws.com/pfe_im') === FALSE) {
-            $form_state->setErrorByName($s3_url, t("File should be hosted only on Amazon S3 e.g //s3.amazonaws.com/pfe_im/..."));
-          }
-        }
-      }
-    }
-
-    parent::validateForm($form, $form_state);
   }
 
   /**
