@@ -86,7 +86,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#description' => t('Enter your development Adobe analytics tracking S code configuration path (s_code_config.js).'),
       '#weight' => '0',
       '#type' => 'textfield',
-      '#maxlength' => 255,
+      '#maxlength' => 500,
       '#title' => t('Development'),
       '#default_value' => $config->get('development_s_code_config'),
     ];
@@ -95,7 +95,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#description' => t('Enter your production Adobe analytics tracking S code configuration path (s_code_config.js).'),
       '#weight' => '1',
       '#type' => 'textfield',
-      '#maxlength' => 255,
+      '#maxlength' => 500,
       '#title' => t('Production'),
       '#default_value' => $config->get('production_s_code_config'),
     ];
@@ -121,7 +121,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#description' => t('Enter your development Adobe analytics tracking S code path (s_code.js).'),
       '#weight' => '0',
       '#type' => 'textfield',
-      '#maxlength' => 255,
+      '#maxlength' => 500,
       '#title' => t('Development'),
       '#default_value' => $config->get('development_s_code'),
     ];
@@ -130,7 +130,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#description' => t('Enter your production Adobe analytics tracking S code path (s_code.js).'),
       '#weight' => '3',
       '#type' => 'textfield',
-      '#maxlength' => 255,
+      '#maxlength' => 500,
       '#title' => t('Production'),
       '#default_value' => $config->get('production_s_code'),
     ];
@@ -155,7 +155,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#description' => t('Enter the path of footer code JS file on Amazon S3.'),
       '#weight' => '0',
       '#type' => 'textfield',
-      '#maxlength' => 255,
+      '#maxlength' => 500,
       '#default_value' => $config->get('footer_js_code'),
     ];
 
@@ -179,7 +179,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#description' => t('Enter the path for custom JS file on Amazon S3. This JS will be added to all pages just before page view call i.e. s(t).'),
       '#weight' => '0',
       '#type' => 'textfield',
-      '#maxlength' => 255,
+      '#maxlength' => 500,
       '#title' => t('Custom tracking javascript path (loaded before s.t())'),
       '#default_value' => $config->get('cdn_custom_tracking_js_before'),
     ];
@@ -188,7 +188,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#description' => t('Enter the path gor custom JS file on Amazon S3. This JS will be added to all pages just after page view call i.e. s(t).'),
       '#weight' => '1',
       '#type' => 'textfield',
-      '#maxlength' => 255,
+      '#maxlength' => 500,
       '#title' => t('Custom tracking javascript path (loaded after s.t())'),
       '#default_value' => $config->get('cdn_custom_tracking_js_after'),
     ];
@@ -205,6 +205,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
         ],
         'invisible' => [
           ':input[name="mode"]' => ['value' => 'general'],
+          'input[name="cdn_install_type"]' => ['value' => 'amazon'],
         ],
       ],
     ];
@@ -213,7 +214,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#description' => t('Enter your development tag manager tool container path.'),
       '#weight' => '0',
       '#type' => 'textfield',
-      '#maxlength' => 255,
+      '#maxlength' => 500,
       '#title' => t('Development'),
       '#default_value' => $config->get('development_tag_manager_container_path'),
     ];
@@ -222,7 +223,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#description' => t('Enter your production tag manager tool container path.'),
       '#weight' => '1',
       '#type' => 'textfield',
-      '#maxlength' => 255,
+      '#maxlength' => 500,
       '#title' => t('Production'),
       '#default_value' => $config->get('production_tag_manager_container_path'),
     ];
@@ -246,7 +247,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#description' => t('Enter the path of footer code JS file on Amazon S3.'),
       '#weight' => '0',
       '#type' => 'textfield',
-      '#maxlength' => 255,
+      '#maxlength' => 500,
       '#default_value' => $config->get('tag_manager_footer_js'),
     ];
     // General form elements.
@@ -274,14 +275,14 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
 
     $form['general']['js_file_location'] = [
       '#type' => 'textfield',
-      '#maxlength' => 255,
+      '#maxlength' => 500,
       '#title' => $this->t('Complete path to AdobeAnalytics Javascript file'),
       '#default_value' => $config->get('js_file_location'),
     ];
 
     $form['general']['image_file_location'] = [
       '#type' => 'textfield',
-      '#maxlength' => 255,
+      '#maxlength' => 500,
       '#title' => $this->t('Complete path to AdobeAnalytics Image file'),
       '#default_value' => $config->get('image_file_location'),
     ];
