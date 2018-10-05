@@ -37,10 +37,10 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
 
     $config = $this->config('adobe_analytics.settings');
 
-    $form['mode'] = [
+    $form['installation_mode'] = [
       '#type' => 'select',
       '#title' => $this->t('Installation mode'),
-      '#default_value' => $config->get('mode') ? $config->get('mode') : 'general',
+      '#default_value' => $config->get('installation_mode') ? $config->get('installation_mode') : 'general',
       '#options' => [
         'general' => $this->t('Basic'),
         'cdn' => $this->t('CDN'),
@@ -60,7 +60,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#weight' => '-10',
       '#states' => [
         'visible' => [
-          ':input[name="mode"]' => ['value' => 'cdn'],
+          ':input[name="installation_mode"]' => ['value' => 'cdn'],
         ],
       ],
     ];
@@ -74,7 +74,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#collapsed' => '0',
       '#states' => [
         'visible' => [
-          ':input[name="mode"]' => ['value' => 'cdn'],
+          ':input[name="installation_mode"]' => ['value' => 'cdn'],
           'input[name="cdn_install_type"]' => ['value' => 'amazon'],
         ],
       ],
@@ -107,7 +107,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#collapsed' => '0',
       '#states' => [
         'visible' => [
-          ':input[name="mode"]' => ['value' => 'cdn'],
+          ':input[name="installation_mode"]' => ['value' => 'cdn'],
           'input[name="cdn_install_type"]' => ['value' => 'amazon'],
         ],
       ],
@@ -139,7 +139,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#collapsed' => '0',
       '#states' => [
         'visible' => [
-          ':input[name="mode"]' => ['value' => 'cdn'],
+          ':input[name="installation_mode"]' => ['value' => 'cdn'],
           'input[name="cdn_install_type"]' => ['value' => 'amazon'],
         ],
       ],
@@ -171,7 +171,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#collapsed' => '0',
       '#states' => [
         'visible' => [
-          ':input[name="mode"]' => ['value' => 'cdn'],
+          ':input[name="installation_mode"]' => ['value' => 'cdn'],
           'input[name="cdn_install_type"]' => ['value' => 'amazon'],
         ],
       ],
@@ -184,7 +184,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#collapsed' => '0',
       '#states' => [
         'visible' => [
-          ':input[name="mode"]' => ['value' => 'cdn'],
+          ':input[name="installation_mode"]' => ['value' => 'cdn'],
           'input[name="cdn_install_type"]' => ['value' => 'amazon'],
         ],
       ],
@@ -215,7 +215,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#collapsed' => '0',
       '#states' => [
         'visible' => [
-          ':input[name="mode"]' => ['value' => 'cdn'],
+          ':input[name="installation_mode"]' => ['value' => 'cdn'],
           'input[name="cdn_install_type"]' => ['value' => 'amazon'],
         ],
       ],
@@ -247,7 +247,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#collapsed' => '0',
       '#states' => [
         'visible' => [
-          ':input[name="mode"]' => ['value' => 'cdn'],
+          ':input[name="installation_mode"]' => ['value' => 'cdn'],
           'input[name="cdn_install_type"]' => ['value' => 'tag'],
         ],
       ],
@@ -286,7 +286,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#collapsed' => '0',
       '#states' => [
         'visible' => [
-          ':input[name="mode"]' => ['value' => 'cdn'],
+          ':input[name="installation_mode"]' => ['value' => 'cdn'],
           'input[name="cdn_install_type"]' => ['value' => 'tag'],
         ],
       ],
@@ -316,7 +316,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#weight' => '-11',
       '#states' => [
         'visible' => [
-          ':input[name="mode"]' => ['value' => 'general'],
+          ':input[name="installation_mode"]' => ['value' => 'general'],
         ],
       ],
     ];
@@ -327,7 +327,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#weight' => '-10',
       '#states' => [
         'visible' => [
-          ':input[name="mode"]' => ['value' => 'general'],
+          ':input[name="installation_mode"]' => ['value' => 'general'],
         ],
       ],
     ];
@@ -373,7 +373,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#suffix' => '</div>',
       '#states' => [
         'visible' => [
-          ':input[name="mode"]' => ['value' => 'general'],
+          ':input[name="installation_mode"]' => ['value' => 'general'],
         ],
       ],
     ];
@@ -400,7 +400,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#weight' => '-2',
       '#states' => [
         'visible' => [
-          ':input[name="mode"]' => ['value' => 'general'],
+          ':input[name="installation_mode"]' => ['value' => 'general'],
         ],
       ],
     ];
@@ -597,7 +597,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       'production_tag_manager_container_path',
     ];
 
-    if ($form_state->getValue('mode') == 'cdn') {
+    if ($form_state->getValue('installation_mode') == 'cdn') {
       foreach ($cloud_fields as $field) {
         if ($form_state->getValue($field) && !strstr($form_state->getValue($field), $config->get('cloud_domain'))) {
           $form_state->setErrorByName($field, "Scripts can 
@@ -638,7 +638,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
 
     // Save all the config variables.
     $config
-      ->set('mode', $form_state->getValue('mode'))
+      ->set('installation_mode', $form_state->getValue('installation_mode'))
       ->set('cdn_install_type', $form_state->getValue('cdn_install_type'))
       ->set('development_s_code_config', $form_state->getValue('development_s_code_config'))
       ->set('production_s_code_config', $form_state->getValue('production_s_code_config'))
