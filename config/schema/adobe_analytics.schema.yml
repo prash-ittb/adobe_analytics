@@ -20,24 +20,36 @@ adobe_analytics.settings:
     production_s_code:
       type: string
       label: 'Production S code path'
-    footer_js_code:
+    development_footer_js_code:
       type: string
-      label: 'Footer JS code'
-    cdn_custom_tracking_js_before:
+      label: 'Development Footer JS code'
+    production_footer_js_code:
       type: string
-      label: 'Custom tracking JS code before'
-    cdn_custom_tracking_js_after:
+      label: 'Production Footer JS code'
+    development_cdn_custom_tracking_js_before:
       type: string
-      label: 'Custom tracking JS code after'
+      label: 'Development Custom tracking JS code before'
+    development_cdn_custom_tracking_js_after:
+      type: string
+      label: 'Development Custom tracking JS code after'
+    production_cdn_custom_tracking_js_before:
+      type: string
+      label: 'Production Custom tracking JS code before'
+    production_cdn_custom_tracking_js_after:
+      type: string
+      label: 'Production Custom tracking JS code after'
     development_tag_manager_container_path:
       type: string
       label: 'Development tag manager container path'
     production_tag_manager_container_path:
       type: string
       label: 'Production tag manager container path'
-    tag_manager_footer_js:
+    development_tag_manager_footer_js:
       type: string
-      label: 'Tag manager footer js code'
+      label: 'Development Tag manager footer js code'
+    production_tag_manager_footer_js:
+      type: string
+      label: 'Production Tag manager footer js code'
     role_tracking_type:
       type: string
       label: 'Role Tracking Type'

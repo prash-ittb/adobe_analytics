@@ -291,15 +291,15 @@ class AdobeAnalyticsHelper {
       $build['#amazon_status'] = TRUE;
       $build['#s_code_config_path'] = $this->cdnConfig->get($environment . '_s_code_config');
       $build['#s_code_path'] = $this->cdnConfig->get($environment . '_s_code');
-      $build['#footer_js_code'] = $this->cdnConfig->get('footer_js_code');
-      $build['#custom_tracking_js_before'] = $this->cdnConfig->get('cdn_custom_tracking_js_before');
-      $build['#custom_tracking_js_after'] = $this->cdnConfig->get('cdn_custom_tracking_js_after');
+      $build['#footer_js_code'] = $this->cdnConfig->get($environment . 'footer_js_code');
+      $build['#custom_tracking_js_before'] = $this->cdnConfig->get($environment . 'cdn_custom_tracking_js_before');
+      $build['#custom_tracking_js_after'] = $this->cdnConfig->get($environment . 'cdn_custom_tracking_js_after');
     }
     else {
       // For Tag Manager Tool.
       $build['#tag_status'] = TRUE;
       $build['#tag_manager_js_path'] = $this->cdnConfig->get($environment . '_tag_manager_container_path');
-      $build['#tag_manager_footer_js'] = $this->cdnConfig->get('tag_manager_footer_js');
+      $build['#tag_manager_footer_js'] = $this->cdnConfig->get($environment . 'tag_manager_footer_js');
     }
 
     return $build;

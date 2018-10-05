@@ -144,13 +144,23 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
         ],
       ],
     ];
-    $form['amazon_footer_code']['footer_js_code'] = [
-      '#required' => '0',
+    $form['amazon_footer_code']['development_footer_js_code'] = [
+      '#required' => TRUE,
       '#description' => t('Enter the path of footer code JS file on Amazon S3.'),
       '#weight' => '0',
+      '#title' => t('Development'),
       '#type' => 'textfield',
       '#maxlength' => 500,
-      '#default_value' => $config->get('footer_js_code'),
+      '#default_value' => $config->get('development_footer_js_code'),
+    ];
+    $form['amazon_footer_code']['production_footer_js_code'] = [
+      '#required' => TRUE,
+      '#description' => t('Enter the path of footer code JS file on Amazon S3.'),
+      '#weight' => '0',
+      '#title' => t('Production'),
+      '#type' => 'textfield',
+      '#maxlength' => 500,
+      '#default_value' => $config->get('production_footer_js_code'),
     ];
 
     $form['amazon_custom_tracking'] = [
@@ -166,23 +176,67 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
         ],
       ],
     ];
-    $form['amazon_custom_tracking']['cdn_custom_tracking_js_before'] = [
+    $form['amazon_custom_tracking']['development_amazon_custom_tracking'] = [
+      '#weight' => '-6',
+      '#type' => 'fieldset',
+      '#title' => t('Development'),
+      '#collapsible' => '1',
+      '#collapsed' => '0',
+      '#states' => [
+        'visible' => [
+          ':input[name="mode"]' => ['value' => 'cdn'],
+          'input[name="cdn_install_type"]' => ['value' => 'amazon'],
+        ],
+      ],
+    ];
+    $form['amazon_custom_tracking']['development_amazon_custom_tracking']['development_cdn_custom_tracking_js_before'] = [
       '#required' => '0',
       '#description' => t('Enter the path for custom JS file on Amazon S3. This JS will be added to all pages just before page view call i.e. s(t).'),
       '#weight' => '0',
       '#type' => 'textfield',
       '#maxlength' => 500,
       '#title' => t('Custom tracking javascript path (loaded before s.t())'),
-      '#default_value' => $config->get('cdn_custom_tracking_js_before'),
+      '#default_value' => $config->get('development_cdn_custom_tracking_js_before'),
     ];
-    $form['amazon_custom_tracking']['cdn_custom_tracking_js_after'] = [
+    $form['amazon_custom_tracking']['development_amazon_custom_tracking']['development_cdn_custom_tracking_js_after'] = [
       '#required' => '0',
       '#description' => t('Enter the path gor custom JS file on Amazon S3. This JS will be added to all pages just after page view call i.e. s(t).'),
       '#weight' => '1',
       '#type' => 'textfield',
       '#maxlength' => 500,
       '#title' => t('Custom tracking javascript path (loaded after s.t())'),
-      '#default_value' => $config->get('cdn_custom_tracking_js_after'),
+      '#default_value' => $config->get('development_cdn_custom_tracking_js_after'),
+    ];
+    $form['amazon_custom_tracking']['production_amazon_custom_tracking'] = [
+      '#weight' => '-6',
+      '#type' => 'fieldset',
+      '#title' => t('Production'),
+      '#collapsible' => '1',
+      '#collapsed' => '0',
+      '#states' => [
+        'visible' => [
+          ':input[name="mode"]' => ['value' => 'cdn'],
+          'input[name="cdn_install_type"]' => ['value' => 'amazon'],
+        ],
+      ],
+    ];
+    $form['amazon_custom_tracking']['production_amazon_custom_tracking']['production_cdn_custom_tracking_js_before'] = [
+      '#required' => '0',
+      '#description' => t('Enter the path for custom JS file on Amazon S3. This JS will be added to all pages just before page view call i.e. s(t).'),
+      '#weight' => '0',
+      '#type' => 'textfield',
+      '#maxlength' => 500,
+      '#title' => t('Custom tracking javascript path (loaded before s.t())'),
+      '#default_value' => $config->get('production_cdn_custom_tracking_js_before'),
+    ];
+    $form['amazon_custom_tracking']['production_amazon_custom_tracking']['production_cdn_custom_tracking_js_after'] = [
+      '#required' => '0',
+      '#description' => t('Enter the path gor custom JS file on Amazon S3. This JS will be added to all pages just after page view call i.e. s(t).'),
+      '#weight' => '1',
+      '#type' => 'textfield',
+      '#maxlength' => 500,
+      '#title' => t('Custom tracking javascript path (loaded after s.t())'),
+      '#default_value' => $config->get('production_cdn_custom_tracking_js_after'),
     ];
 
     $form['tag_manager_container_path'] = [
@@ -199,22 +253,30 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       ],
     ];
     $form['tag_manager_container_path']['development_tag_manager_container_path'] = [
-      '#required' => TRUE,
       '#description' => t('Enter your development tag manager tool container path.'),
       '#weight' => '0',
       '#type' => 'textfield',
       '#maxlength' => 500,
       '#title' => t('Development'),
       '#default_value' => $config->get('development_tag_manager_container_path'),
+      '#states' => [
+        'required' => [
+          'input[name="cdn_install_type"]' => ['value' => 'tag'],
+        ]
+      ]
     ];
     $form['tag_manager_container_path']['production_tag_manager_container_path'] = [
-      '#required' => TRUE,
       '#description' => t('Enter your production tag manager tool container path.'),
       '#weight' => '1',
       '#type' => 'textfield',
       '#maxlength' => 500,
       '#title' => t('Production'),
       '#default_value' => $config->get('production_tag_manager_container_path'),
+      '#states' => [
+        'required' => [
+          'input[name="cdn_install_type"]' => ['value' => 'tag'],
+        ]
+      ]
     ];
     $form['tag_manager_footer_code'] = [
       '#weight' => '-4',
@@ -229,13 +291,23 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
         ],
       ],
     ];
-    $form['tag_manager_footer_code']['tag_manager_footer_js'] = [
+    $form['tag_manager_footer_code']['development_tag_manager_footer_js'] = [
       '#required' => '0',
       '#description' => t('Enter the path of footer code JS file on Amazon S3.'),
       '#weight' => '0',
       '#type' => 'textfield',
+      '#title' => t('Development'),
       '#maxlength' => 500,
-      '#default_value' => $config->get('tag_manager_footer_js'),
+      '#default_value' => $config->get('development_tag_manager_footer_js'),
+    ];
+    $form['tag_manager_footer_code']['production_tag_manager_footer_js'] = [
+      '#required' => '0',
+      '#description' => t('Enter the path of footer code JS file on Amazon S3.'),
+      '#weight' => '0',
+      '#type' => 'textfield',
+      '#title' => t('Production'),
+      '#maxlength' => 500,
+      '#default_value' => $config->get('production_tag_manager_footer_js'),
     ];
     // General form elements.
     $form['general_warning'] = [
@@ -526,12 +598,16 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       ->set('production_s_code_config', $form_state->getValue('production_s_code_config'))
       ->set('development_s_code', $form_state->getValue('development_s_code'))
       ->set('production_s_code', $form_state->getValue('production_s_code'))
-      ->set('footer_js_code', $form_state->getValue('footer_js_code'))
-      ->set('cdn_custom_tracking_js_before', $form_state->getValue('cdn_custom_tracking_js_before'))
-      ->set('cdn_custom_tracking_js_after', $form_state->getValue('cdn_custom_tracking_js_after'))
+      ->set('development_footer_js_code', $form_state->getValue('development_footer_js_code'))
+      ->set('production_footer_js_code', $form_state->getValue('production_footer_js_code'))
+      ->set('development_cdn_custom_tracking_js_before', $form_state->getValue('development_cdn_custom_tracking_js_before'))
+      ->set('development_cdn_custom_tracking_js_after', $form_state->getValue('development_cdn_custom_tracking_js_after'))
+      ->set('production_cdn_custom_tracking_js_before', $form_state->getValue('production_cdn_custom_tracking_js_before'))
+      ->set('production_cdn_custom_tracking_js_after', $form_state->getValue('production_cdn_custom_tracking_js_after'))
       ->set('development_tag_manager_container_path', $form_state->getValue('development_tag_manager_container_path'))
       ->set('production_tag_manager_container_path', $form_state->getValue('production_tag_manager_container_path'))
-      ->set('tag_manager_footer_js', $form_state->getValue('tag_manager_footer_js'))
+      ->set('development_tag_manager_footer_js', $form_state->getValue('development_tag_manager_footer_js'))
+      ->set('production_tag_manager_footer_js', $form_state->getValue('production_tag_manager_footer_js'))
       ->set('extra_variables', $extra_vars)
       ->set('js_file_location', $form_state->getValue('js_file_location'))
       ->set('image_file_location', $form_state->getValue('image_file_location'))

@@ -50,9 +50,12 @@ class AdobeAnalyticsFormSubmitTest extends BrowserTestBase {
       'production_s_code_config' => $this->randomGenerator->string(),
       'development_s_code' => $this->randomGenerator->string(),
       'production_s_code' => $this->randomGenerator->string(),
-      'footer_js_code' => $this->randomGenerator->string(),
-      'cdn_custom_tracking_js_before' => $this->randomGenerator->string(),
-      'cdn_custom_tracking_js_after' => $this->randomGenerator->string(),
+      'development_footer_js_code' => $this->randomGenerator->string(),
+      'production_footer_js_code' => $this->randomGenerator->string(),
+      'development_cdn_custom_tracking_js_before' => $this->randomGenerator->string(),
+      'development_cdn_custom_tracking_js_after' => $this->randomGenerator->string(),
+      'production_cdn_custom_tracking_js_before' => $this->randomGenerator->string(),
+      'production_cdn_custom_tracking_js_after' => $this->randomGenerator->string(),
     ];
     // Save settings form.
     $this->submitForm($edit, t('Save configuration'));
@@ -67,9 +70,12 @@ class AdobeAnalyticsFormSubmitTest extends BrowserTestBase {
       'production_s_code_config' => $this->dummyValue,
       'development_s_code' => $this->dummyValue,
       'production_s_code' => $this->dummyValue,
-      'footer_js_code' => $this->dummyValue,
-      'cdn_custom_tracking_js_before' => $this->dummyValue,
-      'cdn_custom_tracking_js_after' => $this->dummyValue,
+      'development_footer_js_code' => $this->dummyValue,
+      'production_footer_js_code' => $this->dummyValue,
+      'development_cdn_custom_tracking_js_before' => $this->dummyValue,
+      'development_cdn_custom_tracking_js_after' => $this->dummyValue,
+      'production_cdn_custom_tracking_js_before' => $this->dummyValue,
+      'production_cdn_custom_tracking_js_after' => $this->dummyValue,
     ];
     // Save settings form.
     $this->submitForm($edit, t('Save configuration'));
@@ -97,7 +103,8 @@ class AdobeAnalyticsFormSubmitTest extends BrowserTestBase {
       'cdn_install_type' => 'tag',
       'development_tag_manager_container_path' => $this->dummyValue,
       'production_tag_manager_container_path' => $this->dummyValue,
-      'tag_manager_footer_js' => $this->dummyValue,
+      'development_tag_manager_footer_js' => $this->dummyValue,
+      'production_tag_manager_footer_js' => $this->dummyValue,
     ];
     // Save settings form.
     $this->submitForm($edit, t('Save configuration'));
