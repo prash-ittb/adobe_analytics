@@ -148,8 +148,22 @@ adobe_analytics.report_suite:
     page_name_homepage:
       type: string
       label: 'Page name homepage'
-
-
+adobe_analytics.validation_config:
+  type: config_object
+  label: 'Adobe analytics form validator configuration'
+  mapping:
+    cloud_provider:
+      type: string
+      label: 'Provider for cloud domain'
+    cloud_domain:
+      type: string
+      label: 'Validator pattern for cloud domain'
+    tag_manager_provider:
+      type: string
+      label: 'Provider for tag manager'
+    tag_manager_domain:
+      type: string
+      label: 'Validator pattern for tag manager'
 adobe_analytics.variable:
   type: config_object
   label: 'Adobe Analytics variable'

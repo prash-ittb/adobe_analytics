@@ -575,6 +575,52 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    $config = $this->config('adobe_analytics.validation_config');
+    $cloud_fields = [
+      'development_s_code_config',
+      'production_s_code_config',
+      'development_s_code',
+      'production_s_code',
+      'development_footer_js_code',
+      'production_footer_js_code',
+      'development_cdn_custom_tracking_js_before',
+      'development_cdn_custom_tracking_js_after',
+      'production_cdn_custom_tracking_js_before',
+      'production_cdn_custom_tracking_js_after',
+      'development_tag_manager_footer_js',
+      'production_tag_manager_footer_js'
+    ];
+
+    $tag_manager_fields = [
+      'development_tag_manager_container_path',
+      'production_tag_manager_container_path',
+    ];
+
+    if ($form_state->getValue('mode') == 'cdn') {
+      foreach ($cloud_fields as $field) {
+        if ($form_state->getValue($field) && !strstr($form_state->getValue($field), $config->get('cloud_domain'))) {
+          $form_state->setErrorByName($field, "Scripts can 
+          only be hosted at authorized locations, such as " . $config->get('cloud_provider') . " e.g " . $config->get('cloud_domain_validator') . " or on "
+            . $config->get('tag_manager_provider') . " e.g " . $config->get('tag_manager_domain') . ". Please correct the path 
+            or request assistance to authorize your domain.");
+        }
+      }
+      foreach ($tag_manager_fields as $field) {
+        if ($form_state->getValue($field) && !strstr($form_state->getValue($field), $config->get('tag_manager_domain'))) {
+          $form_state->setErrorByName($field, "Scripts can 
+          only be hosted at authorized locations, such as " . $config->get('cloud_provider') . " e.g " . $config->get('cloud_domain_validator') . " or on "
+            . $config->get('tag_manager_provider') . " e.g " . $config->get('tag_manager_domain') . ". Please correct the path 
+            or request assistance to authorize your domain.");
+        }
+      }
+    }
+    parent::validateForm($form, $form_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function submitForm(array &$form, FormStateInterface $form_state) {
 
     $config = $this->config('adobe_analytics.settings');

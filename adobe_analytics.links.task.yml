@@ -27,3 +27,9 @@ adobe_analytics.report_suite_form:
   title: 'Report Suite'
   route_name: adobe_analytics.report_suites_form
   base_route: adobe_analytics.settings
+
+# Add a tab for Report Suite settings
+adobe_analytics.validation_config_form:
+  title: 'Validation Settings'
+  route_name: adobe_analytics.validation_config_form
+  base_route: adobe_analytics.settings
