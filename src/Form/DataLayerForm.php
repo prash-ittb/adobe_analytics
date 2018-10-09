@@ -46,12 +46,13 @@ class DataLayerForm extends ConfigFormBase {
     ];
 
     $form['data_layer_root_field'] = [
-      '#required' => '0',
-      '#description' => t('Enter your development Adobe analytics tracking S code configuration path (s_code_config.js).'),
+      '#required' => TRUE,
+      '#title' => t('Data Layer Object Name'),
+      '#description' => t('Please provide Data Layer Object Name'),
       '#weight' => '0',
       '#type' => 'textfield',
-      '#title' => t('Data Layer Root Field'),
       '#default_value' => $config->get('data_layer_root_field'),
+      '#maxlength' => 500
     ];
 
     $form['data_layer_json_object'] = [
@@ -62,39 +63,41 @@ class DataLayerForm extends ConfigFormBase {
       '#default_value' => $config->get('data_layer_json_object'),
       '#attributes' => [
         'class' => ['use-snippet'],
+        'disabled' => 'disabled'
       ],
     ];
 
     $form['data_layer_level_option'] = [
-      '#title' => t('Data Layer Object Option'),
+      '#title' => t('Manage Data Layer Elements'),
       '#type' => 'select',
       "#options" => [
-        "select_layer" => t("Select option"),
-        "remove_existing" => t("Remove Existing"),
+        "select_layer" => t("Add or Update Elements"),
+        "remove_existing" => t("Remove Element"),
       ],
-      '#description' => t('Select option to remove existing element.'),
       '#default_value' => 'select_layer',
     ];
 
     $data_layer_options = $this->transformJsonToArray();
 
     $form['data_layer_keys'] = [
-      '#title' => t('Data Layer Object Select Keys'),
+      '#title' => t('Select Data Layer Element for Removal'),
       '#type' => 'select',
       '#options' => $data_layer_options,
       '#empty_option' => t('Select Key'),
-      '#description' => $this->t('Choose the Key to remove from Data Layer Object.'),
       '#default_value' => 'select_layer',
     ];
     $form['data_layer_key'] = [
       '#title' => t('Name'),
       '#type' => 'textfield',
-      '#description' => t('Insert your Data Layer Key here. This code will used to generate JSON object.'),
+      '#description' => t('Provide new element name to be added to the Data Layer object. Use period to create hierarchy, e.g. page.pageInfo. Specify existing element name to overwrite its value'),
+      '#token' => FALSE,
+      '#maxlength' => 500
     ];
     $form['data_layer_value'] = [
       '#title' => t('Value'),
       '#type' => 'textfield',
-      '#description' => t('Insert your Data Layer Value here. Use tokens to get dynamic values.'),
+      '#description' => t('Provide value for the element. Use tokens to specify dynamic values.'),
+      '#maxlength' => 500
     ];
 
     $form['tokens'] = [

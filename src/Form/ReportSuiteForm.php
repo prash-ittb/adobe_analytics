@@ -34,11 +34,11 @@ class ReportSuiteForm extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('adobe_analytics.report_suite');
 
-    $form['mode'] = [
+    $form['report_suites_mode'] = [
       '#required' => '1',
       '#key_type_toggled' => '0',
       '#description' => t('Select whether the s_code file is in Production (prod) or Development (dev) mode.'),
-      '#default_value' => $config->get('mode'),
+      '#default_value' => $config->get('report_suites_mode'),
       '#weight' => '0',
       '#type' => 'radios',
       '#options' => [
@@ -169,7 +169,7 @@ class ReportSuiteForm extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->config('adobe_analytics.report_suite')
-      ->set('mode', $form_state->getValue('mode'))
+      ->set('report_suites_mode', $form_state->getValue('report_suites_mode'))
       ->set('development_report_suites', $form_state->getValue('development_report_suites'))
       ->set('production_report_suites', $form_state->getValue('production_report_suites'))
       ->set('development_domains', $form_state->getValue('development_domains'))

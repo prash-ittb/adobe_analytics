@@ -2,7 +2,7 @@ adobe_analytics.settings:
   type: config_object
   label: 'Adobe Analytics settings'
   mapping:
-    mode:
+    installation_mode:
       type: string
       label: 'Adobe analytics installation mode'
     cdn_install_type:

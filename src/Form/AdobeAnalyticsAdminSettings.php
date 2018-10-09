@@ -80,22 +80,30 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       ],
     ];
     $form['amazon_s_code_config']['development_s_code_config'] = [
-      '#required' => TRUE,
       '#description' => t('Enter your development Adobe analytics tracking S code configuration path (s_code_config.js).'),
       '#weight' => '0',
       '#type' => 'textfield',
       '#maxlength' => 500,
       '#title' => t('Development'),
       '#default_value' => $config->get('development_s_code_config'),
+      '#states' => [
+        'required' => [
+          'input[name="cdn_install_type"]' => ['value' => 'amazon'],
+        ]
+      ]
     ];
     $form['amazon_s_code_config']['production_s_code_config'] = [
-      '#required' => TRUE,
       '#description' => t('Enter your production Adobe analytics tracking S code configuration path (s_code_config.js).'),
       '#weight' => '1',
       '#type' => 'textfield',
       '#maxlength' => 500,
       '#title' => t('Production'),
       '#default_value' => $config->get('production_s_code_config'),
+      '#states' => [
+        'required' => [
+          'input[name="cdn_install_type"]' => ['value' => 'amazon'],
+        ]
+      ]
     ];
 
     $form['amazon_s_code'] = [
@@ -113,22 +121,30 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       ],
     ];
     $form['amazon_s_code']['development_s_code'] = [
-      '#required' => TRUE,
       '#description' => t('Enter your development Adobe analytics tracking S code path (s_code.js).'),
       '#weight' => '0',
       '#type' => 'textfield',
       '#maxlength' => 500,
       '#title' => t('Development'),
       '#default_value' => $config->get('development_s_code'),
+      '#states' => [
+        'required' => [
+          'input[name="cdn_install_type"]' => ['value' => 'amazon'],
+        ]
+      ]
     ];
     $form['amazon_s_code']['production_s_code'] = [
-      '#required' => TRUE,
       '#description' => t('Enter your production Adobe analytics tracking S code path (s_code.js).'),
       '#weight' => '3',
       '#type' => 'textfield',
       '#maxlength' => 500,
       '#title' => t('Production'),
       '#default_value' => $config->get('production_s_code'),
+      '#states' => [
+        'required' => [
+          'input[name="cdn_install_type"]' => ['value' => 'amazon'],
+        ]
+      ]
     ];
 
     $form['amazon_footer_code'] = [
@@ -145,22 +161,30 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       ],
     ];
     $form['amazon_footer_code']['development_footer_js_code'] = [
-      '#required' => TRUE,
       '#description' => t('Enter the path of footer code JS file on Amazon S3.'),
       '#weight' => '0',
       '#title' => t('Development'),
       '#type' => 'textfield',
       '#maxlength' => 500,
       '#default_value' => $config->get('development_footer_js_code'),
+      '#states' => [
+        'required' => [
+          'input[name="cdn_install_type"]' => ['value' => 'amazon'],
+        ]
+      ]
     ];
     $form['amazon_footer_code']['production_footer_js_code'] = [
-      '#required' => TRUE,
       '#description' => t('Enter the path of footer code JS file on Amazon S3.'),
       '#weight' => '0',
       '#title' => t('Production'),
       '#type' => 'textfield',
       '#maxlength' => 500,
       '#default_value' => $config->get('production_footer_js_code'),
+      '#states' => [
+        'required' => [
+          'input[name="cdn_install_type"]' => ['value' => 'amazon'],
+        ]
+      ]
     ];
 
     $form['amazon_custom_tracking'] = [
@@ -599,7 +623,10 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
 
     if ($form_state->getValue('installation_mode') == 'cdn') {
       foreach ($cloud_fields as $field) {
-        if ($form_state->getValue($field) && !strstr($form_state->getValue($field), $config->get('cloud_domain'))) {
+        if (!$config->get('cloud_domain') || empty($config->get('cloud_domain'))) {
+          $form_state->setErrorByName($field, "No validation criteria found. Please go to '/admin/config/adobe_analytics/validation_config' to set a validation croteria for the fields.");
+        }
+        elseif ($form_state->getValue($field) && !strstr($form_state->getValue($field), $config->get('cloud_domain'))) {
           $form_state->setErrorByName($field, "Scripts can 
           only be hosted at authorized locations, such as " . $config->get('cloud_provider') . " e.g " . $config->get('cloud_domain_validator') . " or on "
             . $config->get('tag_manager_provider') . " e.g " . $config->get('tag_manager_domain') . ". Please correct the path 
@@ -607,7 +634,10 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
         }
       }
       foreach ($tag_manager_fields as $field) {
-        if ($form_state->getValue($field) && !strstr($form_state->getValue($field), $config->get('tag_manager_domain'))) {
+        if (!$config->get('tag_manager_domain') || empty($config->get('tag_manager_domain'))) {
+          $form_state->setErrorByName($field, "No validation criteria found. Please go to '/admin/config/adobe_analytics/validation_config' to set a validation croteria for the fields.");
+        }
+        elseif ($form_state->getValue($field) && !strstr($form_state->getValue($field), $config->get('tag_manager_domain'))) {
           $form_state->setErrorByName($field, "Scripts can 
           only be hosted at authorized locations, such as " . $config->get('cloud_provider') . " e.g " . $config->get('cloud_domain_validator') . " or on "
             . $config->get('tag_manager_provider') . " e.g " . $config->get('tag_manager_domain') . ". Please correct the path 

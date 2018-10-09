@@ -4,7 +4,7 @@ version: ''
 image_file_location: ''
 token_cache_lifetime: ''
 extra_variables: { }
-mode: 'general'
+installation_mode: 'general'
 cdn_install_type: 'amazon'
 development_s_code_config: ''
 production_s_code_config: ''

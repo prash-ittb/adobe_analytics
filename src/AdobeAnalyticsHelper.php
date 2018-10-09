@@ -195,7 +195,7 @@ class AdobeAnalyticsHelper {
     $build = [];
     $build['#theme'] = 'analytics_code';
 
-    if ($this->cdnConfig->get('mode') == 'cdn') {
+    if ($this->cdnConfig->get('installation_mode') == 'cdn') {
       $build = $this->renderCdnMarkup($build);
     }
 
@@ -203,7 +203,7 @@ class AdobeAnalyticsHelper {
       $build = $this->renderDatalayerMarkup($build);
     }
 
-    if ($this->cdnConfig->get('mode') == 'general') {
+    if ($this->cdnConfig->get('installation_mode') == 'general') {
       if ($this->skipTracking(1)) {
         return [];
       }
@@ -298,7 +298,7 @@ class AdobeAnalyticsHelper {
     else {
       // For Tag Manager Tool.
       $build['#tag_status'] = TRUE;
-      $build['#tag_manager_js_path'] = $this->cdnConfig->get($environment . '_tag_manager_container_path');
+//      $build['#tag_manager_js_path'] = $this->cdnConfig->get($environment . '_tag_manager_container_path');
       $build['#tag_manager_footer_js'] = $this->cdnConfig->get($environment . '_tag_manager_footer_js');
     }
 
@@ -331,7 +331,7 @@ class AdobeAnalyticsHelper {
       return [];
     }
     $build['#data_layer_status'] = TRUE;
-    $build['#data_layer_json'] = 'var ' . $data_root_field . ' = ' . $this->formatJsSnippet($data_layer_json);
+    $build['#data_layer_json'] = 'window.' . $data_root_field . ' = ' . $this->formatJsSnippet($data_layer_json);
     $build['#custom_js'] = \Drupal::config('adobe_analytics.data_layer_custom_javascript')
       ->get('data_layer_custom_javascript');
 

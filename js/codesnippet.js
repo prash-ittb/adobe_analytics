@@ -31,8 +31,8 @@
       }));
       
       var editor = ace.edit(inputId);
-      editor.setTheme("ace/theme/monokai");
-      editor.getSession().setMode("ace/mode/javascript");
+      editor.setTheme("ace/monokai");
+      editor.getSession().setMode("ace/javascript");
       
       editors[inputId] = {
         editor: editor,
