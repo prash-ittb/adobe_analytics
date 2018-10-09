@@ -192,6 +192,7 @@ class AdobeAnalyticsHelper {
    *   Build array.
    */
   public function renderMarkup() {
+    \Drupal::routeMatch()->getRouteObject()->setOption('_no_big_pipe', TRUE);
     $build = [];
     $build['#theme'] = 'analytics_code';
 
