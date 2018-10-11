@@ -115,7 +115,7 @@ adobe_analytics.report_suite:
   type: config_object
   label: 'Adobe analytics Report Suite'
   mapping:
-    mode:
+    report_suites_mode:
       type: string
       label: 'Mode'
     development_report_suites:
