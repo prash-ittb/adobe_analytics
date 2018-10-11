@@ -2,7 +2,7 @@ js_file_location: ''
 codesnippet: ''
 version: ''
 image_file_location: ''
-token_cache_lifetime: ''
+token_cache_lifetime: NULL
 extra_variables: { }
 installation_mode: 'general'
 cdn_install_type: 'amazon'
