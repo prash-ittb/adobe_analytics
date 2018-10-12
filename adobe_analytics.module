@@ -51,6 +51,7 @@ function adobe_analytics_theme($existing, $type, $theme, $path) {
  * Implements hook_page_bottom().
  */
 function adobe_analytics_page_bottom(&$variables) {
+  \Drupal::routeMatch()->getRouteObject()->setOption('_no_big_pipe', TRUE);
   $variables['adobe_analytics'] = [
     '#lazy_builder' => [
       'adobe_analytics.adobe_analytics_helper:renderMarkup',

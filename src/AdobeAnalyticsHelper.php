@@ -192,7 +192,6 @@ class AdobeAnalyticsHelper {
    *   Build array.
    */
   public function renderMarkup() {
-    \Drupal::routeMatch()->getRouteObject()->setOption('_no_big_pipe', TRUE);
     $build = [];
     $build['#theme'] = 'analytics_code';
 
@@ -299,6 +298,7 @@ class AdobeAnalyticsHelper {
     else {
       // For Tag Manager Tool.
       $build['#tag_status'] = TRUE;
+      // $build['#tag_manager_js_path'] = $this->cdnConfig->get($environment . '_tag_manager_container_path');.
       $build['#tag_manager_footer_js'] = $this->cdnConfig->get($environment . '_tag_manager_footer_js');
     }
 
