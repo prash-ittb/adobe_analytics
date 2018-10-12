@@ -39,13 +39,13 @@ class ValidationConfigForm extends ConfigFormBase {
       '#type' => 'textfield',
       '#title' => t('Provider'),
       '#required' => TRUE,
-      '#default_value' => $config->get('cloud_provider')
+      '#default_value' => $config->get('cloud_provider'),
     ];
     $form['cloud_domain_validator']['cloud_domain'] = [
       '#type' => 'textfield',
       '#title' => t('Domain'),
       '#required' => TRUE,
-      '#default_value' => $config->get('cloud_domain')
+      '#default_value' => $config->get('cloud_domain'),
     ];
 
     $form['tag_manager_validator'] = [
@@ -57,13 +57,13 @@ class ValidationConfigForm extends ConfigFormBase {
       '#type' => 'textfield',
       '#title' => t('Provider'),
       '#required' => TRUE,
-      '#default_value' => $config->get('tag_manager_provider')
+      '#default_value' => $config->get('tag_manager_provider'),
     ];
     $form['tag_manager_validator']['tag_manager_domain'] = [
       '#type' => 'textfield',
       '#title' => t('Domain'),
       '#required' => TRUE,
-      '#default_value' => $config->get('tag_manager_domain')
+      '#default_value' => $config->get('tag_manager_domain'),
     ];
     return parent::buildForm($form, $form_state);
   }

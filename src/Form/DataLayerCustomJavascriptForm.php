@@ -44,6 +44,9 @@ class DataLayerCustomJavascriptForm extends ConfigFormBase {
     return parent::buildForm($form, $form_state);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     $config = $this->config('adobe_analytics.validation_config');
     if (!$config->get('cloud_domain') || empty($config->get('cloud_domain'))) {

@@ -2,7 +2,6 @@
 
 namespace Drupal\adobe_analytics\Form;
 
-use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -89,8 +88,8 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#states' => [
         'required' => [
           'input[name="cdn_install_type"]' => ['value' => 'amazon'],
-        ]
-      ]
+        ],
+      ],
     ];
     $form['amazon_s_code_config']['production_s_code_config'] = [
       '#description' => t('Enter your production Adobe analytics tracking S code configuration path (s_code_config.js).'),
@@ -102,8 +101,8 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#states' => [
         'required' => [
           'input[name="cdn_install_type"]' => ['value' => 'amazon'],
-        ]
-      ]
+        ],
+      ],
     ];
 
     $form['amazon_s_code'] = [
@@ -130,8 +129,8 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#states' => [
         'required' => [
           'input[name="cdn_install_type"]' => ['value' => 'amazon'],
-        ]
-      ]
+        ],
+      ],
     ];
     $form['amazon_s_code']['production_s_code'] = [
       '#description' => t('Enter your production Adobe analytics tracking S code path (s_code.js).'),
@@ -143,8 +142,8 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#states' => [
         'required' => [
           'input[name="cdn_install_type"]' => ['value' => 'amazon'],
-        ]
-      ]
+        ],
+      ],
     ];
 
     $form['amazon_footer_code'] = [
@@ -170,8 +169,8 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#states' => [
         'required' => [
           'input[name="cdn_install_type"]' => ['value' => 'amazon'],
-        ]
-      ]
+        ],
+      ],
     ];
     $form['amazon_footer_code']['production_footer_js_code'] = [
       '#description' => t('Enter the path of footer code JS file on Amazon S3.'),
@@ -183,8 +182,8 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#states' => [
         'required' => [
           'input[name="cdn_install_type"]' => ['value' => 'amazon'],
-        ]
-      ]
+        ],
+      ],
     ];
 
     $form['amazon_custom_tracking'] = [
@@ -286,8 +285,8 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#states' => [
         'required' => [
           'input[name="cdn_install_type"]' => ['value' => 'tag'],
-        ]
-      ]
+        ],
+      ],
     ];
     $form['tag_manager_container_path']['production_tag_manager_container_path'] = [
       '#description' => t('Enter your production tag manager tool container path.'),
@@ -299,8 +298,8 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#states' => [
         'required' => [
           'input[name="cdn_install_type"]' => ['value' => 'tag'],
-        ]
-      ]
+        ],
+      ],
     ];
     $form['tag_manager_footer_code'] = [
       '#weight' => '-4',
@@ -613,7 +612,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       'production_cdn_custom_tracking_js_before',
       'production_cdn_custom_tracking_js_after',
       'development_tag_manager_footer_js',
-      'production_tag_manager_footer_js'
+      'production_tag_manager_footer_js',
     ];
 
     $tag_manager_fields = [

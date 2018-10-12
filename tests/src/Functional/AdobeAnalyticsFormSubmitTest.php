@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\adobe_analytics\Functional;
 
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Tests\BrowserTestBase;
 
 /**
@@ -99,34 +98,34 @@ class AdobeAnalyticsFormSubmitTest extends BrowserTestBase {
     $this->submitForm($edit, t('Save configuration'));
     $this->assertSession()
       ->pageTextContains("Scripts can only be hosted at authorized locations, such as " . $this->configFactory->getEditable('adobe_analytics.validation_config')
-          ->get('cloud_provider') . " e.g " . $this->configFactory->getEditable('adobe_analytics.validation_config')
-          ->get('cloud_domain') . " or on " . $this->configFactory->getEditable('adobe_analytics.validation_config')
-          ->get('tag_manager_provider') . " e.g " . $this->configFactory->getEditable('adobe_analytics.validation_config')
-          ->get('tag_manager_domain') . ". Please correct the path or request assistance to authorize your domain.");
+        ->get('cloud_provider') . " e.g " . $this->configFactory->getEditable('adobe_analytics.validation_config')
+        ->get('cloud_domain') . " or on " . $this->configFactory->getEditable('adobe_analytics.validation_config')
+        ->get('tag_manager_provider') . " e.g " . $this->configFactory->getEditable('adobe_analytics.validation_config')
+        ->get('tag_manager_domain') . ". Please correct the path or request assistance to authorize your domain.");
 
     $edit = [
       'installation_mode' => 'cdn',
       'cdn_install_type' => 'amazon',
       'development_s_code_config' => $this->configFactory->getEditable('adobe_analytics.validation_config')
-          ->get('cloud_domain') . '/dev/s_code_config.js',
+        ->get('cloud_domain') . '/dev/s_code_config.js',
       'production_s_code_config' => $this->configFactory->getEditable('adobe_analytics.validation_config')
-          ->get('cloud_domain') . '/prod/s_code_config.js',
+        ->get('cloud_domain') . '/prod/s_code_config.js',
       'development_s_code' => $this->configFactory->getEditable('adobe_analytics.validation_config')
-          ->get('cloud_domain') . '/dev/s_code.js',
+        ->get('cloud_domain') . '/dev/s_code.js',
       'production_s_code' => $this->configFactory->getEditable('adobe_analytics.validation_config')
-          ->get('cloud_domain') . '/prod/s_code.js',
+        ->get('cloud_domain') . '/prod/s_code.js',
       'development_footer_js_code' => $this->configFactory->getEditable('adobe_analytics.validation_config')
-          ->get('cloud_domain') . '/dev/footer.js',
+        ->get('cloud_domain') . '/dev/footer.js',
       'production_footer_js_code' => $this->configFactory->getEditable('adobe_analytics.validation_config')
-          ->get('cloud_domain') . '/prod/footer.js',
+        ->get('cloud_domain') . '/prod/footer.js',
       'development_cdn_custom_tracking_js_before' => $this->configFactory->getEditable('adobe_analytics.validation_config')
-          ->get('cloud_domain') . '/dev/tracking_before.js',
+        ->get('cloud_domain') . '/dev/tracking_before.js',
       'development_cdn_custom_tracking_js_after' => $this->configFactory->getEditable('adobe_analytics.validation_config')
-          ->get('cloud_domain') . '/dev/tracking_after.js',
+        ->get('cloud_domain') . '/dev/tracking_after.js',
       'production_cdn_custom_tracking_js_before' => $this->configFactory->getEditable('adobe_analytics.validation_config')
-          ->get('cloud_domain') . '/stage/tracking_before.js',
+        ->get('cloud_domain') . '/stage/tracking_before.js',
       'production_cdn_custom_tracking_js_after' => $this->configFactory->getEditable('adobe_analytics.validation_config')
-          ->get('cloud_domain') . '/stage/tracking_after.js',
+        ->get('cloud_domain') . '/stage/tracking_after.js',
     ];
     // Save settings form.
     $this->submitForm($edit, t('Save configuration'));
@@ -138,29 +137,19 @@ class AdobeAnalyticsFormSubmitTest extends BrowserTestBase {
       'installation_mode' => 'cdn',
       'cdn_install_type' => 'tag',
       'development_tag_manager_container_path' => $this->configFactory->getEditable('adobe_analytics.validation_config')
-          ->get('tag_manager_domain') . '/dev/container.js',
+        ->get('tag_manager_domain') . '/dev/container.js',
       'production_tag_manager_container_path' => $this->configFactory->getEditable('adobe_analytics.validation_config')
-          ->get('tag_manager_domain') . '/stage/container.js',
+        ->get('tag_manager_domain') . '/stage/container.js',
       'development_tag_manager_footer_js' => $this->configFactory->getEditable('adobe_analytics.validation_config')
-          ->get('cloud_domain') . '/dev/footer.js',
+        ->get('cloud_domain') . '/dev/footer.js',
       'production_tag_manager_footer_js' => $this->configFactory->getEditable('adobe_analytics.validation_config')
-          ->get('cloud_domain') . '/stage/footer.js',
+        ->get('cloud_domain') . '/stage/footer.js',
     ];
     // Save settings form.
     $this->submitForm($edit, t('Save configuration'));
     $this->assertSession()
       ->pageTextContains('The configuration options have been saved.');
 
-//    // Test form retains the values after saving.
-//    $formIds = [
-//      'edit-development-tag-manager-container-path',
-//      'edit-production-tag-manager-container-path',
-//      'edit-tag-manager-footer-js',
-//    ];
-//    foreach ($formIds as $formId) {
-//      $codeElement = $this->xpath('//input[@id=:id]', [':id' => $formId]);
-//      $this->assertEquals($this->dummyValue, $codeElement[0]->getValue());
-//    }
   }
 
   /**
@@ -177,18 +166,12 @@ class AdobeAnalyticsFormSubmitTest extends BrowserTestBase {
       'data_layer_json_object' => '[]',
       'data_layer_level_option' => 'select_layer',
       'data_layer_key' => $this->randomMachineName(),
-      'data_layer_value' => $this->randomMachineName()
+      'data_layer_value' => $this->randomMachineName(),
     ];
     // Save settings form.
     $this->submitForm($edit, t('Save configuration'));
     $this->assertSession()
       ->pageTextContains('The configuration options have been saved.');
-
-    // Test form retains the values after saving.
-//    $codeElement = $this->xpath('//input[@id="edit-data-layer-enabled-1"]');
-//    $this->assertTrue(isset($codeElement[0]));
-//    $codeElement = $this->xpath('//input[@id=:id]', [':id' => 'edit-data-layer-root-field']);
-//    $this->assertEquals($this->randomMachineName(), $codeElement[0]->getValue());
   }
 
   /**
@@ -205,15 +188,13 @@ class AdobeAnalyticsFormSubmitTest extends BrowserTestBase {
 
     $edit = [
       'data_layer_custom_javascript' => $this->configFactory->getEditable('adobe_analytics.validation_config')
-          ->get('cloud_domain') . '/custom.js',
+        ->get('cloud_domain') . '/custom.js',
     ];
     // Save settings form.
     $this->submitForm($edit, t('Save configuration'));
     $this->assertSession()
       ->pageTextContains('The configuration options have been saved.');
 
-//    $codeElement = $this->xpath('//input[@id=:id]', [':id' => 'edit-data-layer-custom-javascript']);
-//    $this->assertEquals($this->dummyValue, $codeElement[0]->getValue());
   }
 
   /**

@@ -38,7 +38,6 @@ function adobe_analytics_theme($existing, $type, $theme, $path) {
         'custom_tracking_js_before' => NULL,
         'custom_tracking_js_after' => NULL,
         'tag_status' => NULL,
-//        'tag_manager_js_path' => NULL,
         'tag_manager_footer_js' => NULL,
         'data_layer_status' => NULL,
         'data_layer_json' => NULL,
@@ -108,8 +107,8 @@ function adobe_analytics_library_info_build() {
       $libraries['tag_manager'] = [
         'header' => TRUE,
         'js' => [
-          $tag_manager_script => ['type' => 'external']
-        ]
+          $tag_manager_script => ['type' => 'external'],
+        ],
       ];
     }
   }
