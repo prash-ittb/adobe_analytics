@@ -88,6 +88,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#default_value' => $config->get('development_s_code_config'),
       '#states' => [
         'required' => [
+          ':input[name="installation_mode"]' => ['value' => 'cdn'],
           'input[name="cdn_install_type"]' => ['value' => 'amazon'],
         ],
       ],
@@ -101,6 +102,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#default_value' => $config->get('production_s_code_config'),
       '#states' => [
         'required' => [
+          ':input[name="installation_mode"]' => ['value' => 'cdn'],
           'input[name="cdn_install_type"]' => ['value' => 'amazon'],
         ],
       ],
@@ -129,6 +131,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#default_value' => $config->get('development_s_code'),
       '#states' => [
         'required' => [
+          ':input[name="installation_mode"]' => ['value' => 'cdn'],
           'input[name="cdn_install_type"]' => ['value' => 'amazon'],
         ],
       ],
@@ -142,6 +145,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#default_value' => $config->get('production_s_code'),
       '#states' => [
         'required' => [
+          ':input[name="installation_mode"]' => ['value' => 'cdn'],
           'input[name="cdn_install_type"]' => ['value' => 'amazon'],
         ],
       ],
@@ -169,6 +173,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#default_value' => $config->get('development_footer_js_code'),
       '#states' => [
         'required' => [
+          ':input[name="installation_mode"]' => ['value' => 'cdn'],
           'input[name="cdn_install_type"]' => ['value' => 'amazon'],
         ],
       ],
@@ -182,6 +187,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#default_value' => $config->get('production_footer_js_code'),
       '#states' => [
         'required' => [
+          ':input[name="installation_mode"]' => ['value' => 'cdn'],
           'input[name="cdn_install_type"]' => ['value' => 'amazon'],
         ],
       ],
@@ -285,6 +291,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#default_value' => $config->get('development_tag_manager_container_path'),
       '#states' => [
         'required' => [
+          ':input[name="installation_mode"]' => ['value' => 'cdn'],
           'input[name="cdn_install_type"]' => ['value' => 'tag'],
         ],
       ],
@@ -298,6 +305,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#default_value' => $config->get('production_tag_manager_container_path'),
       '#states' => [
         'required' => [
+          ':input[name="installation_mode"]' => ['value' => 'cdn'],
           'input[name="cdn_install_type"]' => ['value' => 'tag'],
         ],
       ],
@@ -377,7 +385,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
     ];
 
     $form['general']['token_cache_lifetime'] = [
-      '#type' => 'textfield',
+      '#type' => 'number',
       '#title' => $this->t('Token cache lifetime'),
       '#default_value' => $config->get('token_cache_lifetime'),
       '#description' => $this->t(
