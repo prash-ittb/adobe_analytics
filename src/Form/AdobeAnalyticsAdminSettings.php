@@ -336,7 +336,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
     // General form elements.
     $form['general_warning'] = [
       '#type' => 'item',
-      '#markup' => "<div class='messages messages--warning'>" . $this->t("Please use CDN Installation Mode for Analytics setup. Do not use Basic Installation mode, it is provided for backwards compatibility only.") . "</div>",
+      '#markup' => "<div class='messages messages--warning'>" . $this->t("It's recommended to use CDN installation mode for Adobe Analytics setup. Basic installation mode is provided for backwards compatibility only.") . "</div>",
       '#weight' => '-11',
       '#states' => [
         'visible' => [
