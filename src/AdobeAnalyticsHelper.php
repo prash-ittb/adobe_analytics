@@ -204,7 +204,7 @@ class AdobeAnalyticsHelper {
     }
 
     if ($this->cdnConfig->get('installation_mode') == 'general') {
-      if ($this->skipTracking(1)) {
+      if ($this->skipTracking()) {
         return [];
       }
 
@@ -271,7 +271,7 @@ class AdobeAnalyticsHelper {
    *   Build array.
    */
   protected function renderCdnMarkup(array $build) {
-    if ($this->skipTracking(1)) {
+    if ($this->skipTracking()) {
       return [];
     }
 
@@ -316,7 +316,7 @@ class AdobeAnalyticsHelper {
    */
   protected function renderDatalayerMarkup(array $build) {
 
-    if ($this->skipTracking(2)) {
+    if ($this->skipTracking()) {
       return [];
     }
 
@@ -341,24 +341,21 @@ class AdobeAnalyticsHelper {
   /**
    * Determines whether or not to skip adding analytics code.
    *
-   * @param int $type
-   *   Type 1 will load cdn and general configuration, and 2 will load
-   *   data_layer configuration.
-   *
    * @return bool
    *   Skips the tracking if true.
    */
-  public function skipTracking($type) {
-    if ($type == 1) {
-      $config = $this->cdnConfig;
-    }
-    elseif ($type == 2) {
-      $config = $this->datalayerConfig;
-    }
-    else {
-      return FALSE;
-    }
+  public function skipTracking() {
+//    if ($type == 1) {
+//      $config = $this->cdnConfig;
+//    }
+//    elseif ($type == 2) {
+//      $config = $this->datalayerConfig;
+//    }
+//    else {
+//      return FALSE;
+//    }
     // Check if we should track the currently active user's role.
+    $config = $this->cdnConfig;
     $track_user = TRUE;
     $get_roles = [];
     $tracking_type = $config->get('role_tracking_type');

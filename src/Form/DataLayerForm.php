@@ -113,8 +113,7 @@ class DataLayerForm extends ConfigFormBase {
       '#description' => $this->t('Define which user roles should, or should not be tracked by AdobeAnalytics.'),
       '#weight' => '5',
     ];
-
-    $default_value = ($config->get("role_tracking_type")) ? $config->get("role_tracking_type") : 'inclusive';
+    $default_value = ($this->config('adobe_analytics.settings')->get("role_tracking_type")) ? $this->config('adobe_analytics.settings')->get("role_tracking_type") : 'inclusive';
     $form['roles']['role_tracking_type'] = [
       '#type' => 'select',
       '#title' => $this->t('Add tracking for specific roles'),
@@ -133,7 +132,7 @@ class DataLayerForm extends ConfigFormBase {
     $form['roles']['track_roles'] = [
       '#type' => 'checkboxes',
       '#options' => $roles,
-      '#default_value' => $config->get('track_roles'),
+      '#default_value' => $this->config('adobe_analytics.settings')->get('track_roles'),
     ];
 
     return parent::buildForm($form, $form_state);
@@ -144,7 +143,9 @@ class DataLayerForm extends ConfigFormBase {
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
 
-    if (\Drupal::token()->scan($form_state->getValue('data_layer_root_field'))) {
+    if (\Drupal::token()
+      ->scan($form_state->getValue('data_layer_root_field'))
+    ) {
       $form_state->setErrorByName('data_layer_root_field', 'Usage of tokens is prohibited for the field');
     }
     elseif (\Drupal::token()->scan($form_state->getValue('data_layer_key'))) {
@@ -185,6 +186,10 @@ class DataLayerForm extends ConfigFormBase {
       ->set('data_layer_enabled', $form_state->getValue('data_layer_enabled'))
       ->set('data_layer_root_field', $form_state->getValue('data_layer_root_field'))
       ->set('data_layer_json_object', json_encode($data_layer_array, JSON_PRETTY_PRINT))
+      ->save();
+
+    $global_config = $this->config('adobe_analytics.settings');
+    $global_config
       ->set('role_tracking_type', $form_state->getValue('role_tracking_type'))
       ->set('track_roles', $form_state->getValue('track_roles'))
       ->save();
