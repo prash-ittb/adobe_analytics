@@ -4,6 +4,8 @@ namespace Drupal\adobe_analytics\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
+use Drupal\Core\Url;
 
 /**
  * Class DataLayerCustomJavascriptForm.
@@ -50,7 +52,7 @@ class DataLayerCustomJavascriptForm extends ConfigFormBase {
   public function validateForm(array &$form, FormStateInterface $form_state) {
     $config = $this->config('adobe_analytics.validation_config');
     if (!$config->get('cloud_domain') || empty($config->get('cloud_domain'))) {
-      $form_state->setErrorByName('data_layer_custom_javascript', "No validation criteria found. Please go to '/admin/config/adobe_analytics/validation_config' to set a validation croteria for the fields.");
+      $form_state->setErrorByName('data_layer_custom_javascript', t("No validation criteria found. Please go to %link to set a validation criteria for the fields.", ['%link' => Link::createFromRoute('Validation settings', 'adobe_analytics.validation_config_form')->toString()]));
     }
     elseif (!strstr($form_state->getValue('data_layer_custom_javascript'), $config->get('cloud_domain'))) {
       $form_state->setErrorByName('data_layer_custom_javascript', "Scripts can 
