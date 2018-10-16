@@ -36,7 +36,7 @@ class DataLayerCustomJavascriptForm extends ConfigFormBase {
 
     $form['data_layer_custom_javascript'] = [
       '#required' => TRUE,
-      '#description' => t('Enter the path of a JS file on amazon s3. It will be placed below JSON object in footer, Use jQuery.extend to add custom elements in existing json. e.g jQuery(document).ready(function() { window.segment_str = window.location.pathname; jQuery.extend(pfAnalyticsData, { "webinar": { "webinarID": window.segment_str, } });});'),
+      '#description' => t('Enter the path of a JS file on Amazon s3. It will be placed below JSON object in footer, use "jQuery.extend" to add custom elements in existing JSON ( e.g jQuery(document).ready(function() { window.segment_str = window.location.pathname; jQuery.extend(pfAnalyticsData, { "webinar": { "webinarID": window.segment_str, } });}); )'),
       '#weight' => '0',
       '#maxlength' => 500,
       '#type' => 'textfield',
@@ -52,7 +52,10 @@ class DataLayerCustomJavascriptForm extends ConfigFormBase {
   public function validateForm(array &$form, FormStateInterface $form_state) {
     $config = $this->config('adobe_analytics.validation_config');
     if (!$config->get('cloud_domain') || empty($config->get('cloud_domain'))) {
-      $form_state->setErrorByName('data_layer_custom_javascript', t("No validation criteria found. Please go to %link to set a validation criteria for the fields.", ['%link' => Link::createFromRoute('Validation settings', 'adobe_analytics.validation_config_form')->toString()]));
+      $form_state->setErrorByName('data_layer_custom_javascript', t("No validation criteria found. Please go to %link to set a validation criteria for the fields.", [
+        '%link' => Link::createFromRoute('Validation settings', 'adobe_analytics.validation_config_form')
+          ->toString()
+      ]));
     }
     elseif (!strstr($form_state->getValue('data_layer_custom_javascript'), $config->get('cloud_domain'))) {
       $form_state->setErrorByName('data_layer_custom_javascript', "Scripts can 

@@ -624,7 +624,10 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
     if ($form_state->getValue('installation_mode') == 'cdn') {
       foreach ($cloud_fields as $field) {
         if (!$config->get('cloud_domain') || empty($config->get('cloud_domain'))) {
-          $form_state->setErrorByName($field, t("No validation criteria found. Please go to %link to set a validation criteria for the fields.", ['%link' => Link::createFromRoute('Validation settings', 'adobe_analytics.validation_config_form')->toString()]));
+          $form_state->setErrorByName($field, t("No validation criteria found. Please go to %link to set a validation criteria for the fields.", [
+            '%link' => Link::createFromRoute('Validation settings', 'adobe_analytics.validation_config_form')
+              ->toString()
+          ]));
         }
         elseif ($form_state->getValue($field) && !strstr($form_state->getValue($field), $config->get('cloud_domain'))) {
           $form_state->setErrorByName($field, "Scripts can 
@@ -635,7 +638,10 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       }
       foreach ($tag_manager_fields as $field) {
         if (!$config->get('tag_manager_domain') || empty($config->get('tag_manager_domain'))) {
-          $form_state->setErrorByName($field, t("No validation criteria found. Please go to %link to set a validation criteria for the fields.", ['%link' => Link::createFromRoute('Validation settings', 'adobe_analytics.validation_config_form')->toString()]));
+          $form_state->setErrorByName($field, t("No validation criteria found. Please go to %link to set a validation criteria for the fields.", [
+            '%link' => Link::createFromRoute('Validation settings', 'adobe_analytics.validation_config_form')
+              ->toString()
+          ]));
         }
         elseif ($form_state->getValue($field) && !strstr($form_state->getValue($field), $config->get('tag_manager_domain'))) {
           $form_state->setErrorByName($field, "Scripts can only be hosted at authorized locations, such as " . $config->get('cloud_provider') . " e.g " . $config->get('cloud_domain') . " or on " . $config->get('tag_manager_provider') . " e.g " . $config->get('tag_manager_domain') . ". Please correct the path or request assistance to authorize your domain.");
