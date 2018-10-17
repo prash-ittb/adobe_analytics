@@ -38,7 +38,6 @@ function adobe_analytics_theme($existing, $type, $theme, $path) {
         'custom_tracking_js_before' => NULL,
         'custom_tracking_js_after' => NULL,
         'tag_status' => NULL,
-        'tag_manager_js_path' => NULL,
         'tag_manager_footer_js' => NULL,
         'data_layer_status' => NULL,
         'data_layer_json' => NULL,
@@ -52,6 +51,7 @@ function adobe_analytics_theme($existing, $type, $theme, $path) {
  * Implements hook_page_bottom().
  */
 function adobe_analytics_page_bottom(&$variables) {
+  \Drupal::routeMatch()->getRouteObject()->setOption('_no_big_pipe', TRUE);
   $variables['adobe_analytics'] = [
     '#lazy_builder' => [
       'adobe_analytics.adobe_analytics_helper:renderMarkup',
@@ -89,6 +89,31 @@ function adobe_analytics_adobe_analytics_variables() {
   }
 
   return ['variables' => $variables];
+}
+
+/**
+ * Implements hook_library_info_build().
+ */
+function adobe_analytics_library_info_build() {
+  $libraries = [];
+  if (Drupal::moduleHandler()->moduleExists('adobe_analytics')) {
+    $config = \Drupal::config('adobe_analytics.settings');
+    if ($config->get('installation_mode') == 'cdn' && $config->get('cdn_install_type') == 'tag') {
+      $environment = 'development';
+      if (\Drupal::config('adobe_analytics')->get('mode') == 'prod') {
+        $environment = 'production';
+      }
+      $tag_manager_script = $config->get($environment . "_tag_manager_container_path");
+
+      $libraries['tag_manager'] = [
+        'header' => TRUE,
+        'js' => [
+          $tag_manager_script => ['type' => 'external'],
+        ],
+      ];
+    }
+  }
+  return $libraries;
 }
 
 /**
@@ -133,7 +158,8 @@ function adobe_analytics_page_attachments_alter(array &$attachments) {
 };
 EOT;
 
-  $attachments['#attached']['library'][] = 'adobe_analytics/urlconfig';
+  $attachments['#attached']['library']['urlconfig'] = 'adobe_analytics/urlconfig';
+  $attachments['#attached']['library']['tag_manager'] = 'adobe_analytics/tag_manager';
 
   /*
    * Need to use Markup::create() so that the delimiters don't get filtered.
@@ -145,6 +171,6 @@ EOT;
       '#tag' => 'script',
       '#value' => Markup::create($pfconfig),
     ],
-    'adobe_analytics',
+    'adobe_analytics_report_suites',
   ];
 }

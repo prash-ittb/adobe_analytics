@@ -31,9 +31,9 @@
       }));
       
       var editor = ace.edit(inputId);
-      editor.setTheme("ace/theme/monokai");
-      editor.getSession().setMode("ace/mode/javascript");
-      
+      editor.setTheme("ace/theme/katzenmilch");
+      editor.session.setMode("ace/mode/json");
+      editor.setReadOnly(true);
       editors[inputId] = {
         editor: editor,
         input: inputElement

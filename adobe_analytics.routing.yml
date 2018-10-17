@@ -36,3 +36,13 @@ adobe_analytics.report_suites_form:
     _permission: 'access administration pages'
   options:
     _admin_route: TRUE
+
+adobe_analytics.validation_config_form:
+  path: '/admin/config/adobe_analytics/validation_config'
+  defaults:
+    _form: '\Drupal\adobe_analytics\Form\ValidationConfigForm'
+    _title: 'ValidationConfigForm'
+  requirements:
+    _permission: 'access administration pages'
+  options:
+    _admin_route: TRUE

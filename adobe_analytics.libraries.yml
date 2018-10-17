@@ -2,6 +2,10 @@ ace:
   version: 1.x
   js:
     js/ace/ace.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/jquery.once
 
 codesnippet:
   version: 1.x
@@ -9,6 +13,7 @@ codesnippet:
     js/codesnippet.js: {}
   dependencies:
     - core/jquery
+    - core/drupal
     - adobe_analytics/ace
 
 urlconfig:

@@ -1,20 +1,24 @@
 js_file_location: ''
 codesnippet: ''
-version: H.20.3.
+version: ''
 image_file_location: ''
-token_cache_lifetime: 0
+token_cache_lifetime: NULL
 extra_variables: { }
-mode: 'general'
+installation_mode: 'general'
 cdn_install_type: 'amazon'
 development_s_code_config: ''
 production_s_code_config: ''
 development_s_code: ''
 production_s_code: ''
-footer_js_code: ''
-cdn_custom_tracking_js_before: ''
-cdn_custom_tracking_js_after: ''
+development_footer_js_code: ''
+production_footer_js_code: ''
+development_cdn_custom_tracking_js_before: ''
+development_cdn_custom_tracking_js_after: ''
+production_cdn_custom_tracking_js_before: ''
+production_cdn_custom_tracking_js_after: ''
 development_tag_manager_container_path: ''
 production_tag_manager_container_path: ''
-tag_manager_footer_js: ''
+development_tag_manager_footer_js: ''
+production_tag_manager_footer_js: ''
 role_tracking_type: exclusive
 track_roles: { }
