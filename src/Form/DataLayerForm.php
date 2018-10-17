@@ -16,6 +16,7 @@ class DataLayerForm extends ConfigFormBase {
   protected function getEditableConfigNames() {
     return [
       'adobe_analytics.data_layer',
+      'adobe_analytics.settings'
     ];
   }
 
