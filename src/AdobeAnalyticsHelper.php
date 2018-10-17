@@ -72,7 +72,7 @@ class AdobeAnalyticsHelper {
    *
    * @var \Drupal\Core\Config\ImmutableConfig
    */
-  protected $cdnConfig;
+  protected $adobeConfig;
 
   /**
    * Datalayer config settings.
@@ -98,7 +98,7 @@ class AdobeAnalyticsHelper {
    *   The token service.
    */
   public function __construct(ConfigFactory $config_factory, CurrentRouteMatch $currentRouteMatch, AccountProxyInterface $current_user, ModuleHandlerInterface $moduleHandler, AdminContext $admin_context, Token $token) {
-    $this->cdnConfig = $config_factory->get('adobe_analytics.settings');
+    $this->adobeConfig = $config_factory->get('adobe_analytics.settings');
     $this->datalayerConfig = $config_factory->get('adobe_analytics.data_layer');
     $this->currentRouteMatch = $currentRouteMatch;
     $this->currentUser = $current_user;
@@ -195,7 +195,7 @@ class AdobeAnalyticsHelper {
     $build = [];
     $build['#theme'] = 'analytics_code';
 
-    if ($this->cdnConfig->get('installation_mode') == 'cdn') {
+    if ($this->adobeConfig->get('installation_mode') == 'cdn') {
       $build = $this->renderCdnMarkup($build);
     }
 
@@ -203,16 +203,16 @@ class AdobeAnalyticsHelper {
       $build = $this->renderDatalayerMarkup($build);
     }
 
-    if ($this->cdnConfig->get('installation_mode') == 'general') {
+    if ($this->adobeConfig->get('installation_mode') == 'general') {
       if ($this->skipTracking()) {
         return [];
       }
 
       // Extract module settings.
-      $js_file_location = $this->cdnConfig->get('js_file_location');
-      $codesnippet = $this->cdnConfig->get('codesnippet');
-      $version = $this->cdnConfig->get("version");
-      $nojs = !empty($this->cdnConfig->get("image_file_location")) ? $this->cdnConfig->get("image_file_location") : NULL;
+      $js_file_location = $this->adobeConfig->get('js_file_location');
+      $codesnippet = $this->adobeConfig->get('codesnippet');
+      $version = $this->adobeConfig->get("version");
+      $nojs = !empty($this->adobeConfig->get("image_file_location")) ? $this->adobeConfig->get("image_file_location") : NULL;
 
       // Extract entity overrides.
       list ($include_main_codesnippet, $include_custom_variables, $entity_snippet) = $this->extractEntityOverrides();
@@ -284,22 +284,22 @@ class AdobeAnalyticsHelper {
       $environment = 'development';
     }
 
-    $cdnType = $this->cdnConfig->get('cdn_install_type');
+    $cdnType = $this->adobeConfig->get('cdn_install_type');
 
     // For Amazon S3.
     if ($cdnType == 'amazon') {
       $build['#amazon_status'] = TRUE;
-      $build['#s_code_config_path'] = $this->cdnConfig->get($environment . '_s_code_config');
-      $build['#s_code_path'] = $this->cdnConfig->get($environment . '_s_code');
-      $build['#footer_js_code'] = $this->cdnConfig->get($environment . '_footer_js_code');
-      $build['#custom_tracking_js_before'] = $this->cdnConfig->get($environment . '_cdn_custom_tracking_js_before');
-      $build['#custom_tracking_js_after'] = $this->cdnConfig->get($environment . '_cdn_custom_tracking_js_after');
+      $build['#s_code_config_path'] = $this->adobeConfig->get($environment . '_s_code_config');
+      $build['#s_code_path'] = $this->adobeConfig->get($environment . '_s_code');
+      $build['#footer_js_code'] = $this->adobeConfig->get($environment . '_footer_js_code');
+      $build['#custom_tracking_js_before'] = $this->adobeConfig->get($environment . '_cdn_custom_tracking_js_before');
+      $build['#custom_tracking_js_after'] = $this->adobeConfig->get($environment . '_cdn_custom_tracking_js_after');
     }
     else {
       // For Tag Manager Tool.
       $build['#tag_status'] = TRUE;
-      // $build['#tag_manager_js_path'] = $this->cdnConfig->get($environment . '_tag_manager_container_path');.
-      $build['#tag_manager_footer_js'] = $this->cdnConfig->get($environment . '_tag_manager_footer_js');
+      // $build['#tag_manager_js_path'] = $this->adobeConfig->get($environment . '_tag_manager_container_path');.
+      $build['#tag_manager_footer_js'] = $this->adobeConfig->get($environment . '_tag_manager_footer_js');
     }
 
     return $build;
@@ -315,7 +315,6 @@ class AdobeAnalyticsHelper {
    *   Build array.
    */
   protected function renderDatalayerMarkup(array $build) {
-
     if ($this->skipTracking()) {
       return [];
     }
@@ -345,17 +344,8 @@ class AdobeAnalyticsHelper {
    *   Skips the tracking if true.
    */
   public function skipTracking() {
-//    if ($type == 1) {
-//      $config = $this->cdnConfig;
-//    }
-//    elseif ($type == 2) {
-//      $config = $this->datalayerConfig;
-//    }
-//    else {
-//      return FALSE;
-//    }
     // Check if we should track the currently active user's role.
-    $config = $this->cdnConfig;
+    $config = $this->adobeConfig;
     $track_user = TRUE;
     $get_roles = [];
     $tracking_type = $config->get('role_tracking_type');
