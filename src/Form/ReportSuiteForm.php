@@ -34,8 +34,20 @@ class ReportSuiteForm extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('adobe_analytics.report_suite');
 
-    $form['report_suites_mode'] = [
+    $form['report_suites_enabled'] = [
       '#required' => '1',
+      '#key_type_toggled' => '0',
+      '#default_value' => $config->get('report_suites_enabled'),
+      '#weight' => '0',
+      '#type' => 'radios',
+      '#options' => [
+        '1' => t('Yes'),
+        '0' => t('No'),
+      ],
+      '#title' => t('Enable Report Suite'),
+    ];
+
+    $form['report_suites_mode'] = [
       '#key_type_toggled' => '0',
       '#description' => t('Select whether the s_code file is in Production (prod) or Development (dev) mode.'),
       '#default_value' => $config->get('report_suites_mode'),
@@ -63,6 +75,11 @@ class ReportSuiteForm extends ConfigFormBase {
       '#type' => 'textfield',
       '#title' => t('Development:'),
       '#default_value' => $config->get('development_report_suites'),
+      '#states' => [
+        'required' => [
+          'input[name="report_suites_enabled"]' => ['value' => '1'],
+        ]
+      ]
     ];
     $form['report_suites']['production_report_suites'] = [
       '#required' => '0',
@@ -71,6 +88,11 @@ class ReportSuiteForm extends ConfigFormBase {
       '#type' => 'textfield',
       '#title' => t('Production'),
       '#default_value' => $config->get('production_report_suites'),
+      '#states' => [
+        'required' => [
+          'input[name="report_suites_enabled"]' => ['value' => '1'],
+        ]
+      ]
     ];
     $form['domains'] = [
       '#weight' => '2',
@@ -87,6 +109,11 @@ class ReportSuiteForm extends ConfigFormBase {
       '#type' => 'textfield',
       '#title' => t('Development:'),
       '#default_value' => $config->get('development_domains'),
+      '#states' => [
+        'required' => [
+          'input[name="report_suites_enabled"]' => ['value' => '1'],
+        ]
+      ]
     ];
     $form['domains']['production_domains'] = [
       '#required' => '0',
@@ -95,6 +122,11 @@ class ReportSuiteForm extends ConfigFormBase {
       '#type' => 'textfield',
       '#title' => t('Production:'),
       '#default_value' => $config->get('production_domains'),
+      '#states' => [
+        'required' => [
+          'input[name="report_suites_enabled"]' => ['value' => '1'],
+        ]
+      ]
     ];
     $form['site_section'] = [
       '#weight' => '3',
@@ -169,6 +201,7 @@ class ReportSuiteForm extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->config('adobe_analytics.report_suite')
+      ->set('report_suites_enabled', $form_state->getValue('report_suites_enabled'))
       ->set('report_suites_mode', $form_state->getValue('report_suites_mode'))
       ->set('development_report_suites', $form_state->getValue('development_report_suites'))
       ->set('production_report_suites', $form_state->getValue('production_report_suites'))

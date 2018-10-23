@@ -120,21 +120,26 @@ function adobe_analytics_library_info_build() {
  * Implements hook_page_attachments_alter().
  */
 function adobe_analytics_page_attachments_alter(array &$attachments) {
+
+  // Attach the tag manager container path in the HTML head.
+  $attachments['#attached']['library']['tag_manager'] = 'adobe_analytics/tag_manager';
+
+  // Add the Report Suite tag.
   $config = \Drupal::config('adobe_analytics.report_suite');
+  if ($config->get('report_suites_enabled') == 1) {
+    $mode = $config->get('report_suites_mode');
+    $development_report_suites = $config->get('development_report_suites');
+    $production_report_suites = $config->get('production_report_suites');
+    $development_domains = $config->get('development_domains');
+    $production_domains = $config->get('production_domains');
+    $site_section_prefix = $config->get('site_section_prefix');
+    $site_section_delimiter = $config->get('site_section_delimiter');
+    $page_name_base = $config->get('page_name_base');
+    $page_name_prefix = $config->get('page_name_prefix');
+    $page_name_delimiter = $config->get('page_name_delimiter');
+    $page_name_homepage = $config->get('page_name_homepage');
 
-  $mode = $config->get('mode');
-  $development_report_suites = $config->get('development_report_suites');
-  $production_report_suites = $config->get('production_report_suites');
-  $development_domains = $config->get('development_domains');
-  $production_domains = $config->get('production_domains');
-  $site_section_prefix = $config->get('site_section_prefix');
-  $site_section_delimiter = $config->get('site_section_delimiter');
-  $page_name_base = $config->get('page_name_base');
-  $page_name_prefix = $config->get('page_name_prefix');
-  $page_name_delimiter = $config->get('page_name_delimiter');
-  $page_name_homepage = $config->get('page_name_homepage');
-
-  $pfconfig = <<<EOT
+    $pfconfig = <<<EOT
   var pfConfig = {
     mode: '$mode',
     reportSuites: {
@@ -158,19 +163,19 @@ function adobe_analytics_page_attachments_alter(array &$attachments) {
 };
 EOT;
 
-  $attachments['#attached']['library']['urlconfig'] = 'adobe_analytics/urlconfig';
-  $attachments['#attached']['library']['tag_manager'] = 'adobe_analytics/tag_manager';
+    $attachments['#attached']['library']['urlconfig'] = 'adobe_analytics/urlconfig';
 
-  /*
-   * Need to use Markup::create() so that the delimiters don't get filtered.
-   * @TODO find a better way to do this.
-   */
-  $attachments['#attached']['html_head'][] = [
-    [
-      '#type' => 'html_tag',
-      '#tag' => 'script',
-      '#value' => Markup::create($pfconfig),
-    ],
-    'adobe_analytics_report_suites',
-  ];
+    /*
+     * Need to use Markup::create() so that the delimiters don't get filtered.
+     * @TODO find a better way to do this.
+     */
+    $attachments['#attached']['html_head'][] = [
+      [
+        '#type' => 'html_tag',
+        '#tag' => 'script',
+        '#value' => Markup::create($pfconfig),
+      ],
+      'adobe_analytics_report_suites',
+    ];
+  }
 }
