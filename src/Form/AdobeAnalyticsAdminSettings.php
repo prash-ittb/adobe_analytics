@@ -57,6 +57,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
         'amazon' => t('Amazon S3 hosted'),
         'tag' => t('Tag Manager Tool'),
       ],
+      '#description' => t('Please Clear the cache under Performance when you switch between the installation types.'),
       '#weight' => '-10',
       '#states' => [
         'visible' => [

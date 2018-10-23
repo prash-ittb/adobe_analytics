@@ -40,7 +40,6 @@ class DataLayerCustomJavascriptForm extends ConfigFormBase {
       '#description' => t('Enter the path of a JS file on Amazon s3. It will be placed below JSON object in footer, use "jQuery.extend" to add custom elements in existing JSON ( e.g jQuery(document).ready(function() { window.segment_str = window.location.pathname; jQuery.extend(pfAnalyticsData, { "webinar": { "webinarID": window.segment_str, } });}); )'),
     ];
     $form['data_layer_custom_javascript']['development_data_layer_custom_javascript'] = [
-      '#required' => TRUE,
       '#weight' => '0',
       '#maxlength' => 500,
       '#type' => 'textfield',
@@ -48,7 +47,6 @@ class DataLayerCustomJavascriptForm extends ConfigFormBase {
       '#default_value' => $config->get('development_data_layer_custom_javascript'),
     ];
     $form['data_layer_custom_javascript']['production_data_layer_custom_javascript'] = [
-      '#required' => TRUE,
       '#weight' => '0',
       '#maxlength' => 500,
       '#type' => 'textfield',
