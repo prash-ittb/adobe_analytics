@@ -8,10 +8,22 @@ Adds the Adobe Analytics system to your website.
 Install like any other module via Drush or the web administration interface.
 
 # Configuration
-Navigate to Administration > Configuration > Adobe Analytics, where
-the main configuration settings live. These apply to all
-non-administration pages and support additional conditions based
-on the role of the user making a request.
+To enable the environment mode for the Adobe analytics module, add the
+configuration in settings.php file as:
+
+```php
+$config['adobe_analytics'] = [
+     'mode' => 'dev/prod',
+ ];
+```
+
+Setting it to dev will fire the development scripts and setting it to prod will
+fire the production scripts.
+
+To add the scripts, navigate to 
+Administration > Configuration > Adobe Analytics, where the main configuration
+settings live. These apply to all non-administration pages and support
+additional conditions based on the role of the user making a request.
 
 If you need to override or extend the settings in a particular
 entity, then add a field of type Adobe Analytics to the entity bundle. Once
