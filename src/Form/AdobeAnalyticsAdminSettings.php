@@ -343,17 +343,6 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#default_value' => $config->get('production_tag_manager_footer_js'),
     ];
     // General form elements.
-    $form['general_warning'] = [
-      '#type' => 'item',
-      '#markup' => "<div class='messages messages--warning'>" . $this->t("Please use CDN Installation Mode for Analytics setup. Do not use Basic Installation mode, it is
-provided for backwards compatibility only.") . "</div>",
-      '#weight' => '-11',
-      '#states' => [
-        'visible' => [
-          ':input[name="installation_mode"]' => ['value' => 'general'],
-        ],
-      ],
-    ];
     $form['general'] = [
       '#type' => 'details',
       '#title' => $this->t('General settings'),
