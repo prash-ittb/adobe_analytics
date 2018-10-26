@@ -1,3 +1,4 @@
+report_suites_enabled: '0'
 report_suites_mode: 'dev'
 development_report_suites: ''
 production_report_suites: ''

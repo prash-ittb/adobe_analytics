@@ -108,13 +108,19 @@ adobe_analytics.data_layer_custom_javascript:
   type: config_object
   label: 'Adobe analytics data layer custom Javascript'
   mapping:
-    data_layer_custom_javascript:
+    development_data_layer_custom_javascript:
       type: string
-      label: 'Adobe analytics data layer custom Javascript'
+      label: 'Adobe analytics data layer custom Javascript for development'
+    production_data_layer_custom_javascript:
+      type: string
+      label: 'Adobe analytics data layer custom Javascript for production'
 adobe_analytics.report_suite:
   type: config_object
   label: 'Adobe analytics Report Suite'
   mapping:
+    report_suites_enabled:
+      type: string
+      label: 'Data Layer enabled'
     report_suites_mode:
       type: string
       label: 'Mode'

@@ -1,1 +1,2 @@
-data_layer_custom_javascript: ''
+development_data_layer_custom_javascript: ''
+production_data_layer_custom_javascript: ''

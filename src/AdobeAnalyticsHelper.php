@@ -319,6 +319,15 @@ class AdobeAnalyticsHelper {
       return [];
     }
 
+    $environment = \Drupal::config('adobe_analytics')->get('mode');
+
+    if ($environment == 'prod') {
+      $environment = 'production';
+    }
+    else {
+      $environment = 'development';
+    }
+
     // Get value of data layer variable.
     $data_root_field = !empty($this->datalayerConfig->get('data_layer_root_field')) ? $this->datalayerConfig->get('data_layer_root_field') : 'pfAnalyticsData';
     $data_layer_json = $this->datalayerConfig->get('data_layer_json_object');
@@ -332,7 +341,7 @@ class AdobeAnalyticsHelper {
     $build['#data_layer_status'] = TRUE;
     $build['#data_layer_json'] = 'window.' . $data_root_field . ' = ' . $this->formatJsSnippet($data_layer_json);
     $build['#custom_js'] = \Drupal::config('adobe_analytics.data_layer_custom_javascript')
-      ->get('data_layer_custom_javascript');
+      ->get($environment . '_data_layer_custom_javascript');
 
     return $build;
   }

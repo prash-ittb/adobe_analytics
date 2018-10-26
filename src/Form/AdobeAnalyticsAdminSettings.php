@@ -57,6 +57,7 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
         'amazon' => t('Amazon S3 hosted'),
         'tag' => t('Tag Manager Tool'),
       ],
+      '#description' => t('Please Clear the cache under Performance when you switch between the installation types.'),
       '#weight' => '-10',
       '#states' => [
         'visible' => [
@@ -342,16 +343,6 @@ class AdobeAnalyticsAdminSettings extends ConfigFormBase {
       '#default_value' => $config->get('production_tag_manager_footer_js'),
     ];
     // General form elements.
-    $form['general_warning'] = [
-      '#type' => 'item',
-      '#markup' => "<div class='messages messages--warning'>" . $this->t("It's recommended to use CDN installation mode for Adobe Analytics setup. Basic installation mode is provided for backwards compatibility only.") . "</div>",
-      '#weight' => '-11',
-      '#states' => [
-        'visible' => [
-          ':input[name="installation_mode"]' => ['value' => 'general'],
-        ],
-      ],
-    ];
     $form['general'] = [
       '#type' => 'details',
       '#title' => $this->t('General settings'),
