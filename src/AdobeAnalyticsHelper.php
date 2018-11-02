@@ -298,8 +298,9 @@ class AdobeAnalyticsHelper {
     else {
       // For Tag Manager Tool.
       $build['#tag_status'] = TRUE;
-      // $build['#tag_manager_js_path'] = $this->adobeConfig->get($environment . '_tag_manager_container_path');.
-      $build['#tag_manager_footer_js'] = $this->adobeConfig->get($environment . '_tag_manager_footer_js');
+      if (!empty($this->adobeConfig->get($environment . '_tag_manager_footer_js'))) {
+        $build['#tag_manager_footer_js'] = $this->adobeConfig->get($environment . '_tag_manager_footer_js');
+      }
     }
 
     return $build;
@@ -334,7 +335,7 @@ class AdobeAnalyticsHelper {
 
     // $node = \Drupal::request()->attributes->get('node');
     if (empty($data_layer_json) || !\Drupal::moduleHandler()
-      ->moduleExists('token')
+        ->moduleExists('token')
     ) {
       return [];
     }
