@@ -66,13 +66,7 @@ class DataLayerCustomJavascriptForm extends ConfigFormBase {
     ];
     $config = $this->config('adobe_analytics.validation_config');
     foreach ($fields as $field) {
-      if (!$config->get('cloud_domain') || empty($config->get('cloud_domain'))) {
-        $form_state->setErrorByName($field, t("No validation criteria found. Please go to %link to set a validation criteria for the fields.", [
-          '%link' => Link::createFromRoute('Validation settings', 'adobe_analytics.validation_config_form')
-            ->toString()
-        ]));
-      }
-      elseif (!strstr($form_state->getValue($field), $config->get('cloud_domain'))) {
+      if (!empty($form_state->getValue($field)) && !strstr($form_state->getValue($field), $config->get('cloud_domain'))) {
         $form_state->setErrorByName($field, "Scripts can 
           only be hosted at authorized locations, such as " . $config->get('cloud_provider') . " e.g " . $config->get('cloud_domain_validator') . " or on "
           . $config->get('tag_manager_provider') . " e.g " . $config->get('tag_manager_domain') . ". Please correct the path 
