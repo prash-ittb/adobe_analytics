@@ -1,7 +1,9 @@
 {% if general_status %}
   <!-- AdobeAnalytics code version: {{ version }}
 Copyright 1996-2017 Adobe, Inc. -->
-  <script type="text/javascript" src="{{ js_file_location }}"></script>
+  {% if js_file_location %}
+    <script type="text/javascript" src="{{ js_file_location }}"></script>
+  {% endif %}
 
   <script type="text/javascript"><!--
 
