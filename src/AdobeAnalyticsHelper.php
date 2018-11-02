@@ -292,8 +292,12 @@ class AdobeAnalyticsHelper {
       $build['#s_code_config_path'] = $this->adobeConfig->get($environment . '_s_code_config');
       $build['#s_code_path'] = $this->adobeConfig->get($environment . '_s_code');
       $build['#footer_js_code'] = $this->adobeConfig->get($environment . '_footer_js_code');
-      $build['#custom_tracking_js_before'] = $this->adobeConfig->get($environment . '_cdn_custom_tracking_js_before');
-      $build['#custom_tracking_js_after'] = $this->adobeConfig->get($environment . '_cdn_custom_tracking_js_after');
+      if (!empty($this->adobeConfig->get($environment . '_cdn_custom_tracking_js_before'))) {
+        $build['#custom_tracking_js_before'] = $this->adobeConfig->get($environment . '_cdn_custom_tracking_js_before');
+      }
+      if (!empty($this->adobeConfig->get($environment . '_cdn_custom_tracking_js_after'))) {
+        $build['#custom_tracking_js_after'] = $this->adobeConfig->get($environment . '_cdn_custom_tracking_js_after');
+      }
     }
     else {
       // For Tag Manager Tool.
